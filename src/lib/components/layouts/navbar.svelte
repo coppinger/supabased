@@ -2,7 +2,7 @@
 </script>
 
 <div class="flex h-12 place-items-center">
-	NAVBAR
+	<a href="/">NAVBAR</a>
 
 	<!-- TODO AVATAR -->
 </div>
