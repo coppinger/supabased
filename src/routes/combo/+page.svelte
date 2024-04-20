@@ -12,6 +12,7 @@
 	import { tick } from 'svelte';
 
 	import { stacksMinimal } from '$lib/stacks';
+	import Combox from '$lib/components/combobox/combox.svelte';
 
 	const stacks = stacksMinimal;
 
@@ -77,3 +78,5 @@
 		</Command.Root>
 	</Popover.Content>
 </Popover.Root>
+
+<Combox data={stacks} multiple={true} />
