@@ -1,12 +1,21 @@
-// src/routes/auth/callback/+server.ts
-import { redirect } from '@sveltejs/kit'
+import { redirect } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 
-export const GET = async ({ url, locals: { supabase } }) => {
-  const code = url.searchParams.get('code')
+export const GET = (async (event) => {
+  const {
+    url,
+    locals: { supabase }
+  } = event;
+  const code = url.searchParams.get('code') as string;
+  const next = url.searchParams.get('next') ?? '/';
 
   if (code) {
-    await supabase.auth.exchangeCodeForSession(code)
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    if (!error) {
+      throw redirect(303, `/${next.slice(1)}`);
+    }
   }
 
-  throw redirect(303, '/account')
-}
+  // return the user to an error page with instructions
+  throw redirect(303, '/auth/auth-code-error');
+}) satisfies RequestHandler
