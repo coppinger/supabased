@@ -1,7 +1,7 @@
-import { supabaseClient } from '$lib/supabaseClient';
+import { supabase } from '$lib/db/client';
 
 export async function handleMagicLink(email: string) {
-	const { data, error } = await supabaseClient.auth.signInWithOtp({
+	const { data, error } = await supabase.auth.signInWithOtp({
 		email,
 		options: {
 			shouldCreateUser: true,

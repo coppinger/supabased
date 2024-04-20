@@ -1,5 +1,4 @@
-<script>
-	// @ts-nocheck
+<script lang="ts">
 	import { Confetti } from 'svelte-confetti';
 
 	const duration = 2000;
