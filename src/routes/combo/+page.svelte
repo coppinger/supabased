@@ -1,11 +1,18 @@
 <script lang="ts">
-	import Check from 'lucide-svelte/icons/check';
-	import ChevronsUpDown from 'lucide-svelte/icons/chevrons-up-down';
-	import { tick } from 'svelte';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Command from '$lib/components/ui/command/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
 	import { cn } from '$lib/utils.js';
+
+	import Fuse from 'fuse.js';
+
+	// ignoring until ts figures its shiz out
+	// @ts-ignore
+	import Check from 'lucide-svelte/icons/check';
+	// @ts-ignore
+	import ChevronsUpDown from 'lucide-svelte/icons/chevrons-up-down';
+
+	import { tick } from 'svelte';
 
 	const frameworks = [
 		{
@@ -34,6 +41,18 @@
 	let value = '';
 
 	$: selectedValue = frameworks.find((f) => f.value === value)?.label ?? 'Select a framework...';
+
+	const fuse = new Fuse(frameworks, {
+		keys: ['value', 'label'],
+		threshold: 0.4
+	});
+
+	let filteredFrameworks: typeof frameworks;
+	if (value) {
+		filteredFrameworks = fuse.search(value).map((res) => res.item);
+	} else {
+		filteredFrameworks = frameworks;
+	}
 
 	// We want to refocus the trigger button when the user selects
 	// an item from the list so users can continue navigating the
@@ -64,7 +83,7 @@
 			<Command.Input placeholder="Search framework..." />
 			<Command.Empty>No framework found.</Command.Empty>
 			<Command.Group>
-				{#each frameworks as framework}
+				{#each filteredFrameworks as framework}
 					<Command.Item
 						value={framework.value}
 						onSelect={(currentValue) => {
