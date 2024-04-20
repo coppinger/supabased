@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Endorse from '$lib/components/actions/endorse.svelte';
+	import Endorse from './endorse.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -9,4 +9,5 @@
 
 <!-- TODO add profile view-->
 
+<!-- FIXME EXAMPLE -->
 <Endorse data={endorse} {profile} endorser={{ name: 'testing' }}>Endorse</Endorse>
