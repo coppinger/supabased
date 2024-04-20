@@ -6,52 +6,30 @@
 
 	import Fuse from 'fuse.js';
 
-	// ignoring until ts figures its shiz out
-	// @ts-ignore
-	import Check from 'lucide-svelte/icons/check';
-	// @ts-ignore
-	import ChevronsUpDown from 'lucide-svelte/icons/chevrons-up-down';
+	import { Check } from 'lucide-svelte';
+	import { ChevronsUpDown } from 'lucide-svelte';
 
 	import { tick } from 'svelte';
 
-	const frameworks = [
-		{
-			value: 'sveltekit',
-			label: 'SvelteKit'
-		},
-		{
-			value: 'next.js',
-			label: 'Next.js'
-		},
-		{
-			value: 'nuxt.js',
-			label: 'Nuxt.js'
-		},
-		{
-			value: 'remix',
-			label: 'Remix'
-		},
-		{
-			value: 'astro',
-			label: 'Astro'
-		}
-	];
+	import { stacksMinimal } from '$lib/stacks';
+
+	const stacks = stacksMinimal;
 
 	let open = false;
 	let value = '';
 
-	$: selectedValue = frameworks.find((f) => f.value === value)?.label ?? 'Select a framework...';
+	$: selectedValue = stacks.find((f) => f.value === value)?.label ?? 'Select a framework...';
 
-	const fuse = new Fuse(frameworks, {
+	const fuse = new Fuse(stacks, {
 		keys: ['value', 'label'],
 		threshold: 0.4
 	});
 
-	let filteredFrameworks: typeof frameworks;
+	let filteredStacks: typeof stacks;
 	if (value) {
-		filteredFrameworks = fuse.search(value).map((res) => res.item);
+		filteredStacks = fuse.search(value).map((res) => res.item);
 	} else {
-		filteredFrameworks = frameworks;
+		filteredStacks = stacks;
 	}
 
 	// We want to refocus the trigger button when the user selects
@@ -78,12 +56,12 @@
 			<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
 		</Button>
 	</Popover.Trigger>
-	<Popover.Content class="w-[200px] p-0">
+	<Popover.Content class="w-[200px] max-h-[300px] overflow-y-auto overflow-x-hidden p-0">
 		<Command.Root>
 			<Command.Input placeholder="Search framework..." />
 			<Command.Empty>No framework found.</Command.Empty>
 			<Command.Group>
-				{#each filteredFrameworks as framework}
+				{#each filteredStacks as framework}
 					<Command.Item
 						value={framework.value}
 						onSelect={(currentValue) => {
