@@ -18,6 +18,7 @@ export const load = (async ({ locals, params: { name } }) => {
 
 export const actions = {
     default: async ({ locals, request }) => {
+        // User should be logged in before endorsing
         // const { user } = await locals.safeGetSession()
         const form = await superValidate<Infer<FormSchema>, Message>(request, zod(formSchema))
 
@@ -31,7 +32,7 @@ export const actions = {
         // })
 
         // TODO add schema
-        await locals.supabase.from('stacks').insert({ id: form.data.stackname })
+        // await locals.supabase.from('stacks').insert({ id: form.data.stackname })
 
         return message(form, { status: 'success', text: `Recieved your submission to add ${form.data.stackname}` })
     }
