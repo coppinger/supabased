@@ -42,6 +42,7 @@
 		"@supabase/supabase-js": "^2.39.1",
 		"bits-ui": "^0.11.8",
 		"clsx": "^2.0.0",
+		"fuse.js": "^7.0.0",
 		"lucide-svelte": "^0.299.0",
 		"phosphor-svelte": "^1.4.2",
 		"tailwind-merge": "^2.1.0",
