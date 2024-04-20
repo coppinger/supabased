@@ -1,4 +1,5 @@
-export const stacks = [
+
+export const stacks = Object.freeze([
 	{
 		name: 'Clerk',
 		url: 'https://clerk.com/',
@@ -684,7 +685,8 @@ export const stacks = [
 		url: 'https://shoutout.io/',
 		tags: ['Testimonials']
 	}
-];
+] as const)
+export type Stack = typeof stacks[number]
 
 export const stacksMinimal = [
 	{ label: 'Clerk', value: 'clerk' },
@@ -824,4 +826,7 @@ export const stacksMinimal = [
 	{ label: 'Testimonial', value: 'testimonial' },
 	{ label: 'Senja', value: 'senja' },
 	{ label: 'Shoutout', value: 'shoutout' }
-];
+]
+
+export const tags = Object.freeze([...new Set(stacks.flatMap(stack => stack.tags))] as const)
+export type Tag = typeof tags[number]

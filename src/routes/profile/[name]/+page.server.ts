@@ -1,9 +1,9 @@
-import { message, superValidate, type Infer } from "sveltekit-superforms";
-import type { Actions, PageServerLoad } from "./$types";
-import { zod } from "sveltekit-superforms/adapters";
-import { endorseSchema, type EndorseSchema } from "./schema";
+import { message, superValidate, type Infer } from "sveltekit-superforms"
+import type { Actions, PageServerLoad } from "./$types"
+import { zod } from "sveltekit-superforms/adapters"
+import { endorseSchema, type EndorseSchema } from "./schema"
 
-interface Message {
+export interface Message {
   status: 'error' | 'success'
   text: string
   // TODO add correct type
@@ -14,7 +14,13 @@ interface Message {
 
 export const load = (async ({ locals, params: { name } }) => {
   // TODO add constraints
-  const profile = locals.supabase.from('profiles').select()
+  // const profile = locals.supabase.from('profiles').select()
+
+  console.log(name)
+  // FIXME test data
+  const profile = {
+    name
+  }
 
   return {
     profile,
@@ -29,19 +35,23 @@ export const actions = {
     // return message()
   },
   endorse: async ({ request, locals, params: { name } }) => {
-    const { user } = await locals.safeGetSession()
+    // const { user } = await locals.safeGetSession()
     const form = await superValidate<Infer<EndorseSchema>, Message>(request, zod(endorseSchema))
 
     if (!form.valid) return message(form, { status: 'error', text: 'Invalid form' })
 
-    if (!user) return message(form, { status: 'error', text: 'Please Login to Endorse.' }, {
-      status: 401
-    })
+
+
+    // if (!user) return message(form, { status: 'error', text: 'Please Login to Endorse.' }, {
+    //   status: 401
+    // })
 
     // TODO add constraints
     // WARN don't return the full profile, just the name (or whatever else we need) for context
-    const returned = await locals.supabase.from('profiles').update('').select('name').single()
+    // const returned = await locals.supabase.from('profiles').update('').select('name').single()
 
-    return message(form, { status: 'error', text: 'Endorsed', profile: returned.data })
+    // return message(form, { status: 'error', text: 'Endorsed', profile: returned.data })
+
+    return message(form, { status: 'error', text: 'Endorsed', profile: { name: form.data.profile } })
   }
 } satisfies Actions
