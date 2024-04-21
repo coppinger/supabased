@@ -6,8 +6,11 @@
 
 	import Fuse from 'fuse.js';
 
-	import { Check } from 'lucide-svelte';
-	import { ChevronsUpDown } from 'lucide-svelte';
+	// ignoring until ts figures its shiz out
+	// @ts-ignore
+	import Check from 'lucide-svelte/icons/check';
+	// @ts-ignore
+	import ChevronsUpDown from 'lucide-svelte/icons/chevrons-up-down';
 
 	import { tick } from 'svelte';
 
@@ -15,22 +18,44 @@
 	import Combox from '$lib/components/combobox/combox.svelte';
 
 	const stacks = stacksMinimal;
+	const frameworks = [
+		{
+			value: 'sveltekit',
+			label: 'SvelteKit'
+		},
+		{
+			value: 'next.js',
+			label: 'Next.js'
+		},
+		{
+			value: 'nuxt.js',
+			label: 'Nuxt.js'
+		},
+		{
+			value: 'remix',
+			label: 'Remix'
+		},
+		{
+			value: 'astro',
+			label: 'Astro'
+		}
+	];
 
 	let open = false;
 	let value = '';
 
-	$: selectedValue = stacks.find((f) => f.value === value)?.label ?? 'Select a framework...';
+	$: selectedValue = frameworks.find((f) => f.value === value)?.label ?? 'Select a framework...';
 
-	const fuse = new Fuse(stacks, {
+	const fuse = new Fuse(frameworks, {
 		keys: ['value', 'label'],
 		threshold: 0.4
 	});
 
-	let filteredStacks: typeof stacks;
+	let filteredFrameworks: typeof frameworks;
 	if (value) {
-		filteredStacks = fuse.search(value).map((res) => res.item);
+		filteredFrameworks = fuse.search(value).map((res) => res.item);
 	} else {
-		filteredStacks = stacks;
+		filteredFrameworks = frameworks;
 	}
 
 	// We want to refocus the trigger button when the user selects
@@ -57,12 +82,12 @@
 			<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
 		</Button>
 	</Popover.Trigger>
-	<Popover.Content class="w-[200px] max-h-[300px] overflow-y-auto overflow-x-hidden p-0">
+	<Popover.Content class="w-[200px] p-0">
 		<Command.Root>
 			<Command.Input placeholder="Search framework..." />
 			<Command.Empty>No framework found.</Command.Empty>
 			<Command.Group>
-				{#each filteredStacks as framework}
+				{#each filteredFrameworks as framework}
 					<Command.Item
 						value={framework.value}
 						onSelect={(currentValue) => {
