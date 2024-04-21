@@ -7,7 +7,7 @@
 </script>
 
 <Toaster />
-<main class="container h-svh">
+<main class="h-svh">
 	<NavBar />
 	<slot />
 </main>
