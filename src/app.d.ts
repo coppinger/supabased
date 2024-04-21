@@ -1,4 +1,4 @@
-import { Database } from '../DatabaseDefinitions';
+import { Database } from '../DatabaseDefinitions'
 import { SupabaseClient, Session } from '@supabase/supabase-js'
 
 declare global {

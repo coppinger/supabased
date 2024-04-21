@@ -6,6 +6,7 @@ export const load = (async ({ locals: { safeGetSession } }) => {
 
   return {
     session,
-    user,
+    user
   }
 }) satisfies LayoutServerLoad
+
