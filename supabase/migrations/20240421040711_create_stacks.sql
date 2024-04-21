@@ -1,5 +1,5 @@
 CREATE TABLE "stacks"(
-    "id" uuid PRIMARY KEY,
+    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     "name" text,
     "url" text,
     "slug" text
@@ -13,7 +13,7 @@ CREATE POLICY "Stacks are viewable by everyone." ON stacks
         USING (TRUE);
 
 CREATE TABLE "projects_stacks"(
-    "id" uuid PRIMARY KEY,
+    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     "project_id" uuid,
     "stack_id" uuid
 );

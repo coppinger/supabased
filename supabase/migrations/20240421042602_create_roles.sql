@@ -1,5 +1,5 @@
 CREATE TABLE "roles"(
-    "id" uuid PRIMARY KEY,
+    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     "name" text,
     "sort" int
 );
@@ -13,7 +13,7 @@ CREATE POLICY "Roles are viewable by everyone." ON roles
 
 -- Create join table
 CREATE TABLE "profiles_roles"(
-    "id" uuid PRIMARY KEY,
+    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     "profile_id" uuid,
     "role_id" uuid
 );

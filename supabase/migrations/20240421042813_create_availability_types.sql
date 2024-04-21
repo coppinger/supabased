@@ -1,11 +1,11 @@
 CREATE TABLE "availability_types"(
-    "id" uuid PRIMARY KEY,
+    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     "name" text,
     "sort" int
 );
 
 CREATE TABLE "profile_availability_types"(
-    "id" uuid PRIMARY KEY,
+    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     "profile_id" uuid,
     "availability_type_id" uuid
 );

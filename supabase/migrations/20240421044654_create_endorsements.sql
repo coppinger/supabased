@@ -1,5 +1,5 @@
 CREATE TABLE "endorsements"(
-    "id" uuid PRIMARY KEY,
+    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     "endoresement_to" uuid,
     "endorsed_by" uuid,
     "created_at" timestamptz DEFAULT now(),

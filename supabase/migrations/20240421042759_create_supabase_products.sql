@@ -1,5 +1,5 @@
 CREATE TABLE "supabase_products"(
-    "id" uuid PRIMARY KEY,
+    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     "name" text,
     "sort" int
 );
@@ -13,7 +13,7 @@ CREATE POLICY "Supabase products are viewable by everyone." ON supabase_products
 
 -- Create join table
 CREATE TABLE "supabase_products_projects"(
-    "id" uuid PRIMARY KEY,
+    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     "supabase_product_id" uuid,
     "project_id" uuid
 );

@@ -1,5 +1,5 @@
 CREATE TABLE "projects"(
-    "id" uuid PRIMARY KEY,
+    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     "profile_id" uuid,
     "project_name" text,
     "project_url" text,
