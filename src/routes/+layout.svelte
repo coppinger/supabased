@@ -1,12 +1,13 @@
 <script lang="ts">
 	import NavBar from '$lib/components/layouts/navbar.svelte';
+	import { Toaster } from 'svelte-sonner';
 	import '../app.pcss';
-	import type { LayoutData } from './$types';
 
-	export let data: LayoutData;
+	export let data;
 </script>
 
-<div class="container h-svh">
+<Toaster />
+<main class="container h-svh">
 	<NavBar />
 	<slot />
-</div>
+</main>

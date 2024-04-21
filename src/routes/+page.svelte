@@ -4,17 +4,14 @@
 	import ConfettiOnClick from '$lib/components/ConfettiOnClick.svelte';
 
 	export let data;
-	// const { table } = data;
-	let { session } = data;
+	let { session, user, supabase } = data;
 </script>
+
+<!-- TODO create landing view -->
 
 <Skunk />
 
 <h1 class="text-xl font-bold">Welcome to SkunkKit</h1>
-
-<!-- {#each test as item}
-	<p>{item.id}</p>
-{/each} -->
 
 {#if session}
 	<p>Logged in 🔓</p>
