@@ -5,6 +5,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Separator } from '$lib/components/ui/separator';
 	import { cn } from '$lib/utils';
+	import Endorse from '$routes/profile/[name]/endorse.svelte';
 	import { capitalize } from 'lodash-es';
 	import {
 		Box,
@@ -21,6 +22,9 @@
 		X
 	} from 'lucide-svelte';
 	import { DotsThree, GithubLogo } from 'phosphor-svelte';
+	export let data;
+
+	$: ({ endorse } = data);
 
 	const allAvailabilities = ['Full Time', 'Part Time', 'Contract', 'Consulting', 'Task', 'MVP'];
 
@@ -172,12 +176,6 @@
 </script>
 
 <div class="">
-	<div class="border-b h-16 px-10 w-full">
-		<div class="container flex items-center justify-between h-full">
-			<div>SUPABASE<span class="text-green-400">D</span></div>
-			<Menu />
-		</div>
-	</div>
 	<div class="p-10 w-full space-y-8">
 		<div class="flex items-center justify-between max-w-3xl mx-auto">
 			<Button
@@ -285,7 +283,9 @@
 						</div>
 						<Separator />
 						<div class="flex justify-between items-center">
-							<Button variant="outline" class="">Endorse 🫡</Button>
+							<Endorse form={endorse} {profile}>
+								<Button variant="outline" class="">Endorse 🫡</Button>
+							</Endorse>
 							<Button variant="ghost" class="gap-2">
 								<span class="flex gap-1">
 									<span class="text-opacity-40">

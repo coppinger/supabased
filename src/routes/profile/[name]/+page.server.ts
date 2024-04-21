@@ -24,7 +24,6 @@ export const load = (async ({ locals, params: { name } }) => {
 
   return {
     profile,
-    endorse: await superValidate(zod(endorseSchema)),
     // like: await superValidate(zod(likeSchema))
   }
 

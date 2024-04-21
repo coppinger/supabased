@@ -33,6 +33,7 @@ export const load = (async ({ fetch, data, depends }) => {
   return {
     supabase,
     session,
-    user: data.user
+    user: data.user,
+    endorse: data.endorse
   }
 }) satisfies LayoutLoad
