@@ -1,16 +1,22 @@
 <script lang="ts">
+	import { goto, preloadData, pushState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import type { Message } from '$routes/profile/[name]/+page.server';
 	import { endorseSchema, type EndorseSchema } from '$routes/profile/[name]/schema';
 	import { toast } from 'svelte-sonner';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
+	import * as Dialog from '$lib/components/ui/dialog';
+	import { Auth } from '@supabase/auth-ui-svelte';
+	import { ThemeSupa } from '@supabase/auth-ui-shared';
 
-	export let data: SuperValidated<Infer<EndorseSchema>, Message>;
+	let data: SuperValidated<Infer<EndorseSchema>, Message>;
+	export { data as form };
+
 	// TODO put correct Profile type
-	export let profile: { name: any };
+	export let profile: { firstName: string };
 	// TODO put correct Profile type
-	export let endorser: { name: any };
+	export let endorser: { firstName: string } | undefined = undefined;
 
 	const form = superForm(data, {
 		validators: zodClient(endorseSchema),
@@ -45,11 +51,32 @@ Usage:
 </Endorse> 
 ```
 -->
-
-<form method="POST" use:enhance action="/profile/{$page.params.name}?/endorse">
-	<input type="hidden" value={profile.name} name="profile" />
-	<input type="hidden" value={endorser.name} name="endorser" />
-	<button>
-		<slot />
-	</button>
-</form>
+{#if endorser}
+	<form method="POST" use:enhance action="/profile/{profile.firstName}?/endorse">
+		<input type="hidden" value={profile.firstName} name="profile" />
+		<input type="hidden" value={endorser.firstName} name="endorser" />
+		<button>
+			<slot />
+		</button>
+	</form>
+{:else}
+	<Dialog.Root>
+		<Dialog.Trigger>
+			<slot />
+		</Dialog.Trigger>
+		<Dialog.Content>
+			<div class="row flex-center flex">
+				<div class="col-6 form-widget">
+					<Auth
+						supabaseClient={$page.data.supabase}
+						providers={['google', 'github', 'twitter']}
+						redirectTo={`${$page.url.origin}/auth/callback`}
+						showLinks={false}
+						appearance={{ theme: ThemeSupa, style: { input: 'color: #fff' } }}
+						socialLayout="horizontal"
+					/>
+				</div>
+			</div>
+		</Dialog.Content>
+	</Dialog.Root>
+{/if}
