@@ -1,5 +1,7 @@
+import type { SuperValidated } from 'sveltekit-superforms'
 import { Database } from '../DatabaseDefinitions'
 import { SupabaseClient, Session } from '@supabase/supabase-js'
+import type { EndorseSchema } from '$routes/profile/[name]/schema'
 
 declare global {
 	namespace App {
@@ -10,6 +12,7 @@ declare global {
 		interface PageData {
 			session: Session | null
 			user: User | null
+			endorse: SuperValidated<Infer<EndorseSchema>>
 		}
 		// interface Error {}
 		// interface Platform {}

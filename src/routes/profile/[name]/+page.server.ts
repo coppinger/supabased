@@ -24,7 +24,6 @@ export const load = (async ({ locals, params: { name } }) => {
 
   return {
     profile,
-    endorse: await superValidate(zod(endorseSchema)),
     // like: await superValidate(zod(likeSchema))
   }
 
@@ -39,8 +38,6 @@ export const actions = {
     const form = await superValidate<Infer<EndorseSchema>, Message>(request, zod(endorseSchema))
 
     if (!form.valid) return message(form, { status: 'error', text: 'Invalid form' })
-
-
 
     // if (!user) return message(form, { status: 'error', text: 'Please Login to Endorse.' }, {
     //   status: 401

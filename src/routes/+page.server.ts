@@ -1,10 +1,12 @@
-// import { supabase } from '$lib/index';
+import { profiles as mockProfiles } from '$lib/components/profile/mock.js'
 
-// export async function load({ locals: { getSession } }) {
-// 	// const { data } = await supabase.from('table').select();
+export async function load({ locals: { supabase } }) {
+    // const { data } = await supabase.from('table').select();
 
-// 	return {
-// 		// table: data ?? [],
-// 		session: await getSession()
-// 	};
-// }
+    //FIXME DELETEME when we have actual profile data
+    const profiles = mockProfiles
+
+    return {
+        profiles
+    }
+}
