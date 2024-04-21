@@ -1,7 +1,8 @@
 CREATE TABLE "stacks"(
     "id" uuid PRIMARY KEY,
     "name" text,
-    "url" text
+    "url" text,
+    "slug" text
 );
 
 -- Set up RLS for stacks
