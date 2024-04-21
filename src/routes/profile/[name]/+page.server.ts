@@ -39,8 +39,6 @@ export const actions = {
 
     if (!form.valid) return message(form, { status: 'error', text: 'Invalid form' })
 
-
-
     // if (!user) return message(form, { status: 'error', text: 'Please Login to Endorse.' }, {
     //   status: 401
     // })
