@@ -2,6 +2,7 @@
 	import Skunk from '$lib/components/Skunk.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import ConfettiOnClick from '$lib/components/ConfettiOnClick.svelte';
+	import Supa3D from '$lib/components/Supa3D.svelte';
 
 	export let data;
 	let { session, user, supabase } = data;
@@ -52,3 +53,7 @@
 <ConfettiOnClick><Button variant="outline">Noice</Button></ConfettiOnClick>
 
 <p class="italic">*based on what?</p>
+
+<div class="h-screen w-screen">
+	<Supa3D speed={8} />
+</div>
