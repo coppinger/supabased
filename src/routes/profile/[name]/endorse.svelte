@@ -9,17 +9,19 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Auth } from '@supabase/auth-ui-svelte';
 	import { ThemeSupa } from '@supabase/auth-ui-shared';
+	import type { Profile } from '$lib/components/profile/mock';
 
 	let data: SuperValidated<Infer<EndorseSchema>, Message>;
 	export { data as form };
 
-	// TODO put correct Profile type
-	export let profile: { firstName: string };
-	// TODO put correct Profile type
+	export let profile: Profile;
+
+	// TODO put correct User type
 	export let endorser: { firstName: string } | undefined = undefined;
 
 	const form = superForm(data, {
 		validators: zodClient(endorseSchema),
+		id: profile.firstName,
 		onUpdated: ({ form }) => {
 			if (form.valid) {
 				const { message } = form;
@@ -65,8 +67,9 @@ Usage:
 			<slot />
 		</Dialog.Trigger>
 		<Dialog.Content>
-			<div class="row flex-center flex">
-				<div class="col-6 form-widget">
+			<!-- TODO update with actual auth component -->
+			<div class="flex place-content-center">
+				<div class="">
 					<Auth
 						supabaseClient={$page.data.supabase}
 						providers={['google', 'github', 'twitter']}

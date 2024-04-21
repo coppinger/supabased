@@ -6,7 +6,7 @@
 </script>
 
 <div class="border-b h-16 px-10 w-full">
-	<div class="container flex items-center justify-between h-full">
+	<div class=" flex items-center justify-between h-full">
 		<a href="/">SUPABASE<span class="text-green-400">D</span></a>
 
 		{#if $page.data.user}

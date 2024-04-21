@@ -1,59 +1,71 @@
 <script lang="ts">
-	import Skunk from '$lib/components/Skunk.svelte';
-	import { Button } from '$lib/components/ui/button';
-	import ConfettiOnClick from '$lib/components/ConfettiOnClick.svelte';
 	import Supa3D from '$lib/components/Supa3D.svelte';
-
+	import Profile from '$lib/components/profile/profile.svelte';
+	import Filter from '$lib/filter/filter.svelte';
+	import { createProfilesState } from '$lib/stores/profiles.js';
+	import { Box, Cloud, Database, Lock, MousePointerClick, Triangle } from 'lucide-svelte';
 	export let data;
-	let { session, user, supabase } = data;
+
+	$: ({ profiles, filter } = createProfilesState(data.profiles, data.supabase));
+
+	const tags = [
+		{
+			label: 'Database',
+			Icon: Database
+		},
+		{
+			label: 'Auth',
+			Icon: Lock
+		},
+		{
+			label: 'Storage',
+			Icon: Cloud
+		},
+		{
+			label: 'Edge',
+			Icon: Triangle
+		},
+		{
+			label: 'Realtime',
+			Icon: MousePointerClick
+		},
+		{
+			label: 'Vector',
+			Icon: Box
+		}
+	];
 </script>
 
-<!-- TODO create landing view -->
-
-<Skunk />
-
-<h1 class="text-xl font-bold">Welcome to SkunkKit</h1>
-
-{#if session}
-	<p>Logged in 🔓</p>
-{:else}
-	<p>Logged out 🔒</p>
-{/if}
-
-<ul class="flex gap-2">
-	<li>ShadCN</li>
-	<li>---</li>
-	<li>SvelteKit</li>
-	<li>---</li>
-	<li>Supabase(d)*</li>
-	<li>---</li>
-	<li>Typescript</li>
-</ul>
-
-<h3 class="text-lg font-bold">Setup steps</h3>
-
-<p>0. Create an `.env.local` file in the root and add your Supabase project URL & anon key</p>
-<p>
-	1. Setup the Supabase CLI locally and login by following <a
-		href="https://supabase.com/docs/guides/cli/getting-started"
-		target="_blank"
-		class="border-2 underline underline-offset-4">this guide</a
-	>
-</p>
-<p>2. Update the `npm run gentypes` command in `packages.json` with the project id</p>
-<p>
-	3. Follow the steps <a
-		href="https://supabase.com/docs/guides/auth/server-side/email-based-auth-with-pkce-flow-for-ssr?framework=sveltekit"
-		target="_blank"
-		class="border-2 underline underline-offset-4">here</a
-	> to update the email templates for the SSR auth flow
-</p>
-<p>4. Uncomment the index.ts, +layouts.server.ts, +layout.ts & +page.server.ts files</p>
-
-<ConfettiOnClick><Button variant="outline">Noice</Button></ConfettiOnClick>
-
-<p class="italic">*based on what?</p>
-
-<div class="h-screen w-screen">
-	<Supa3D speed={8} />
+<div class="">
+	<div class="p-2 w-full">
+		<div class="flex items-center justify-between border-b pt-2 pb-4 mx-auto">
+			{#each tags as { label, Icon }}
+				<div class="flex select-none rounded-full text-primary justify-between px-4">
+					{label}
+					<Icon class="ml-2" />
+				</div>
+			{/each}
+		</div>
+		<div class="flex py-10 p-2">
+			<div class="w-1/3 space-y-3">
+				<h1 class="text-4xl">A community of folks building with Supabase.</h1>
+				<h3 class="text-lg text-muted-foreground">
+					Lorem ipsum dolor sit amet consectetur adipisicing elit.
+				</h3>
+			</div>
+			<!--FIXME scale correctly-->
+			<div class="ml-auto">
+				<Supa3D speed={8} />
+			</div>
+		</div>
+		<div class="container px-2 mx-auto w-full flex gap-4">
+			<Filter {filter} />
+			<!-- TODO added ml-auto class for now, remove when we add filter/search if not needed-->
+			<div class="w-2/3 ml-auto space-y-4">
+				{#each $profiles as profile}
+					<Profile {profile} />
+				{/each}
+			</div>
+		</div>
+	</div>
 </div>
