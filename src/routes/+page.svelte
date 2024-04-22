@@ -35,7 +35,7 @@
 			Icon: Box
 		}
 	];
-	$: ({ profiles, filter } = createProfilesState(data.profiles, data.supabase));
+	$: ({ profiles, filter, filteredProfiles } = createProfilesState(data.profiles, data.supabase));
 
 	let profileSearchTerm = '';
 
@@ -63,29 +63,7 @@
 		threshold: 0.3
 	});
 
-	$: searchedFilteredProfiles = profileSearchTerm
-		? fuse.search(profileSearchTerm).map((res) => res.item)
-		: $profiles;
-
-	$: filteredProfiles = $profiles.filter((profile) => {
-		return true;
-		if (
-			$filter.availibility.length &&
-			!profile.availabilities.some((availability) => $filter.availibility.includes(availability))
-		)
-			return false;
-
-		if (
-			!profile.projects
-				.map((project) =>
-					project.usedTech.some((experience) => $filter.experiences.includes(experience))
-				)
-				.flat()
-				.some((bool) => bool)
-		)
-			return false;
-		return true;
-	});
+	filteredProfiles.subscribe(console.log);
 </script>
 
 <div class="">
