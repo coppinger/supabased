@@ -1,98 +1,94 @@
-// import type { PageServerLoad } from './$types';
-// import { error } from '@sveltejs/kit';
-// import { profileSchema } from './profileSchema';
-// import { fail, message, superValidate } from 'sveltekit-superforms';
-// import { redirect } from '@sveltejs/kit';
-// import { zod } from 'sveltekit-superforms/adapters';
+import type { PageServerLoad } from './$types';
+import { error } from '@sveltejs/kit';
+import { profileSchema } from './profileSchema';
+import { fail, message, superValidate } from 'sveltekit-superforms';
+import { redirect } from '@sveltejs/kit';
+import { zod } from 'sveltekit-superforms/adapters';
 
-// // import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 
-// // import type { Database } from '../../../../types/databaseDefinitions'
+// import type { Database } from '../../../../types/databaseDefinitions'
 
-// // 1. Handle errors more gracefully
+// 1. Handle errors more gracefully
 
-// export const load: PageServerLoad = async ({ locals: { getSession, supabase } }) => {
-// 	const session = await getSession();
+export const load: PageServerLoad = async ({ locals: { safeGetSession, supabase } }) => {
+	const { session } = await safeGetSession();
+	if (!session) {
+		throw redirect(303, '/login?redirectedFrom=onboarding');
+	}
+	const { data: profile } = await supabase
+		.from('profiles')
+		.select(`display_name, website, profile, pfp_url`)
+		.eq('id', session.user.id)
+		.single();
+	return {
+		form: await superValidate(zod(profileSchema)),
+		profile,
+		session
+	};
+};
 
-// 	if (!session) {
-// 		throw redirect(303, '/login?redirectedFrom=onboarding');
-// 	}
+export const actions = {
+	default: async ({ request, locals: { supabase, safeGetSession } }) => {
+		const session = await safeGetSession();
 
-// 	const { data: profile } = await supabase
-// 		.from('profiles')
-// 		.select(`username, display_name, website, profile`)
-// 		.eq('id', session.user.id)
-// 		.single();
+		if (!session) {
+			throw redirect(303, '/login?redirectedFrom=onboarding');
+		}
 
-// 	return {
-// 		form: await superValidate(zod(profileSchema)),
-// 		profile,
-// 		session
-// 	};
-// };
+		const form = await superValidate(request, zod(profileSchema));
 
-// export const actions = {
-// 	default: async ({ request, locals: { supabase, getSession } }) => {
-// 		const session = await getSession();
+		if (!form.valid) {
+			// Again, return { form } and things will just work.
+			return fail(400, { form });
+		}
 
-// 		if (!session) {
-// 			throw redirect(303, '/login?redirectedFrom=onboarding');
-// 		}
+		const file = form.data.pfp_url;
+		const fileExt = file.name.split('.').pop();
+		const filePath = `${randomUUID()}.${fileExt}`;
 
-// 		const form = await superValidate(request, zod(profileSchema));
+		const { data: uploadData, error: uploadError } = await supabase.storage
+			.from('profile_pictures')
+			.upload(filePath, file);
 
-// 		if (!form.valid) {
-// 			// Again, return { form } and things will just work.
-// 			return fail(400, { form });
-// 		}
+		if (uploadError) {
+			return error(500, 'Error uploading file.');
+		}
 
-// 		const file = form.data.pfp_url;
-// 		const fileExt = file.name.split('.').pop();
-// 		const filePath = `${uuidv4()}.${fileExt}`;
+		const { data: publicUrlData } = await supabase.storage
+			.from('profile_pictures')
+			.getPublicUrl(uploadData.path, {
+				transform: {
+					width: 400,
+					height: 400,
+					resize: 'cover' // 'cover' | 'fill' | 'contain'
+				}
+			});
 
-// 		const { data: uploadData, error: uploadError } = await supabase.storage
-// 			.from('profile_pictures')
-// 			.upload(filePath, file);
+		if (!publicUrlData) {
+			return error(500, 'Error retrieving public URL.');
+		}
 
-// 		if (uploadError) {
-// 			return error(500, 'Error uploading file.');
-// 		}
+		const { publicUrl } = publicUrlData;
 
-// 		const { data: publicUrlData } = await supabase.storage
-// 			.from('profile_pictures')
-// 			.getPublicUrl(uploadData.path, {
-// 				transform: {
-// 					width: 400,
-// 					height: 400,
-// 					resize: 'cover' // 'cover' | 'fill' | 'contain'
-// 				}
-// 			});
+		// TODO: Do something with the validated form.data
+		const { error: errorProfileInsert } = await supabase
+			.from('profiles')
+			.update({
+				display_name: form.data.display_name,
+				location: form.data.location,
+				bio: form.data.bio,
+				pfp_url: publicUrl
+			})
+			.eq('id', session.user.id)
+			.select();
 
-// 		if (!publicUrlData) {
-// 			return error(500, 'Error retrieving public URL.');
-// 		}
+		if (errorProfileInsert) {
+			console.log(errorProfileInsert);
+			return error(500, 'Error updating or inserting profile.');
+		}
 
-// 		const { publicUrl } = publicUrlData;
-
-// 		// TODO: Do something with the validated form.data
-// 		const { error: errorProfileInsert } = await supabase
-// 			.from('profiles')
-// 			.update({
-// 				username: form.data.username,
-// 				display_name: form.data.display_name,
-// 				geopgrahical_location: form.data.geopgrahical_location,
-// 				bio: form.data.bio,
-// 				dream: form.data.dream,
-// 				pfp_url: publicUrl
-// 			})
-// 			.eq('id', session.user.id)
-// 			.select();
-
-// 		if (errorProfileInsert) {
-// 			console.log(errorProfileInsert);
-// 			return error(500, 'Error updating or inserting profile.');
-// 		}
-
-// 		return message(form, 'Form posted successfully!');
-// 	}
-// };
+		return message(form, 'Form posted successfully!');
+	}
+};

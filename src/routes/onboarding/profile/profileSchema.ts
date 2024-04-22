@@ -6,8 +6,7 @@ export const profileSchema = z.object({
 	display_name: z.string().min(3).max(64),
 	bio: z.string().max(160),
 	pfp_url: imageUploadSchema,
-	geopgrahical_location: z.string().default('Earth'),
-	dream: z.string().max(160)
+	location: z.string().default('Earth')
 });
 
 export type Profile = z.infer<typeof profileSchema>;

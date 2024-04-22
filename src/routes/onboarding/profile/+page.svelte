@@ -1,4 +1,4 @@
-<!-- <script lang="ts">
+<script lang="ts">
 	import { superForm, fileProxy } from 'sveltekit-superforms';
 	import { Field, Control, Description, FieldErrors } from 'formsnap';
 
@@ -15,18 +15,17 @@
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { cn } from '$lib/utils.js';
-	import { CircleCheck, XCircle } from 'lucide-svelte';
+	// import { CircleCheck, XCircle } from 'lucide-svelte';
 	import { CircleNotch } from 'phosphor-svelte';
 
 	export let data: PageData;
-    
+
 	let { session, supabase, profile } = data;
 	$: ({ session, supabase, profile } = data);
 
 	let profileForm: HTMLFormElement;
 	let loading = false;
 	let displayName: string = profile?.display_name ?? '';
-	let username: string = profile?.username ?? '';
 	let website: string = profile?.website ?? '';
 	let pfpUrl: string = profile?.pfp_url ?? '';
 
@@ -99,12 +98,12 @@
 		{:else if $formData.username.length > 3}
 			{#if usernameUnavailable === true}
 				<div class="flex items-center gap-2 text-red-500">
-					<XCircle size="1rem" />
+					<!-- <XCircle size="1rem" /> -->
 					<p>That username is already taken.</p>
 				</div>
 			{:else if usernameUnavailable === false}
 				<div class="flex items-center gap-2 text-green-500">
-					<CircleCheck size="1rem" />
+					<!-- <CircleCheck size="1rem" /> -->
 					<p>Nice, that username is available.</p>
 				</div>
 			{/if}
@@ -119,11 +118,11 @@
 		<Form.Description>This is your public display name.</Form.Description>
 		<Form.FieldErrors />
 	</Form.Field>
-	<Form.Field {form} name="geopgrahical_location">
+	<Form.Field {form} name="location">
 		<Form.Control let:attrs>
 			<Form.Label>Location</Form.Label>
 
-			<Input {...attrs} bind:value={$formData.geopgrahical_location} />
+			<Input {...attrs} bind:value={$formData.location} />
 		</Form.Control>
 		<Form.Description>Where you're located; be as specific (or not) as you'd like.</Form.Description
 		>
@@ -140,17 +139,6 @@
 		</p>
 		<Form.FieldErrors />
 	</Form.Field>
-	<Form.Field {form} name="dream">
-		<Form.Control let:attrs>
-			<Form.Label>Dream</Form.Label>
-			<Textarea {...attrs} bind:value={$formData.dream} />
-		</Form.Control>
-		<Form.Description>Alright, in 160 or less characters, what's your dream?</Form.Description>
-		<p class={cn($formData.dream.length > 160 ? 'text-destructive' : 'text-muted-foreground')}>
-			{$formData.dream.length}/160
-		</p>
-		<Form.FieldErrors />
-	</Form.Field>
 	<Form.Field {form} name="pfp_url">
 		<Form.Control let:attrs>
 			<Form.Label>Profile picture</Form.Label>
@@ -160,4 +148,4 @@
 		<Form.FieldErrors />
 	</Form.Field>
 	<Button type="submit">Submit</Button>
-</form> -->
+</form>

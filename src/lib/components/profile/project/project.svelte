@@ -6,22 +6,25 @@
 	import { Link2 } from 'lucide-svelte';
 	import { supabaseTech } from '$lib/components/profile/data';
 	import { cn } from '$lib/utils';
+	import type { Tables } from '$lib/types/DatabaseDefinitions';
 
-	export let project: any;
+	export let project: Tables<'projects'>;
 </script>
 
 <div class="border rounded-xl p-4 space-y-4 text-sm">
 	<div class="flex items-center justify-between">
 		<div class="flex items-center gap-2 flex-wrap">
-			<h4>{project.name}</h4>
-			<h6 class="text-foreground text-opacity-40">{project.url}</h6>
+			<h4>{project.project_name}</h4>
+			<h6 class="text-foreground text-opacity-40">{project.project_url}</h6>
 		</div>
 		<div class="flex items-center gap-2">
 			{#each supabaseTech as { Icon, name }}
 				<Icon
 					class={cn(
 						'h-4 w-4 ml-2',
-						project.usedTech.includes(name) ? 'text-primary' : 'text-foreground text-opacity-40'
+						project.project_name?.includes(name)
+							? 'text-primary'
+							: 'text-foreground text-opacity-40'
 					)}
 				/>
 			{/each}
@@ -48,14 +51,14 @@
 			>
 		</div>
 		<div class="flex gap-2 items-center text-foreground text-opacity-30">
-			{#if Boolean(project.github)}
-				<a href={project.github} target="_blank">
+			{#if Boolean(project.repository_url)}
+				<a href={project.repository_url} target="_blank">
 					<Button variant="ghost" size="icon" class="p-1 h-auto w-auto rounded-md">
 						<GithubLogo class="h-5 w-5" />
 					</Button>
 				</a>
 			{/if}
-			<a href={project.link} target="_blank">
+			<a href={project.project_url} target="_blank">
 				<Button variant="ghost" size="icon" class="p-1 h-auto w-auto rounded-md">
 					<Link2 class="h-5 w-5" />
 				</Button>
