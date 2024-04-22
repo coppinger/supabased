@@ -51,7 +51,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 export const handleError: HandleServerError = async ({ error, event, status, message }) => {
 	const errorId = crypto.randomUUID();
 
-	console.log('Unexpect server error', error, event, status, message);
+	console.log('Unexpect server error', error, status, message);
 
 	return {
 		message: 'Whoops!',
