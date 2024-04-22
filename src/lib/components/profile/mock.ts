@@ -1,95 +1,37 @@
+export type Profile = {
+	availibility: string | null;
+	bio: string | null;
+	created_at: string | null;
+	deleted_at: string | null;
+	display_name: string | null;
+	github_username: string | null;
+	id: string;
+	linkedin_url: string | null;
+	location: string | null;
+	pfp_url: string | null;
+	skills: string | null;
+	timezone: string | null;
+	twitter_username: string | null;
+	updated_at: string | null;
+	website_url: string | null;
+};
+
 export const profiles = [
 	{
-		firstName: 'James',
-		lastName: 'Coffee',
-		profile_pic: 'https://github.com/shadcn.png',
-		devType: 'full_stack',
-		city: 'Melbourne',
-		country: 'Australia',
-		description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-		endorsement_num: 37,
-		availabilities: ['Full Time', 'Consulting', 'Task', 'MVP'],
-		twitter: 'james_coffee',
-		github: 'james_coffee',
-		projects: [
-			{
-				name: 'ASX Bot',
-				url: 'https://www.asxbot.com',
-				usedTech: ['Vector', 'Auth', 'Edge'],
-				description: 'A reddit sentiment analysis tool for the Australian Stock Exchange',
-				github: 'https://github.com/meta-llama/llama3',
-				link: 'https://llama.meta.com/'
-			},
-			{
-				name: 'ASX Bot',
-				url: 'https://www.asxbot.com',
-				usedTech: ['Vector', 'Auth', 'Edge'],
-				description: 'A reddit sentiment analysis tool for the Australian Stock Exchange',
-				link: 'https://www.shadcn-svelte.com/docs/components/button#link-1'
-			}
-		]
-	},
-
-	{
-		firstName: 'Emma',
-		lastName: 'Smith',
-		profile_pic: 'https://github.com/emmasmith.png',
-		devType: 'frontend',
-		city: 'London',
-		country: 'United Kingdom',
-		description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-		endorsement_num: 15,
-		availabilities: ['Part Time', 'Freelance'],
-		twitter: 'emma_smith',
-		github: 'emma_smith',
-		projects: [
-			{
-				name: 'E-commerce Website',
-				url: 'https://www.ecommerce.com',
-				usedTech: ['React', 'Redux', 'Node.js'],
-				description: 'An online store for selling various products',
-				github: 'https://github.com/emmasmith/ecommerce',
-				link: 'https://www.ecommerce.com'
-			},
-			{
-				name: 'Portfolio Website',
-				url: 'https://www.emmasmith.com',
-				usedTech: ['HTML', 'CSS', 'JavaScript'],
-				description: 'A personal website showcasing my work and skills',
-				link: 'https://www.emmasmith.com'
-			}
-		]
-	},
-	{
-		firstName: 'John',
-		lastName: 'Doe',
-		profile_pic: 'https://github.com/johndoe.png',
-		devType: 'backend',
-		city: 'New York',
-		country: 'United States',
-		description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-		endorsement_num: 10,
-		availabilities: ['Full Time', 'Contract'],
-		twitter: 'johndoe',
-		github: 'johndoe',
-		projects: [
-			{
-				name: 'Blog API',
-				url: 'https://www.blogapi.com',
-				usedTech: ['Node.js', 'Express', 'MongoDB'],
-				description: 'A RESTful API for managing blog posts',
-				github: 'https://github.com/johndoe/blog-api',
-				link: 'https://www.blogapi.com'
-			},
-			{
-				name: 'Task Management App',
-				url: 'https://www.taskapp.com',
-				usedTech: ['React', 'Redux', 'Firebase'],
-				description: 'An app for managing tasks and to-do lists',
-				link: 'https://www.taskapp.com'
-			}
-		]
+		availibility: 'Available',
+		bio: 'Experienced software developer',
+		created_at: '2023-01-10T12:00:00Z',
+		deleted_at: null,
+		display_name: 'John Doe',
+		github_username: 'johndoe',
+		id: '1',
+		linkedin_url: 'https://www.linkedin.com/in/johndoe/',
+		location: 'San Francisco, CA',
+		pfp_url: 'https://example.com/pfp/johndoe.jpg',
+		skills: 'TypeScript, React',
+		timezone: 'PST',
+		twitter_username: 'johndoe_dev',
+		updated_at: '2023-04-01T12:00:00Z',
+		website_url: 'https://johndoe.com'
 	}
-];
-
-export type Profile = (typeof profiles)[number];
+] satisfies Profile[];
