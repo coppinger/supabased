@@ -17,7 +17,9 @@
 
 <div class="border-b border-neutral-800 p-4 flex items-center justify-between flex-wrap gap-4">
 	{#await supabaseProducts}
-		<div>Loading...</div>
+		{#each [...Array(6)] as _}
+			<div class="animate-pulse bg-neutral-700 h-6 w-24 rounded" />
+		{/each}
 	{:then data}
 		{#each data.data as { name }}
 			<div class="px-1 flex gap-4 items-center text-emerald-400 font-bold">
