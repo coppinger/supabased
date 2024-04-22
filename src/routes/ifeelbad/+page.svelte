@@ -6,6 +6,8 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 
+	import * as Tooltip from '$lib/components/ui/tooltip';
+
 	import { Separator } from '$lib/components/ui/separator';
 	import Endorse from '$routes/profile/[name]/endorse.svelte';
 	import { DotsThree, GithubLogo } from 'phosphor-svelte';
@@ -66,29 +68,84 @@
 
 <SupabaseProductsBar {supabase} />
 
-<header
-	class="px-4 py-10 flex flex-col justify-center items-center gap-4 relative overflow-hidden border-b border-neutral-800"
->
-	<div class="flex flex-col items-center gap-2">
-		<h1 class="text-2xl font-bold text-center">
-			Discover & connect with folks who are building with
-		</h1>
-		<SupabaseLogo />
-	</div>
-	<p class="font-medium text-neutral-500 text-center">
-		Supabased is a community created & run directory of folks who build with Supabase
-	</p>
-	<Button variant="outline" class="text-emerald-400 border-emerald-400"
-		>Submit your profile -></Button
+<header class="border-b border-neutral-800">
+	<div
+		class="px-4 py-10 md:py-32 md:px-20 flex flex-col md:flex-row justify-center items-center gap-4 relative overflow-hidden max-w-screen-xl mx-auto"
 	>
-	<div class="w-full h-20 relative">
-		<div class="absolute -top-32 w-[500px] h-[500px] left-1/2 -translate-x-1/2">
-			<Supa3D speed={8} />
+		<div class="flex flex-col gap-4">
+			<div class="flex flex-col items-center md:items-start gap-2">
+				<h1 class="text-2xl font-bold text-center md:text-left">
+					Discover & connect with folks who are building with
+				</h1>
+				<SupabaseLogo />
+			</div>
+			<p class="font-medium text-neutral-500 text-center md:text-left">
+				Supabased is a community created & run directory of folks who build with Supabase
+			</p>
+			<Button variant="outline" class="text-emerald-400 border-emerald-400 md:w-fit"
+				>Submit your profile -></Button
+			>
+			<div class="flex gap-6 items-center">
+				<Button
+					variant="outline"
+					href="https://discord.gg/skunkworks"
+					target="_blank"
+					class="flex gap-2 items-center"
+					>Discord <iconify-icon icon="ic:baseline-discord"></iconify-icon></Button
+				>
+				<Button
+					variant="outline"
+					href="https://twitter.com/supabasedcom"
+					target="_blank"
+					class="flex gap-2 items-center"
+					>Twitter <iconify-icon icon="mdi:twitter"></iconify-icon></Button
+				>
+			</div>
+		</div>
+		<!-- TODO: Remove this pointer-events-none and use z-index instead -->
+		<div
+			class="w-full h-20 md:h-40 relative pointer-events-none md:flex md:items-center md:justify-center"
+		>
+			<div
+				class="absolute -top-32 w-[500px] h-[500px] md:w-[960px] md:h-[960px] left-1/2 -translate-x-1/2 md:top-1/2 md:-translate-y-1/2"
+			>
+				<Supa3D speed={8} />
+			</div>
 		</div>
 	</div>
 </header>
 
-<main class="flex flex-col gap-6">
+<div class="flex flex-col md:flex-row gap-6 max-w-screen-xl mx-auto md:p-10 md:px-20">
+	<div class="hidden md:flex flex-col gap-6">
+		<div class="flex flex-col border border-neutral-800 p-4 w-[400px] rounded-md">
+			<p class="text-xl font-bold">Sidebar</p>
+			<Tooltip.Root>
+				<Tooltip.Trigger>Hover</Tooltip.Trigger>
+				<Tooltip.Content>
+					<p>Add to library</p>
+				</Tooltip.Content>
+			</Tooltip.Root>
+		</div>
+		<Button variant="outline" class="text-emerald-400 border-emerald-400"
+			>Submit your profile -></Button
+		>
+		<div class="flex gap-6 items-center">
+			<Button
+				variant="outline"
+				href="https://discord.gg/skunkworks"
+				target="_blank"
+				class="flex gap-2 items-center w-full"
+				>Discord <iconify-icon icon="ic:baseline-discord"></iconify-icon></Button
+			>
+			<Button
+				variant="outline"
+				href="https://twitter.com/supabasedcom"
+				target="_blank"
+				class="flex gap-2 items-center w-full"
+				>Twitter <iconify-icon icon="mdi:twitter"></iconify-icon></Button
+			>
+		</div>
+	</div>
 	<div class="flex flex-col gap-6 p-4 w-full">
 		<div class="flex flex-col gap-4 w-full">
 			<Input placeholder="Search profiles..." />
@@ -253,4 +310,4 @@
 			<!-- End profile list component -->
 		{/each}
 	</div>
-</main>
+</div>
