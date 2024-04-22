@@ -11,7 +11,7 @@
 </script>
 
 <Toaster />
-<main class="h-svh">
+<main>
 	<NavBar />
 	<slot />
 </main>
