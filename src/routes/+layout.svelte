@@ -2,6 +2,9 @@
 	import NavBar from '$lib/components/layouts/navbar.svelte';
 	import { Toaster } from 'svelte-sonner';
 	import '../app.pcss';
+	import '@fontsource-variable/manrope';
+
+	import 'iconify-icon';
 
 	export let data;
 </script>

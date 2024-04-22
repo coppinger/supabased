@@ -54,10 +54,10 @@ Usage:
 ```
 -->
 {#if endorser}
-	<form method="POST" use:enhance action="/profile/{profile.firstName}?/endorse">
+	<form method="POST" use:enhance action="/profile/{profile.firstName}?/endorse" class="!w-full">
 		<input type="hidden" value={profile.firstName} name="profile" />
 		<input type="hidden" value={endorser.firstName} name="endorser" />
-		<button>
+		<button class="!w-full">
 			<slot />
 		</button>
 	</form>
