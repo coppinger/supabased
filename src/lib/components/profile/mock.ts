@@ -1,124 +1,37 @@
-export const profiles = [
-    {
-        firstName: 'James',
-        lastName: 'Coffee',
-        profile_pic: 'https://github.com/shadcn.png',
-        devType: 'full_stack',
-        city: 'Melbourne',
-        country: 'Australia',
-        description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-        endorsement_num: 37,
-        availabilities: ['Full Time', 'Consulting', 'Task', 'MVP'],
-        twitter: 'james_coffee',
-        github: 'james_coffee',
-        projects: [
-            {
-                name: 'ASX Bot',
-                url: 'https://www.asxbot.com',
-                usedTech: ['Vector', 'Auth', 'Edge'],
-                description: 'A reddit sentiment analysis tool for the Australian Stock Exchange',
-                github: 'https://github.com/meta-llama/llama3',
-                link: 'https://llama.meta.com/'
-            },
-            {
-                name: 'ASX Bot',
-                url: 'https://www.asxbot.com',
-                usedTech: ['Vector', 'Auth', 'Edge'],
-                description: 'A reddit sentiment analysis tool for the Australian Stock Exchange',
-                link: 'https://www.shadcn-svelte.com/docs/components/button#link-1'
-            }
-        ]
-    },
-    {
-        firstName: 'James',
-        lastName: 'Coffee',
-        profile_pic: 'https://github.com/shadcn.png',
-        devType: 'full_stack',
-        city: 'Melbourne',
-        country: 'Australia',
-        description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-        endorsement_num: 37,
-        availabilities: ['Full Time', 'Consulting', 'Task', 'MVP'],
-        twitter: 'james_coffee',
-        github: 'james_coffee',
-        projects: [
-            {
-                name: 'ASX Bot',
-                url: 'https://www.asxbot.com',
-                usedTech: ['Vector', 'DB', 'Edge'],
-                description: 'A reddit sentiment analysis tool for the Australian Stock Exchange',
-                github: 'https://github.com/meta-llama/llama3',
-                link: 'https://llama.meta.com/'
-            },
-            {
-                name: 'ASX Bot',
-                url: 'https://www.asxbot.com',
-                usedTech: ['Vector', 'Auth', 'Edge'],
-                description: 'A reddit sentiment analysis tool for the Australian Stock Exchange',
-                link: 'https://www.shadcn-svelte.com/docs/components/button#link-1'
-            }
-        ]
-    },
-    {
-        firstName: 'James',
-        lastName: 'Coffee',
-        profile_pic: 'https://github.com/shadcn.png',
-        devType: 'full_stack',
-        city: 'Melbourne',
-        country: 'Australia',
-        description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-        endorsement_num: 37,
-        availabilities: ['Full Time', 'Consulting', 'Task', 'MVP'],
-        twitter: 'james_coffee',
-        github: 'james_coffee',
-        projects: [
-            {
-                name: 'ASX Bot',
-                url: 'https://www.asxbot.com',
-                usedTech: ['Vector', 'Auth', 'Edge'],
-                description: 'A reddit sentiment analysis tool for the Australian Stock Exchange',
-                github: 'https://github.com/meta-llama/llama3',
-                link: 'https://llama.meta.com/'
-            },
-            {
-                name: 'ASX Bot',
-                url: 'https://www.asxbot.com',
-                usedTech: ['Vector', 'Auth', 'Edge'],
-                description: 'A reddit sentiment analysis tool for the Australian Stock Exchange',
-                link: 'https://www.shadcn-svelte.com/docs/components/button#link-1'
-            }
-        ]
-    },
-    {
-        firstName: 'James',
-        lastName: 'Coffee',
-        profile_pic: 'https://github.com/shadcn.png',
-        devType: 'full_stack',
-        city: 'Melbourne',
-        country: 'Australia',
-        description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-        endorsement_num: 37,
-        availabilities: ['Full Time', 'Consulting', 'Task', 'MVP'],
-        twitter: 'james_coffee',
-        github: 'james_coffee',
-        projects: [
-            {
-                name: 'ASX Bot',
-                url: 'https://www.asxbot.com',
-                usedTech: ['Vector', 'Auth', 'Edge'],
-                description: 'A reddit sentiment analysis tool for the Australian Stock Exchange',
-                github: 'https://github.com/meta-llama/llama3',
-                link: 'https://llama.meta.com/'
-            },
-            {
-                name: 'ASX Bot',
-                url: 'https://www.asxbot.com',
-                usedTech: ['Vector', 'Auth', 'Edge'],
-                description: 'A reddit sentiment analysis tool for the Australian Stock Exchange',
-                link: 'https://www.shadcn-svelte.com/docs/components/button#link-1'
-            }
-        ]
-    }
-]
+export type Profile = {
+	availibility: string | null;
+	bio: string | null;
+	created_at: string | null;
+	deleted_at: string | null;
+	display_name: string | null;
+	github_username: string | null;
+	id: string;
+	linkedin_url: string | null;
+	location: string | null;
+	pfp_url: string | null;
+	skills: string | null;
+	timezone: string | null;
+	twitter_username: string | null;
+	updated_at: string | null;
+	website_url: string | null;
+};
 
-export type Profile = typeof profiles[number]
+export const profiles = [
+	{
+		availibility: 'Available',
+		bio: 'Experienced software developer',
+		created_at: '2023-01-10T12:00:00Z',
+		deleted_at: null,
+		display_name: 'John Doe',
+		github_username: 'johndoe',
+		id: '1',
+		linkedin_url: 'https://www.linkedin.com/in/johndoe/',
+		location: 'San Francisco, CA',
+		pfp_url: 'https://example.com/pfp/johndoe.jpg',
+		skills: 'TypeScript, React',
+		timezone: 'PST',
+		twitter_username: 'johndoe_dev',
+		updated_at: '2023-04-01T12:00:00Z',
+		website_url: 'https://johndoe.com'
+	}
+] satisfies Profile[];

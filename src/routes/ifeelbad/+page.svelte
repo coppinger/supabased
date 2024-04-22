@@ -6,6 +6,8 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 
+	import { Checkbox } from '$lib/components/ui/checkbox';
+
 	import * as Tooltip from '$lib/components/ui/tooltip';
 
 	import { Separator } from '$lib/components/ui/separator';
@@ -16,8 +18,9 @@
 	// Components
 
 	import SupabaseLogo from '$lib/components/SupabaseLogo.svelte';
-
+	import { supabaseProductIcons } from '$lib/components/layouts/supabaseProductIcons';
 	import SupabaseProductsBar from '$lib/components/layouts/SupabaseProductsBar.svelte';
+	import { profiles as mockProfiles } from '$lib/components/profile/mock.js';
 
 	// ThreeJS
 
@@ -27,46 +30,30 @@
 	import { page } from '$app/stores';
 	import type { Profile } from '$lib/components/profile/mock';
 	import Project from '$lib/components/profile/project/project.svelte';
+	import { toast } from 'svelte-sonner';
+
+	toast.success('Successful Toast', {
+		description: 'This is a description'
+	});
 
 	export let data;
-	const { profiles } = data;
+	const { supabase } = data;
+
+	// Filter chip data
+	const supabaseProducts = supabase.from('supabase_products').select().order('sort');
 
 	// Send to profiles component
-
 	import { Box, Cloud, Database, Lock, MousePointerClick, Triangle } from 'lucide-svelte';
-	const supabaseProducts = [
-		{
-			label: 'Database',
-			Icon: Database
-		},
-		{
-			label: 'Auth',
-			Icon: Lock
-		},
-		{
-			label: 'Storage',
-			Icon: Cloud
-		},
-		{
-			label: 'Edge',
-			Icon: Triangle
-		},
-		{
-			label: 'Realtime',
-			Icon: MousePointerClick
-		},
-		{
-			label: 'Vector',
-			Icon: Box
-		}
-	];
+	import { createProfilesState } from '$lib/stores/profiles.js';
+
+	$: ({ profiles, filter } = createProfilesState(data.profiles, data.supabase));
 
 	$: ({ endorse } = $page.data);
 
 	export let profile: Profile;
 </script>
 
-<SupabaseProductsBar />
+<SupabaseProductsBar {supabase} />
 
 <header class="border-b border-neutral-800">
 	<div
@@ -82,8 +69,10 @@
 			<p class="font-medium text-neutral-500 text-center md:text-left">
 				Supabased is a community created & run directory of folks who build with Supabase
 			</p>
-			<Button variant="outline" class="text-emerald-400 border-emerald-400 md:w-fit"
-				>Submit your profile -></Button
+			<Button
+				variant="outline"
+				class="text-emerald-400 border-emerald-400 md:w-fit"
+				href="/auth/signin">Submit your profile -></Button
 			>
 			<div class="flex gap-6 items-center">
 				<Button
@@ -117,14 +106,90 @@
 
 <div class="flex flex-col md:flex-row gap-6 max-w-screen-xl mx-auto md:p-10 md:px-20">
 	<div class="hidden md:flex flex-col gap-6">
-		<div class="flex flex-col border border-neutral-800 p-4 w-[400px] rounded-md">
-			<p class="text-xl font-bold">Sidebar</p>
-			<Tooltip.Root>
-				<Tooltip.Trigger>Hover</Tooltip.Trigger>
-				<Tooltip.Content>
-					<p>Add to library</p>
-				</Tooltip.Content>
-			</Tooltip.Root>
+		<div class="flex flex-col gap-8 border border-neutral-800 p-8 w-[400px] rounded-md">
+			<div class="flex flex-col gap-8">
+				<div class="flex items-center gap-2">
+					<p class="text-xl font-bold">Stacks</p>
+					<Tooltip.Root>
+						<Tooltip.Trigger
+							><p class="material-symbols-outlined text-neutral-600 text-[16px] leading-none h-4">
+								info
+							</p></Tooltip.Trigger
+						>
+						<Tooltip.Content>
+							<p>Add to library</p>
+						</Tooltip.Content>
+					</Tooltip.Root>
+				</div>
+				<Input placeholder="Search stacks..." />
+				<p class="text-neutral-50 font-bold">Popular stacks</p>
+				<div class="grid grid-cols-2 gap-4">
+					<Button variant="outline" class="flex justify-between">React <Checkbox /></Button>
+					<Button variant="outline" class="flex justify-between">React <Checkbox /></Button>
+
+					<Button variant="outline" class="flex justify-between">React <Checkbox /></Button>
+
+					<Button variant="outline" class="flex justify-between">React <Checkbox /></Button>
+
+					<Button variant="outline" class="flex justify-between">React <Checkbox /></Button>
+
+					<Button variant="outline" class="flex justify-between">React <Checkbox /></Button>
+				</div>
+			</div>
+			<div class="flex flex-col gap-8">
+				<div class="flex items-center gap-2">
+					<p class="text-xl font-bold">Availability</p>
+					<Tooltip.Root>
+						<Tooltip.Trigger
+							><p class="material-symbols-outlined text-neutral-600 text-[16px] leading-none h-4">
+								info
+							</p></Tooltip.Trigger
+						>
+						<Tooltip.Content>
+							<p>Add to library</p>
+						</Tooltip.Content>
+					</Tooltip.Root>
+				</div>
+
+				<div class="flex gap-4 flex-wrap">
+					<Button variant="outline" class="flex gap-4">Full time <Checkbox /></Button>
+					<Button variant="outline" class="flex gap-4">Part time <Checkbox /></Button>
+					<Button variant="outline" class="flex gap-4">Contract <Checkbox /></Button>
+					<Button variant="outline" class="flex gap-4">Consulting <Checkbox /></Button>
+					<Button variant="outline" class="flex gap-4">Task <Checkbox /></Button>
+					<Button variant="outline" class="flex gap-4">MVP <Checkbox /></Button>
+				</div>
+			</div>
+			<div class="flex flex-col gap-8">
+				<div class="flex items-center gap-2">
+					<p class="text-xl font-bold">Supabase Experience</p>
+					<Tooltip.Root>
+						<Tooltip.Trigger
+							><p class="material-symbols-outlined text-neutral-600 text-[16px] leading-none h-4">
+								info
+							</p></Tooltip.Trigger
+						>
+						<Tooltip.Content>
+							<p>Add to library</p>
+						</Tooltip.Content>
+					</Tooltip.Root>
+				</div>
+
+				<div class="flex gap-4 flex-wrap">
+					{#await supabaseProducts}
+						{#each [...Array(6)] as _}
+							<div class="animate-pulse bg-neutral-700 h-6 w-24 rounded" />
+						{/each}
+					{:then data}
+						{#each data?.data as { name }}
+							<Button variant="outline" class="flex gap-4"
+								>{name}
+								<svelte:component this={supabaseProductIcons[name]} class="h-4 w-4" /></Button
+							>
+						{/each}
+					{/await}
+				</div>
+			</div>
 		</div>
 		<Button variant="outline" class="text-emerald-400 border-emerald-400"
 			>Submit your profile -></Button
@@ -176,7 +241,7 @@
 				<p class="text-sm font-medium text-neutral-600">No filters active</p>
 			{/if}
 		</div>
-		{#each profiles as profile}
+		{#each $profiles as profile}
 			<!-- Start profile list component -->
 			<div class="flex flex-col gap-6 rounded-md border border-neutral-800 p-6 w-full">
 				<div class="flex flex-col gap-6">
