@@ -68,6 +68,7 @@ Usage:
 		</Dialog.Trigger>
 		<Dialog.Content>
 			<!-- TODO update with actual auth component -->
+			<!-- Touch action none on mobile -->
 			<div class="flex place-content-center">
 				<div class="">
 					<Auth
