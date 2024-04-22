@@ -27,7 +27,7 @@
 	import Project from '$lib/components/profile/project/project.svelte';
 
 	export let data;
-	const { profiles } = data;
+	const { supabase, profiles } = data;
 
 	// Send to profiles component
 
@@ -64,7 +64,7 @@
 	export let profile: Profile;
 </script>
 
-<SupabaseProductsBar />
+<SupabaseProductsBar {supabase} />
 
 <header
 	class="px-4 py-10 flex flex-col justify-center items-center gap-4 relative overflow-hidden border-b border-neutral-800"
