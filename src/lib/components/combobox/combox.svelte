@@ -3,8 +3,7 @@
 	import * as Command from '$lib/components/ui/command/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { cn } from '$lib/utils.js';
-	import { Check } from 'lucide-svelte';
-	import { ChevronsUpDown } from 'lucide-svelte';
+	import { Check, ChevronsUpDown } from 'lucide-svelte';
 	import { tick } from 'svelte';
 
 	import Fuse from 'fuse.js';
@@ -17,6 +16,7 @@
 	export let placeholder = 'Select item...';
 	export let threshold = 0.4;
 	export let multiple = false;
+	export let inputClassName: string | undefined;
 
 	type ValueType<V> = V extends true ? string[] : string;
 	let value: ValueType<typeof multiple> = multiple ? [] : '';
@@ -24,9 +24,12 @@
 	let open = false;
 	let search = '';
 
-	export let selected = undefined;
+	export let selected: string | string[] | undefined = undefined;
 	$: selected = multiple
-		? data.filter((f) => value.includes(f.value)).map((f) => f.label)
+		? data
+				.filter((f) => value.includes(f.value))
+				.map((f) => f.label)
+				.join(', ')
 		: data.find((f) => f.value === value)?.label;
 
 	const fuse = new Fuse(data, {
@@ -54,7 +57,7 @@
 			variant="outline"
 			role="combobox"
 			aria-expanded={open}
-			class="w-[200px] justify-between"
+			class={cn('w-[200px] justify-between', inputClassName)}
 		>
 			<div class="truncate grow-0 contain-paint overflow-clip">
 				{selected?.length ? selected : placeholder}
@@ -62,7 +65,7 @@
 			<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
 		</Button>
 	</Popover.Trigger>
-	<Popover.Content class="w-[200px] max-h-[300px] overflow-y-auto overflow-x-hidden p-0">
+	<Popover.Content class={cn('w-[200px] max-h-[300px] overflow-y-auto overflow-x-hidden p-0')}>
 		<Command.Root shouldFilter={false}>
 			<Command.Input {placeholder} bind:value={search} />
 			<Command.Empty>No item found.</Command.Empty>
