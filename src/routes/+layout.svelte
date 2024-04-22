@@ -5,6 +5,7 @@
 	import '@fontsource-variable/manrope';
 
 	import 'iconify-icon';
+	import Footer from '$lib/components/Footer.svelte';
 
 	export let data;
 </script>
@@ -14,3 +15,5 @@
 	<NavBar />
 	<slot />
 </main>
+
+<Footer />
