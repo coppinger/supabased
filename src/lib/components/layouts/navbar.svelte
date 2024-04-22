@@ -3,11 +3,14 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button';
+	import Logo from '$lib/components/Logo.svelte';
 </script>
 
-<div class="border-b h-16 px-10 w-full">
+<div class="border-b py-6 px-4 w-full">
 	<div class=" flex items-center justify-between h-full">
-		<a href="/">SUPABASE<span class="text-green-400">D</span></a>
+		<a href="/" class="max-h-8">
+			<Logo />
+		</a>
 
 		{#if $page.data.user}
 			{@const { user } = $page.data}
@@ -26,6 +29,9 @@
 			</DropdownMenu.Root>
 		{:else}
 			<Button href="/auth/signin">Sign In</Button>
+			<button class="h-8 w-8 flex items-center justify-center"
+				><span class="material-symbols-outlined text-[20px]">lunch_dining</span></button
+			>
 		{/if}
 	</div>
 </div>
