@@ -7,7 +7,6 @@ export async function load({ locals: { supabase } }) {
 	const profiles = mockProfiles;
 
 	return {
-		supabase,
 		profiles
 	};
 }

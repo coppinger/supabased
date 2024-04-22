@@ -241,8 +241,7 @@
 				<p class="text-sm font-medium text-neutral-600">No filters active</p>
 			{/if}
 		</div>
-		{#each $profiles as profile}
-			<!-- Start profile list component -->
+		<!-- {#each $profiles as profile}
 			<div class="flex flex-col gap-6 rounded-md border border-neutral-800 p-6 w-full">
 				<div class="flex flex-col gap-6">
 					<div class="flex gap-4 items-center w-full">
@@ -286,7 +285,6 @@
 					</div>
 				</div>
 				<p class="text-neutral-200">{profile.description}</p>
-				<!-- Availabilities -->
 				<div class="flex flex-wrap gap-6 py-4 px-6 border border-neutral-800 rounded-md">
 					{#each allAvailabilities as availability}
 						<div class="flex gap-2 items-center">
@@ -300,7 +298,7 @@
 						</div>
 					{/each}
 				</div>
-				<!-- Stacks -->
+				
 				<ul class="flex flex-wrap gap-4">
 					{#each profile.projects[0].usedTech as usedTech}
 						<li
@@ -317,9 +315,7 @@
 							: ''} with Supabase using:
 					</p>
 					<div class="flex gap-6 items-center">
-						<!-- TODO: These values should be an aggregate set of all of the users projects -->
 						{#each supabaseProducts as { label, Icon }}
-							<!-- TODO: If the product has been used, it should be green, otherwise neutral-600 -->
 							<div class="flex gap-4 items-center text-emerald-400 font-bold">
 								<Icon class="h-4 w-4" />
 							</div>
@@ -338,7 +334,6 @@
 							></Button
 						>
 						<div class="flex flex-col gap-6 items-center w-full">
-							<!-- TODO: Unfuck this fucking button. Pls, our Lord and Saviour, TheMixedNuts, help me 🙏🥹 -->
 							<Endorse form={endorse} {profile}>
 								<Button variant="outline" class="w-full">Endorse 🫡</Button>
 							</Endorse>
@@ -372,7 +367,6 @@
 					</div>
 				</div>
 			</div>
-			<!-- End profile list component -->
-		{/each}
+		{/each} -->
 	</div>
 </div>
