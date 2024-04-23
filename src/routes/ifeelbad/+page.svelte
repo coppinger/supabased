@@ -94,7 +94,7 @@
 	>
 		<div class="flex flex-col gap-4">
 			<div class="flex flex-col items-center md:items-start gap-2">
-				<h1 class="text-2xl font-bold text-center md:text-left">
+				<h1 class="text-2xl font-bold text-center md:text-left text-neutral-50">
 					Discover & connect with folks who are building with
 				</h1>
 				<SupabaseLogo />
