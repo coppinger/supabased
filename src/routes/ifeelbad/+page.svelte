@@ -45,74 +45,11 @@
 	import { createProfilesState } from '$lib/stores/profiles.js';
 	import { onMount } from 'svelte';
 	import type { Tables } from '$lib/types/DatabaseDefinitions.js';
+	import ProfileListItem from '$lib/components/ProfileListItem.svelte';
 
-	$: console.log('profiles', data.profiles);
 	// $: ({ profiles, filter } = createProfilesState(data.profiles, data.supabase));
 
 	$: ({ endorse } = $page.data);
-
-	// Sample
-
-	// {
-	//     "id": "f86a4c9c-d08e-42d6-8c94-53a11ebc4353",
-	//     "display_name": "iklhdio",
-	//     "skills": null,
-	//     "bio": "iodhw",
-	//     "twitter_username": "@charliecoppinger",
-	//     "github_username": null,
-	//     "website_url": null,
-	//     "linkedin_url": null,
-	//     "location": "hoidwh",
-	//     "timezone": null,
-	//     "availibility": null,
-	//     "pfp_url": "http://127.0.0.1:54321/storage/v1/render/image/public/profile_pictures/c5ec13dc-f3ce-41bd-9290-fe70cf909f70.png?width=400&height=400&resize=cover",
-	//     "created_at": "2024-04-22T07:17:00.63362+00:00",
-	//     "updated_at": "2024-04-22T07:33:55.240686+00:00",
-	//     "deleted_at": null,
-	//     "profile_availability_types": [
-	//         {
-	//             "id": "48ffc02b-56a9-4fbd-811a-eee40b9a5c4a",
-	//             "profile_id": "f86a4c9c-d08e-42d6-8c94-53a11ebc4353",
-	//             "availability_types": {
-	//                 "id": "19951885-4621-4b10-8a56-5330f3e9deab",
-	//                 "name": "MVP"
-	//             },
-	//             "availability_type_id": "19951885-4621-4b10-8a56-5330f3e9deab"
-	//         }
-	//     ],
-	//     "profiles_roles": [
-	//         {
-	//             "id": "12c833e3-e2d7-48c4-a0cc-473cfbbd6d2c",
-	//             "roles": {
-	//                 "id": "8022be82-eaaa-4acf-8183-da1d7519c498",
-	//                 "name": "Design"
-	//             },
-	//             "role_id": "8022be82-eaaa-4acf-8183-da1d7519c498",
-	//             "profile_id": "f86a4c9c-d08e-42d6-8c94-53a11ebc4353"
-	//         }
-	//     ],
-	//     "projects": [
-	//         {
-	//             "id": "89e68e6a-8a7c-44f0-9dca-96079d933ab2",
-	//             "created_at": "2024-04-22T07:25:13.095944+00:00",
-	//             "deleted_at": null,
-	//             "profile_id": "f86a4c9c-d08e-42d6-8c94-53a11ebc4353",
-	//             "updated_at": null,
-	//             "description": "This is the hottest hackathon proj.",
-	//             "project_url": "supabased.com",
-	//             "project_name": "Supabased",
-	//             "repository_url": "github.com/coppinger/supabased",
-	//             "projects_stacks": [
-	//                 {
-	//                     "stack_id": "916a89ad-2bba-4baa-9e90-401ac7d375aa"
-	//                 },
-	//                 {
-	//                     "stack_id": "baa83017-a50d-4ae5-8768-eb2ae3994b9e"
-	//                 }
-	//             ]
-	//         }
-	//     ]
-	// }
 
 	// const filteredData = supaProfiles.profiles.filter((profile) => {
 	// 	if (
@@ -143,6 +80,10 @@
 	// });
 
 	export let profiles: Tables<'profiles'>;
+
+	const { profilesData } = data;
+
+	$: console.log('profiles: ', profiles);
 </script>
 
 <SupabaseProductsBar {supabase} />
@@ -321,7 +262,7 @@
 			>
 		</div>
 		<div class="flex flex-wrap gap-4 items-center w-full min-h-10">
-			<div class="h-full flex items-center">
+			<div class="flex items-center">
 				<p class="text-sm font-medium text-neutral-600">Filters:</p>
 			</div>
 			<!-- TODO: If filters are active, render this and loop through the active filters in the button below -->
@@ -337,11 +278,17 @@
 						>filter_alt_off</span
 					></Button
 				>
+				<p>Test</p>
 			{:else}
 				<p class="text-sm font-medium text-neutral-600">No filters active</p>
 			{/if}
 		</div>
-		{#await supabaseProfiles}
+		{#if profilesData}
+			{#each profilesData as profile}
+				<ProfileListItem {profile} />
+			{/each}
+		{/if}
+		<!-- {#await supabaseProfiles}
 			{#each [...Array(10)] as _}
 				<div class="animate-pulse bg-neutral-700 h-10 w-20 rounded" />
 			{/each}
@@ -479,6 +426,6 @@
 					</div>
 				{/each}
 			{/if}
-		{/await}
+		{/await} -->
 	</div>
 </div>
