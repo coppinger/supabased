@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { Menu } from 'lucide-svelte';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button';
 	import Logo from '$lib/components/Logo.svelte';
+
+	$: ({ user } = $page.data);
 </script>
 
 <div class="border-b w-full">
@@ -12,27 +12,14 @@
 			<Logo />
 		</a>
 
-		{#if $page.data.user}
-			{@const { user } = $page.data}
-			<DropdownMenu.Root>
-				<DropdownMenu.Trigger><Menu /></DropdownMenu.Trigger>
-				<DropdownMenu.Content side="bottom" align="end">
-					<DropdownMenu.Group>
-						<DropdownMenu.Label>{user.username}</DropdownMenu.Label>
-						<DropdownMenu.Separator />
-						<DropdownMenu.Item>Profile</DropdownMenu.Item>
-						<DropdownMenu.Item>Billing</DropdownMenu.Item>
-						<DropdownMenu.Item>Team</DropdownMenu.Item>
-						<DropdownMenu.Item>Subscription</DropdownMenu.Item>
-					</DropdownMenu.Group>
-				</DropdownMenu.Content>
-			</DropdownMenu.Root>
+		{#if user}
+			<span class="material-symbols-outlined text-[20px]">lunch_dining</span>
 		{:else}
 			<div class="flex gap-6 items-center">
 				<Button href="/login" variant="outline">Sign In</Button>
-				<button class="h-8 w-8 flex items-center justify-center"
-					><span class="material-symbols-outlined text-[20px]">lunch_dining</span></button
-				>
+				<button class="h-8 w-8 flex items-center justify-center">
+					<span class="material-symbols-outlined text-[20px]">lunch_dining</span>
+				</button>
 			</div>
 		{/if}
 	</div>
