@@ -1,4 +1,4 @@
-import type { Tables } from '$lib/types/DatabaseDefinitions.js';
+import type { Tables } from '$lib/types/DatabaseDefinitions.js'
 
 export async function load({ locals: { supabase } }) {
 	// const { data } = await supabase.from('table').select();
@@ -20,12 +20,14 @@ export async function load({ locals: { supabase } }) {
 	//     ),
 	//   `);
 
-	const { data: profilesData } = await supabase
-		.from('profiles')
-		.select('*')
-		.returns<Tables<'profiles'>[]>();
 
 	return {
-		profilesData
-	};
+		profiles: await supabase
+			.from('profiles')
+			.select('*')
+			.returns<Tables<'profiles'>[]>(),
+		availabilityTypes: supabase.from('availability_types').select().order('sort').returns<Tables<'availability_types'>[]>(),
+		products: supabase.from('supabase_products').select().order('sort').returns<Tables<'supabase_products'>[]>(),
+		stacks: supabase.from('stacks').select('name').limit(10).returns<Tables<'stacks'>[]>(),
+	}
 }

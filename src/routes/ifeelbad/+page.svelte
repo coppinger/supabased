@@ -32,24 +32,19 @@
 	import Project from '$lib/components/profile/project/project.svelte';
 
 	export let data;
-	const { supabase } = data;
+	$: ({ supabase, profiles, endorse, stacks, availabilityTypes, products } = data);
 
 	// Filter chip data
-	const supabaseProfiles = supabase.from('profiles').select();
-	const supabaseProducts = supabase.from('supabase_products').select().order('sort');
-	const availabilityTypes = supabase.from('availability_types').select().order('sort');
-	const popularStacks = supabase.from('stacks').select('name').limit(10); // TODO: Create a DB View to get the most popular stacks by grouping/counting on the projects table - https://stackoverflow.com/questions/71905843/how-can-i-do-select-count-with-group-by-in-supabase-js
+	// TODO: Create a DB View to get the most popular stacks by grouping/counting on the projects table - https://stackoverflow.com/questions/71905843/how-can-i-do-select-count-with-group-by-in-supabase-js
 
 	// Send to profiles component
-	import { Box, Cloud, Database, Lock, MousePointerClick, Triangle } from 'lucide-svelte';
+	import { Box, Cloud, Database, Lock, LogIn, MousePointerClick, Triangle } from 'lucide-svelte';
 	import { createProfilesState } from '$lib/stores/profiles.js';
 	import { onMount } from 'svelte';
 	import type { Tables } from '$lib/types/DatabaseDefinitions.js';
 	import ProfileListItem from '$lib/components/ProfileListItem.svelte';
 
 	// $: ({ profiles, filter } = createProfilesState(data.profiles, data.supabase));
-
-	$: ({ endorse } = $page.data);
 
 	// const filteredData = supaProfiles.profiles.filter((profile) => {
 	// 	if (
@@ -78,15 +73,9 @@
 	// 		return false;
 	// 	return true;
 	// });
-
-	export let profiles: Tables<'profiles'>;
-
-	const { profilesData } = data;
-
-	$: console.log('profiles: ', profiles);
 </script>
 
-<SupabaseProductsBar {supabase} />
+<!-- <SupabaseProductsBar {supabase} /> -->
 
 <header class="border-b border-neutral-800">
 	<div
@@ -157,17 +146,24 @@
 				<Input placeholder="Search stacks..." />
 				<p class="text-neutral-50 font-bold">Popular stacks</p>
 				<div class="flex gap-4 flex-wrap">
-					{#await popularStacks}
+					{#await stacks}
 						{#each [...Array(10)] as _}
 							<div class="animate-pulse bg-neutral-700 h-10 w-20 rounded" />
 						{/each}
-					{:then data}
-						{#each data?.data as { name }}
-							<Button variant="outline" class="flex gap-4"
-								>{name}
-								<Checkbox /></Button
-							>
-						{/each}
+					{:then result}
+						{#if result.data}
+							{@const results = result.data}
+							{#each results as { name }}
+								<Button variant="outline" class="flex gap-4">
+									{name}
+									<Checkbox />
+								</Button>
+							{/each}
+						{:else if result.error}
+							{console.log(result.error)}
+						{/if}
+					{:catch err}
+						{console.log('stacks error', err)}
 					{/await}
 				</div>
 			</div>
@@ -175,11 +171,11 @@
 				<div class="flex items-center gap-2">
 					<p class="text-xl font-bold">Availability</p>
 					<Tooltip.Root>
-						<Tooltip.Trigger
-							><p class="material-symbols-outlined text-neutral-600 text-[16px] leading-none h-4">
+						<Tooltip.Trigger>
+							<p class="material-symbols-outlined text-neutral-600 text-[16px] leading-none h-4">
 								info
-							</p></Tooltip.Trigger
-						>
+							</p>
+						</Tooltip.Trigger>
 						<Tooltip.Content>
 							<p>Add to library</p>
 						</Tooltip.Content>
@@ -187,7 +183,7 @@
 				</div>
 
 				<div class="flex gap-4 flex-wrap">
-					{#await availabilityTypes}
+					<!-- {#await availabilityTypes}
 						{#each [...Array(6)] as _}
 							<div class="animate-pulse bg-neutral-700 h-10 w-20 rounded" />
 						{/each}
@@ -198,18 +194,18 @@
 								<Checkbox /></Button
 							>
 						{/each}
-					{/await}
+					{/await} -->
 				</div>
 			</div>
 			<div class="flex flex-col gap-8">
 				<div class="flex items-center gap-2">
 					<p class="text-xl font-bold">Supabase Experience</p>
 					<Tooltip.Root>
-						<Tooltip.Trigger
-							><p class="material-symbols-outlined text-neutral-600 text-[16px] leading-none h-4">
+						<Tooltip.Trigger>
+							<p class="material-symbols-outlined text-neutral-600 text-[16px] leading-none h-4">
 								info
-							</p></Tooltip.Trigger
-						>
+							</p>
+						</Tooltip.Trigger>
 						<Tooltip.Content>
 							<p>Add to library</p>
 						</Tooltip.Content>
@@ -217,7 +213,7 @@
 				</div>
 
 				<div class="flex gap-4 flex-wrap">
-					{#await supabaseProducts}
+					<!-- {#await supabaseProducts}
 						{#each [...Array(6)] as _}
 							<div class="animate-pulse bg-neutral-700 h-10 w-24 rounded" />
 						{/each}
@@ -228,13 +224,13 @@
 								<svelte:component this={supabaseProductIcons?.[name]} class="h-4 w-4" /></Button
 							>
 						{/each}
-					{/await}
+					{/await} -->
 				</div>
 			</div>
 		</div>
-		<Button variant="outline" class="text-emerald-400 border-emerald-400"
-			>Submit your profile -></Button
-		>
+		<Button variant="outline" class="text-emerald-400 border-emerald-400">
+			Submit your profile ->
+		</Button>
 		<div class="flex gap-6 items-center">
 			<Button
 				variant="outline"
@@ -283,10 +279,10 @@
 				<p class="text-sm">No filters active</p>
 			{/if}
 		</div>
-		{#if profilesData}
+		<!-- {#if profilesData}
 			{#each profilesData as profile}
 				<ProfileListItem {profile} />
 			{/each}
-		{/if}
+		{/if} -->
 	</div>
 </div>
