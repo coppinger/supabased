@@ -6,6 +6,8 @@
 
 	import { page } from '$app/stores';
 	import Label from '$lib/components/ui/label/label.svelte';
+	import { SocialAuth } from '@supabase/auth-ui-svelte';
+	import { ThemeSupa } from '@supabase/auth-ui-shared';
 
 	export let data;
 	$: ({ session, supabase } = data);
@@ -35,14 +37,6 @@
 			break;
 	}
 
-	// function handleClick(email: string) {
-	// 	handleMagicLink(email);
-	// }
-	async function signInWithGithub() {
-		const { data, error } = await supabase.auth.signInWithOAuth({
-			provider: 'github'
-		});
-	}
 	const { form, errors, constraints, message, enhance } = superForm(data.form);
 </script>
 
@@ -75,9 +69,15 @@
 <div
 	class="border-neutral-800 mx-auto max-w-md px-10 py-4 my-10 border rounded-md flex items-center justify-center gap-2"
 >
-	<Button on:click={signInWithGithub}>Github</Button>
-
-	<!-- TODO add other OAuths -->
-	<!-- <Button on:click={signInWithGithub}>Github</Button>
-	<Button on:click={signInWithGithub}>Github</Button> -->
+	<SocialAuth
+		supabaseClient={supabase}
+		providers={['github']}
+		appearance={{
+			theme: ThemeSupa,
+			style: {
+				button: 'background-color: hsl(var(--primary)); border-color: rgb(38 38 38)'
+			}
+		}}
+		socialLayout="horizontal"
+	/>
 </div>

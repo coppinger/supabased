@@ -1,14 +1,13 @@
-import { superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
-import { z } from 'zod';
+import { superValidate } from 'sveltekit-superforms'
+import { zod } from 'sveltekit-superforms/adapters'
 
-import { loginSchema } from './loginSchema';
+import { loginSchema } from './schema'
 
 export const load = async ({ locals: { safeGetSession } }) => {
-	const form = await superValidate(zod(loginSchema));
+	const form = await superValidate(zod(loginSchema))
 
 	return {
 		session: await safeGetSession(),
 		form
-	};
-};
+	}
+}

@@ -3,6 +3,7 @@ import { createServerClient } from '@supabase/ssr'
 import type { Database } from '$lib/types/DatabaseDefinitions'
 import type { Handle, HandleServerError } from '@sveltejs/kit'
 import { dev } from '$app/environment'
+import type { AuthError, Session, User } from '@supabase/supabase-js'
 
 const _URL = false ? PUBLIC_SUPABASE_DEV_URL : PUBLIC_SUPABASE_URL
 const _ANON = false ? PUBLIC_SUPABASE_DEV_ANON : PUBLIC_SUPABASE_ANON_KEY
@@ -40,9 +41,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 			data: { user },
 			error
 		} = await event.locals.supabase.auth.getUser()
+
 		if (error) {
 			return { session: null, user: null }
 		}
+
 
 		const {
 			data: { session }

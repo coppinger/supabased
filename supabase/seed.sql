@@ -339,3 +339,117 @@ VALUES
     ),
     ('Senja', 'https://senja.io/', 'senja'),
     ('Shoutout', 'https://shoutout.io/', 'shoutout');
+
+-- Seed data for profiles
+INSERT INTO
+    "profiles" (
+        "id",
+        "display_name",
+        "skills",
+        "bio",
+        "twitter_username",
+        "github_username",
+        "website_url",
+        "linkedin_url",
+        "location",
+        "timezone",
+        "availibility",
+        "pfp_url"
+    )
+VALUES
+    (
+        'c1e426ee-3b77-4a20-bff3-9079d0c362f2',
+        'John Doe',
+        'JavaScript, React, Node.js',
+        'Passionate developer with expertise in building web applications.',
+        'johndoe',
+        'johndoe',
+        'https://johndoe.com',
+        'https://linkedin.com/in/johndoe',
+        'New York',
+        'UTC-05:00',
+        'Full Time',
+        'https://avatars.githubusercontent.com/u/420'
+    ),
+    (
+        'a2e716ed-7d3d-4f1b-b6d7-7a9d8c2f5031',
+        'Jane Smith',
+        'Python, Django, Flask',
+        'Experienced backend developer specializing in Python web frameworks.',
+        'janesmith',
+        'janesmith',
+        'https://janesmith.com',
+        'https://linkedin.com/in/janesmith',
+        'San Francisco',
+        'UTC-08:00',
+        'Part Time',
+        'https://avatars.githubusercontent.com/u/69'
+    );
+
+-- Seed data for projects
+INSERT INTO
+    "projects" (
+        "id",
+        "profile_id",
+        "project_name",
+        "project_url",
+        "repository_url",
+        "description"
+    )
+VALUES
+    (
+        '335cf024-9347-4b94-86bb-63a787a4e109',
+        'c1e426ee-3b77-4a20-bff3-9079d0c362f2',
+        'React App',
+        'https://example.com/react-app',
+        'https://github.com/johndoe/react-app',
+        'A simple React application for demonstration.'
+    ),
+    (
+        '9a99e786-c1bb-45a9-a43d-014ef2185a68',
+        'a2e716ed-7d3d-4f1b-b6d7-7a9d8c2f5031',
+        'Django Project',
+        'https://example.com/django-project',
+        'https://github.com/janesmith/django-project',
+        'A Django web application showcasing various features.'
+    );
+
+-- Seed data for stacks
+INSERT INTO
+    "stacks" ("id", "name", "url", "slug")
+VALUES
+    (
+        '39903377-ff4d-4f94-a0bb-2a9a9e78a336',
+        'React',
+        'https://react.dev/',
+        'react'
+    ),
+    (
+        'd12d629e-f52e-4b1b-9a88-1d77c13b59e2',
+        'Django',
+        'https://djangoproject.com/',
+        'django'
+    );
+
+-- Seed data for projects_stacks (associating projects with stacks)
+INSERT INTO
+    "projects_stacks" ("id", "project_id", "stack_id")
+VALUES
+    (
+        'a9c1e6a3-1213-45ef-964e-2532418f8be0',
+        '335cf024-9347-4b94-86bb-63a787a4e109',
+        '39903377-ff4d-4f94-a0bb-2a9a9e78a336'
+    ),
+    (
+        'bb6a83fc-3f12-4b90-9f11-9ab163c13d61',
+        '9a99e786-c1bb-45a9-a43d-014ef2185a68',
+        'd12d629e-f52e-4b1b-9a88-1d77c13b59e2'
+    );
+
+INSERT INTO
+    "endorsements" ("endorsement_to", "endorsed_by")
+VALUES
+    (
+        'c1e426ee-3b77-4a20-bff3-9079d0c362f2',
+        'a2e716ed-7d3d-4f1b-b6d7-7a9d8c2f5031'
+    );

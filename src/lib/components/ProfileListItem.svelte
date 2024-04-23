@@ -9,8 +9,10 @@
 	import Endorse from '$routes/profile/[name]/endorse.svelte';
 	import { DotsThree, GithubLogo } from 'phosphor-svelte';
 	import { allAvailabilities } from '$lib/components/profile/data';
+	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+	import type { ProfilesResult } from '$lib/db/query';
 
-	import type { Tables } from '$lib/types/DatabaseDefinitions';
 	import { Box, Cloud, Database, Lock, MousePointerClick, Triangle } from 'lucide-svelte';
 
 	const supabaseProducts = [
@@ -40,27 +42,8 @@
 		}
 	];
 
-	export let profile: Tables<'profiles'>;
-
-	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
-
-	$: ({ endorse, supabase } = $page.data);
-
-	let endorseCount: number = 0;
-
-	onMount(async () => {
-		const { count, error } = await supabase
-			.from('endorsements')
-			.select('*', { count: 'estimated', head: true })
-			.eq('endoresement_to', profile.id);
-
-		if (error) {
-			console.log(error);
-		}
-
-		endorseCount = count;
-	});
+	export let profile: ProfilesResult;
+	$: ({ endorse, supabase, user } = $page.data);
 </script>
 
 <div class="flex flex-col gap-6 rounded-md border border-neutral-800 p-6 w-full">
@@ -76,7 +59,7 @@
 		<div class="flex gap-4 items-center w-full">
 			<Avatar class="h-12 w-12">
 				<AvatarImage src={profile.pfp_url} alt={profile.display_name} />
-				<AvatarFallback>{profile.display_name[0]}</AvatarFallback>
+				<AvatarFallback>{profile.display_name}</AvatarFallback>
 			</Avatar>
 			<div>
 				<h5 class="text-neutral-50">{profile.display_name}</h5>
@@ -182,7 +165,7 @@
 				></Button
 			>
 			<div class="flex flex-col gap-6 items-center w-full">
-				<Endorse form={endorse} {profile}>
+				<Endorse form={endorse} {profile} endorser={user}>
 					<Button variant="outline" class="w-full">Endorse 🫡</Button>
 				</Endorse>
 				<Button variant="ghost" class="gap-2">
@@ -190,28 +173,33 @@
 						<p>Endorsed by</p>
 						<span>🫡</span>
 					</span>
-					{endorseCount}
+
+					<!-- TODO lets make this realtime for the flex, you know what I mean? -->
+					{#await supabase
+						.from('endorsements')
+						.select('*', { count: 'estimated', head: true })
+						.eq('endorsement_to', profile.id)}
+						Loading
+					{:then { count, error }}
+						{count}
+					{/await}
 					<span class="flex -space-x-2">
-						<Avatar class="h-8 w-8 border-2 border-background">
-							<AvatarImage src="https://i.kym-cdn.com/photos/images/original/002/307/265/9a6" />
-						</Avatar>
-						<Avatar class="h-8 w-8 border-2 border-background">
-							<AvatarImage src="https://i.redd.it/l0m6jy5zqwxa1.png" />
-						</Avatar>
-						<Avatar class="h-8 w-8 border-2 border-background">
-							<AvatarImage src="https://media.tenor.com/Mfk5cU9Jdg8AAAAe/chad-face-chad.png" />
-						</Avatar>
+						{#each profile.endorsements as endorsement}
+							<Avatar class="h-8 w-8 border-2 border-background">
+								<AvatarImage src={endorsement.profiles.pfp_url} />
+							</Avatar>
+						{/each}
 					</span>
 					<span>
 						<DotsThree class="w-5 h-5 opacity-30" />
 					</span>
 				</Button>
-				<!-- TODO: Add the project count of this profile to this button -->
 				<Button
 					variant="outline"
 					class="w-full md:w-fit md:place-self-end text-emerald-400 border-emer"
-					>View 7 projects -></Button
 				>
+					View {profile.projects.length} project{profile.projects.length > 1 ? 's' : ''} ->
+				</Button>
 			</div>
 		</div>
 	</div>

@@ -13,6 +13,8 @@
 		"gentypes": "supabase gen types typescript --project-id ktnwuhsueazrotoagcww > DatabaseDefinitions.ts"
 	},
 	"devDependencies": {
+		"@snaplet/copycat": "^5.0.0",
+		"@snaplet/seed": "^0.95.1",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/enhanced-img": "^0.2.0",
 		"@sveltejs/kit": "latest",
@@ -28,6 +30,7 @@
 		"eslint-plugin-svelte": "^2.30.0",
 		"postcss": "^8.4.32",
 		"postcss-load-config": "^5.0.2",
+		"postgres": "^3.4.4",
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
 		"prettier-plugin-tailwindcss": "^0.5.9",
