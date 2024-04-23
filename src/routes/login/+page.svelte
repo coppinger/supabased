@@ -36,7 +36,6 @@
 			break;
 	}
 
-<<<<<<< HEAD
 	// function handleClick(email: string) {
 	// 	handleMagicLink(email);
 	// }
@@ -45,9 +44,7 @@
 			provider: 'github'
 		});
 	}
-=======
 	const { form, errors, constraints, message, enhance } = superForm(data.form);
->>>>>>> refs/remotes/origin/profile-list-item
 </script>
 
 {#if session.user}
