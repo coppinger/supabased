@@ -4,6 +4,8 @@
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button';
 	import Logo from '$lib/components/Logo.svelte';
+
+	$: ({ user } = $page.data);
 </script>
 
 <div class="border-b w-full">
