@@ -137,9 +137,9 @@
 	</div>
 </header>
 
-<div class="flex flex-col md:flex-row gap-6 max-w-screen-xl mx-auto md:p-10 md:px-20">
+<div class="flex flex-col md:flex-row gap-10 max-w-screen-xl mx-auto md:p-10 md:px-20">
 	<div class="hidden md:flex flex-col gap-6">
-		<div class="flex flex-col gap-8 border border-neutral-800 p-8 w-[400px] rounded-md">
+		<div class="flex flex-col gap-8 p-8 w-[360px] rounded-md">
 			<div class="flex flex-col gap-8">
 				<div class="flex items-center gap-2">
 					<p class="text-xl font-bold">Stacks</p>
@@ -252,7 +252,7 @@
 			>
 		</div>
 	</div>
-	<div class="flex flex-col gap-6 p-4 w-full">
+	<div class="flex flex-col gap-6 p-4 md:p-0 w-full">
 		<div class="flex flex-col gap-4 w-full">
 			<Input placeholder="Search profiles..." />
 			<Button variant="outline"
@@ -278,7 +278,6 @@
 						>filter_alt_off</span
 					></Button
 				>
-				<p>Test</p>
 			{:else}
 				<p class="text-sm">No filters active</p>
 			{/if}
