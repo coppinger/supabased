@@ -5,7 +5,7 @@
 <button
 	on:click={() => menuBoolean.update((value) => !value)}
 	aria-label="Open nav menu"
-	class="p-2"
+	class="flex items-center justify-center"
 >
 	<span class="material-symbols-outlined text-[20px]">lunch_dining</span>
 </button>

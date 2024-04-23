@@ -79,7 +79,7 @@
 				<AvatarFallback>{profile.display_name[0]}</AvatarFallback>
 			</Avatar>
 			<div>
-				<h5>{profile.display_name}</h5>
+				<h5 class="text-neutral-50">{profile.display_name}</h5>
 				<p class="text-neutral-600">
 					{profile.location}
 					{profile.timezone ? ` • ${profile.timezone}` : ''}

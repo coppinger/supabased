@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { superForm } from 'sveltekit-superforms';
+
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 
@@ -9,7 +11,7 @@
 	let { session, supabase } = data;
 	$: ({ session, supabase } = data);
 
-	let email: string = 'test@test.com';
+	let email: string = '';
 
 	async function signInWithEmail(email: string) {
 		const { data, error } = await supabase.auth.signInWithOtp({
@@ -34,6 +36,7 @@
 			break;
 	}
 
+<<<<<<< HEAD
 	// function handleClick(email: string) {
 	// 	handleMagicLink(email);
 	// }
@@ -42,9 +45,10 @@
 			provider: 'github'
 		});
 	}
+=======
+	const { form, errors, constraints, message, enhance } = superForm(data.form);
+>>>>>>> refs/remotes/origin/profile-list-item
 </script>
-
-<button on:click={() => console.log(session)}>Log session</button>
 
 {#if session.user}
 	<p>You're logged in as {session.user?.email}</p>
@@ -52,9 +56,19 @@
 	{#if redirectedFrom}
 		<p>{redirectMessage}</p>
 	{/if}
-	<div>
-		<Label>Email</Label>
-		<Input bind:value={email} placeholder="Your email address" />
+	<div class="flex flex-col gap-4">
+		<form method="POST" class="flex flex-col gap-4" use:enhance>
+			<Label>Email</Label>
+			<Input
+				type="text"
+				name="email"
+				bind:value={$form.email}
+				aria-invalid={$errors.email ? 'true' : undefined}
+				{...$constraints.email}
+				placeholder="Your email address"
+			/>
+			{#if $errors.email}<span class="invalid">{$errors.email}</span>{/if}
+		</form>
 		<Button on:click={() => signInWithEmail(email)}>Send magic link</Button>
 	</div>
 	<div>
@@ -62,3 +76,9 @@
 		<Button on:click={signInWithGithub}>Github</Button>
 	</div>
 {/if}
+
+<style>
+	.invalid {
+		color: red;
+	}
+</style>
