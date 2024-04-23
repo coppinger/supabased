@@ -21,6 +21,12 @@
 		});
 	}
 
+	async function signInWithGithub() {
+		const { data, error } = await supabase.auth.signInWithOAuth({
+			provider: 'github'
+		});
+	}
+
 	let redirectMessage: string;
 	let redirectedFrom = $page.url.searchParams.get('redirectedFrom');
 
@@ -48,5 +54,9 @@
 		<Label>Email</Label>
 		<Input bind:value={email} placeholder="Your email address" />
 		<Button on:click={() => signInWithEmail(email)}>Send magic link</Button>
+	</div>
+	<div>
+		<Label>GitHub</Label>
+		<Button on:click={() => signInWithGithub()}>Sign In with GitHub</Button>
 	</div>
 {/if}

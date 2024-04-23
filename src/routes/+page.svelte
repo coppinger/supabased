@@ -35,7 +35,7 @@
 			Icon: Box
 		}
 	];
-	$: ({ profiles, filter, filteredProfiles } = createProfilesState(data.profiles, data.supabase));
+	$: ({ profiles, filter } = createProfilesState(data.profiles, data.supabase));
 
 	let profileSearchTerm = '';
 
@@ -62,8 +62,6 @@
 		],
 		threshold: 0.3
 	});
-
-	filteredProfiles.subscribe(console.log);
 </script>
 
 <div class="">
@@ -96,9 +94,9 @@
 					<MagnifyingGlass class="absolute left-4 top-1/2 -translate-y-1/2" />
 					<Input bind:value={profileSearchTerm} placeholder="Search Profiles" class="pl-10" />
 				</span>
-				{#each filteredProfiles as profile}
+				<!-- {#each filteredProfiles as profile}
 					<Profile {profile} />
-				{/each}
+				{/each} -->
 			</div>
 		</div>
 	</div>
