@@ -8,7 +8,6 @@
 	import Label from '$lib/components/ui/label/label.svelte';
 
 	export let data;
-	let { session, supabase } = data;
 	$: ({ session, supabase } = data);
 
 	let email: string = '';
@@ -47,35 +46,38 @@
 	const { form, errors, constraints, message, enhance } = superForm(data.form);
 </script>
 
-{#if session.user}
-	<p>You're logged in as {session.user?.email}</p>
-{:else}
-	{#if redirectedFrom}
-		<p>{redirectMessage}</p>
+<div class="border-neutral-800 mx-auto max-w-md p-10 my-10 border rounded-md">
+	{#if session.user}
+		<p>You're logged in as {session.user?.email}</p>
+	{:else}
+		{#if redirectedFrom}
+			<p>{redirectMessage}</p>
+		{/if}
+		<div class="flex flex-col gap-4">
+			<form method="POST" class="flex flex-col gap-4" use:enhance>
+				<Label>Email</Label>
+				<Input
+					type="text"
+					name="email"
+					bind:value={$form.email}
+					aria-invalid={$errors.email ? 'true' : undefined}
+					{...$constraints.email}
+					placeholder="Your email address"
+				/>
+				{#if $errors.email}<span class=" text-[red]">{$errors.email}</span>{/if}
+			</form>
+			<Button on:click={() => signInWithEmail(email)}>Send magic link</Button>
+		</div>
 	{/if}
-	<div class="flex flex-col gap-4">
-		<form method="POST" class="flex flex-col gap-4" use:enhance>
-			<Label>Email</Label>
-			<Input
-				type="text"
-				name="email"
-				bind:value={$form.email}
-				aria-invalid={$errors.email ? 'true' : undefined}
-				{...$constraints.email}
-				placeholder="Your email address"
-			/>
-			{#if $errors.email}<span class="invalid">{$errors.email}</span>{/if}
-		</form>
-		<Button on:click={() => signInWithEmail(email)}>Send magic link</Button>
-	</div>
-	<div>
-		<Label>Github</Label>
-		<Button on:click={signInWithGithub}>Github</Button>
-	</div>
-{/if}
+</div>
 
-<style>
-	.invalid {
-		color: red;
-	}
-</style>
+<!-- TODO sorry charlie, don't hate me LMAO, I'll let you make it pretty-->
+<div
+	class="border-neutral-800 mx-auto max-w-md px-10 py-4 my-10 border rounded-md flex items-center justify-center gap-2"
+>
+	<Button on:click={signInWithGithub}>Github</Button>
+
+	<!-- TODO add other OAuths -->
+	<!-- <Button on:click={signInWithGithub}>Github</Button>
+	<Button on:click={signInWithGithub}>Github</Button> -->
+</div>

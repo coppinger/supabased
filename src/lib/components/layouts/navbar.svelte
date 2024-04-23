@@ -1,11 +1,13 @@
 <script lang="ts">
 	import Menu from '$lib/components/menu/Menu.svelte';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button';
 	import Logo from '$lib/components/Logo.svelte';
 
-	$: ({ user } = $page.data);
+	$: ({ session, supabase } = $page.data);
+	async function signOut() {
+		const { error } = await supabase.auth.signOut();
+	}
 </script>
 
 <div class="border-b w-full">
@@ -14,15 +16,14 @@
 			<Logo />
 		</a>
 
-		{#if $page.data.user}
-			{@const { user } = $page.data}
+		{#if !session?.user}
 			<div class="flex gap-6 items-center">
 				<Button href="/login" variant="outline">Sign In</Button>
 				<Menu />
 			</div>
 		{:else}
 			<div class="flex gap-6 items-center">
-				<Button href="/login" variant="outline">Sign In</Button>
+				<Button on:click={signOut} variant="outline">Sign Out</Button>
 				<Menu />
 			</div>
 		{/if}
