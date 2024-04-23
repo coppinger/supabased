@@ -14,6 +14,8 @@ import { randomUUID } from 'crypto';
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession, supabase } }) => {
 	const { session } = await safeGetSession();
+	console.log(session);
+
 	if (!session) {
 		throw redirect(303, '/login?redirectedFrom=onboarding');
 	}
