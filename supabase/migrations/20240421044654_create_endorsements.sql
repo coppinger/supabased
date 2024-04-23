@@ -1,17 +1,13 @@
 CREATE TABLE
     "endorsements" (
         "id" uuid PRIMARY KEY DEFAULT gen_random_uuid (),
-        "endorsement_to" uuid,
-        "endorsed_by" uuid,
+        "endorsement_to" uuid REFERENCES profiles (id),
+        "endorsed_by" uuid REFERENCES profiles (id),
         "created_at" timestamptz DEFAULT now (),
-        "deleted_at" timestamptz
+        "deleted_at" timestamptz,
+        CONSTRAINT unique_endorsement UNIQUE (endorsement_to, endorsed_by)
     );
 
-ALTER TABLE "endorsements" ADD FOREIGN KEY ("endorsement_to") REFERENCES "profiles" ("id");
-
-ALTER TABLE "endorsements" ADD FOREIGN KEY ("endorsed_by") REFERENCES "profiles" ("id");
-
--- Set up RLS
 ALTER TABLE endorsements ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Endorsements are viewable by everyone." ON endorsements FOR

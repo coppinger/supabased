@@ -44,6 +44,21 @@
 
 	export let profile: ProfilesResult;
 	$: ({ endorse, supabase, user } = $page.data);
+
+	onMount(() => {
+		let realtime = supabase
+			.channel('endorsements')
+			.on(
+				'postgres_changes',
+				{
+					event: 'INSERT',
+					schema: 'public',
+					table: 'endorsements'
+				},
+				(payload) => console.log(payload)
+			)
+			.subscribe();
+	});
 </script>
 
 <div class="flex flex-col gap-6 rounded-md border border-neutral-800 p-6 w-full">
@@ -175,14 +190,7 @@
 					</span>
 
 					<!-- TODO lets make this realtime for the flex, you know what I mean? -->
-					{#await supabase
-						.from('endorsements')
-						.select('*', { count: 'estimated', head: true })
-						.eq('endorsement_to', profile.id)}
-						Loading
-					{:then { count, error }}
-						{count}
-					{/await}
+					{profile.endorsements.length}
 					<span class="flex -space-x-2">
 						{#each profile.endorsements as endorsement}
 							<Avatar class="h-8 w-8 border-2 border-background">

@@ -38,11 +38,12 @@ UPDATE ON profiles FOR EACH ROW EXECUTE PROCEDURE moddatetime (updated_at);
 
 -- When a new auth user is created by Supabase, create a profile for them
 CREATE FUNCTION public.handle_new_user()
-    RETURNS TRIGGER
-    AS $$
+RETURNS TRIGGER
+AS $$
 BEGIN
     INSERT INTO public.profiles(id)
-        VALUES(NEW.id);
+    VALUES(NEW.id);
+
     RETURN new;
 END;
 $$
@@ -52,7 +53,7 @@ CREATE TRIGGER on_auth_user_created
     AFTER INSERT ON auth.users
     FOR EACH ROW
     EXECUTE PROCEDURE public.handle_new_user();
-    
+
 -- Set up Storage bucket for user avatars
 -- INSERT INTO storage.buckets(id, name, public)
 --     VALUES ('profile_pictures', 'profile_pictures', TRUE);
