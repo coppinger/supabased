@@ -4,19 +4,21 @@
 
 	import { page } from '$app/stores';
 	import Label from '$lib/components/ui/label/label.svelte';
+	import { invalidateAll } from '$app/navigation';
 
 	export let data;
+	let { session, supabase } = data;
 	$: ({ session, supabase } = data);
 
 	let email: string = 'test@test.com';
 
 	async function signInWithEmail(email: string) {
 		const { data, error } = await supabase.auth.signInWithOtp({
-			email: 'test@test.com',
+			email,
 			options: {
 				// set this to false if you do not want the user to be automatically signed up
 				shouldCreateUser: true,
-				emailRedirectTo: 'http://localhost:5173/onboarding/profile'
+				emailRedirectTo: 'http://localhost:5173/login'
 			}
 		});
 	}
@@ -37,6 +39,8 @@
 	// 	handleMagicLink(email);
 	// }
 </script>
+
+<button on:click={() => console.log(session)}>Log session</button>
 
 {#if session.user}
 	<p>You're logged in as {session.user?.email}</p>

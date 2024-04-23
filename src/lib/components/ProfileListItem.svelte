@@ -41,9 +41,27 @@
 	];
 
 	export let profile: Tables<'profiles'>;
-</script>
 
-<!-- <pre>{JSON.stringify(profile, null, 2)}</pre> -->
+	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+
+	$: ({ endorse, supabase } = $page.data);
+
+	let endorseCount: number = 0;
+
+	onMount(async () => {
+		const { count, error } = await supabase
+			.from('endorsements')
+			.select('*', { count: 'estimated', head: true })
+			.eq('endoresement_to', profile.id);
+
+		if (error) {
+			console.log(error);
+		}
+
+		endorseCount = count;
+	});
+</script>
 
 <div class="flex flex-col gap-6 rounded-md border border-neutral-800 p-6 w-full">
 	<div class="flex flex-col gap-6">
@@ -68,39 +86,6 @@
 				</p>
 			</div>
 		</div>
-		<ul class="flex gap-6 text-neutral-600 text-xl">
-			{#if profile.github_username}
-				<li class="hover:text-neutral-50 transition-all ease-linear duration-300">
-					<a href={`https://github.com/${profile.github_username}`} target="_blank">
-						<iconify-icon icon="mdi:github"></iconify-icon>
-					</a>
-				</li>
-			{/if}
-
-			{#if profile.linkedin_url}
-				<li class="hover:text-neutral-50 transition-all ease-linear duration-300">
-					<a href={profile.linkedin_url} target="_blank">
-						<iconify-icon icon="mdi:linkedin"></iconify-icon>
-					</a>
-				</li>
-			{/if}
-
-			{#if profile.twitter_username}
-				<li class="hover:text-neutral-50 transition-all ease-linear duration-300">
-					<a href={`https://twitter.com/${profile.twitter_username}`} target="_blank">
-						<iconify-icon icon="mdi:twitter"></iconify-icon>
-					</a>
-				</li>
-			{/if}
-
-			{#if profile.website_url}
-				<li class="hover:text-neutral-50 transition-all ease-linear duration-300">
-					<a href={profile.website_url} target="_blank">
-						<iconify-icon icon="mdi:globe"></iconify-icon>
-					</a>
-				</li>
-			{/if}
-		</ul>
 		<div class="flex gap-2 items-center text-neutral-600">
 			<p>UTC-08:00</p>
 			<p>•</p>
@@ -108,27 +93,35 @@
 		</div>
 	</div>
 	<div class="flex flex-wrap gap-6 py-4 px-6 border border-neutral-800 rounded-md">
-		<!-- {#each allAvailabilities as availability}
-			<div class="flex gap-2 items-center">
-				{#if profile.availabilities.includes(availability)}
+		{#each allAvailabilities as availability}
+			<div class="flex gap-2 items-center text-neutral-200">
+				<!-- {#if profile.availabilities.includes(availability)}
 					{availability}
 					<span class="material-symbols-outlined text-[16px] text-emerald-400">check</span>
 				{:else}
 					{availability}
 					<span class="material-symbols-outlined text-[16px] text-neutral-600">close</span>
-				{/if}
+				{/if} -->
+				{availability}
+				<span class="material-symbols-outlined text-[16px] text-emerald-400">check</span>
 			</div>
-		{/each} -->
+		{/each}
 	</div>
 
 	<ul class="flex flex-wrap gap-4">
-		<!-- {#each profile.projects[0].usedTech as usedTech}
+		<!-- TODO: Add the usedTech data to the profile here -->
+		<!-- {#each profile.usedTech as usedTech}
 			<li
 				class="flex items-center justify-center text-neutral-600 text-sm px-4 py-2 rounded-full border border-neutral-800"
 			>
 				{usedTech}
 			</li>
 		{/each} -->
+		<li
+			class="flex items-center justify-center text-neutral-600 text-sm px-4 py-2 rounded-full border border-neutral-800"
+		>
+			React
+		</li>
 	</ul>
 	<div class="flex flex-col gap-6">
 		<!-- <p class="text-neutral-200">
@@ -143,9 +136,45 @@
 				</div>
 			{/each}
 		</div> -->
-		<Button variant="outline" class="w-full md:w-fit md:place-self-end">View projects -></Button>
+		<!-- <Button variant="outline" class="w-full md:w-fit md:place-self-end"
+			>View {profile.projects.length} project{profile.projects.length ? 's' : ''} -></Button
+		> -->
 	</div>
 	<Separator />
+	<!-- Social icons -->
+	<ul class="flex gap-6 text-neutral-600 text-2xl md:text-xl place-self-center">
+		{#if profile.github_username}
+			<li class="hover:text-neutral-50 transition-all ease-linear duration-300">
+				<a href={`https://github.com/${profile.github_username}`} target="_blank">
+					<iconify-icon icon="mdi:github"></iconify-icon>
+				</a>
+			</li>
+		{/if}
+		{#if profile.linkedin_url}
+			<li class="hover:text-neutral-50 transition-all ease-linear duration-300">
+				<a href={profile.linkedin_url} target="_blank">
+					<iconify-icon icon="mdi:linkedin"></iconify-icon>
+				</a>
+			</li>
+		{/if}
+
+		{#if profile.twitter_username}
+			<li class="hover:text-neutral-50 transition-all ease-linear duration-300">
+				<a href={`https://twitter.com/${profile.twitter_username}`} target="_blank">
+					<iconify-icon icon="mdi:twitter"></iconify-icon>
+				</a>
+			</li>
+		{/if}
+
+		{#if profile.website_url}
+			<li class="hover:text-neutral-50 transition-all ease-linear duration-300">
+				<a href={profile.website_url} target="_blank">
+					<iconify-icon icon="mdi:globe"></iconify-icon>
+				</a>
+			</li>
+		{/if}
+	</ul>
+	<!-- End social icons -->
 	<div class="flex flex-col gap-6">
 		<div class="flex flex-col gap-6">
 			<Button variant="outline" class="flex gap-2 items-center"
@@ -153,16 +182,15 @@
 				></Button
 			>
 			<div class="flex flex-col gap-6 items-center w-full">
-				<!-- <Endorse form={endorse} {profile}>
+				<Endorse form={endorse} {profile}>
 					<Button variant="outline" class="w-full">Endorse 🫡</Button>
 				</Endorse>
 				<Button variant="ghost" class="gap-2">
 					<span class="flex gap-1">
-						<span class="text-opacity-40">
-							{profile.endorsement_num}
-						</span>
+						<p>Endorsed by</p>
 						<span>🫡</span>
 					</span>
+					{endorseCount}
 					<span class="flex -space-x-2">
 						<Avatar class="h-8 w-8 border-2 border-background">
 							<AvatarImage src="https://i.kym-cdn.com/photos/images/original/002/307/265/9a6" />
@@ -177,7 +205,13 @@
 					<span>
 						<DotsThree class="w-5 h-5 opacity-30" />
 					</span>
-				</Button> -->
+				</Button>
+				<!-- TODO: Add the project count of this profile to this button -->
+				<Button
+					variant="outline"
+					class="w-full md:w-fit md:place-self-end text-emerald-400 border-emer"
+					>View 7 projects -></Button
+				>
 			</div>
 		</div>
 	</div>
