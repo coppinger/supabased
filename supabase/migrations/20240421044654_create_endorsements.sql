@@ -10,6 +10,8 @@ CREATE TABLE
 
 ALTER TABLE endorsements ENABLE ROW LEVEL SECURITY;
 
+ALTER publication supabase_realtime ADD TABLE endorsements;
+
 CREATE POLICY "Endorsements are viewable by everyone." ON endorsements FOR
 SELECT
     USING (TRUE);

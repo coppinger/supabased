@@ -6,6 +6,7 @@ export async function load({ locals: { supabase } }) {
 		profiles: await supabase
 			.from('profiles')
 			.select(PROFILE_QUERY)
+			.neq('display_name', null)
 			.returns<ProfilesResult[]>(),
 		availabilityTypes: supabase.from('availability_types').select().order('sort').returns<Tables<'availability_types'>[]>(),
 		products: supabase.from('supabase_products').select().order('sort').returns<Tables<'supabase_products'>[]>(),

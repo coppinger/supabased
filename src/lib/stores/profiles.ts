@@ -23,6 +23,7 @@ export const createProfilesState = (init: PostgrestSingleResponse<ProfilesResult
 		let query = supabase
 			.from('profiles')
 			.select(PROFILE_QUERY)
+			.neq('display_name', null)
 
 		if (availability.length) query = query.textSearch('availibility', availability)
 

@@ -33,13 +33,13 @@
 	}
 </script>
 
-<Combox
+<!-- <Combox
 	selected={$filter['stacks']}
 	data={[{ label: 'React', value: 'react' }]}
 	placeholder="Search Stacks..."
 	multiple
 	inputClassName="w-full"
-/>
+/> -->
 
 <div class="flex flex-col gap-8 p-8 w-[360px] rounded-md">
 	<div class="flex flex-col gap-8">

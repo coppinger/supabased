@@ -20,6 +20,7 @@
 	export let data;
 	$: ({ supabase, availabilityTypes, products, profiles: init, stacks } = data);
 	$: ({ profiles, filter, activeFilters, clearFilters } = createProfilesState(init, supabase));
+	$: console.log($profiles);
 </script>
 
 <SupabaseProductsBar {supabase} />
@@ -136,7 +137,6 @@
 			{/if}
 		</div>
 		{#if $profiles}
-			{console.log($profiles)}
 			{#each $profiles as profile}
 				<ProfileListItem {profile} />
 			{/each}

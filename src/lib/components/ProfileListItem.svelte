@@ -10,10 +10,11 @@
 	import { DotsThree, GithubLogo } from 'phosphor-svelte';
 	import { allAvailabilities } from '$lib/components/profile/data';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
-	import type { ProfilesResult } from '$lib/db/query';
+	import { onDestroy, onMount } from 'svelte';
+	import type { EndorsementsResult, ProfilesResult } from '$lib/db/query';
 
 	import { Box, Cloud, Database, Lock, MousePointerClick, Triangle } from 'lucide-svelte';
+	import type { Tables } from '$lib/types/DatabaseDefinitions';
 
 	const supabaseProducts = [
 		{
@@ -45,6 +46,8 @@
 	export let profile: ProfilesResult;
 	$: ({ endorse, supabase, user } = $page.data);
 
+	let endorsements = profile.endorsements;
+
 	onMount(() => {
 		let realtime = supabase
 			.channel('endorsements')
@@ -55,9 +58,43 @@
 					schema: 'public',
 					table: 'endorsements'
 				},
-				(payload) => console.log(payload)
+				async (payload) => {
+					const { endorsement_to, endorsed_by } = payload.new;
+					if (endorsement_to === profile.id) {
+						const { data, error } = await supabase
+							.from('profiles')
+							.select()
+							.eq('id', endorsed_by)
+							.returns<Tables<'profiles'>>();
+
+						if (!error) {
+							endorsements.push({ ...payload.new, profiles: data } as EndorsementsResult);
+							endorsements = endorsements;
+						}
+					}
+				}
+			)
+			.on(
+				'postgres_changes',
+				{
+					event: 'DELETE',
+					schema: 'public',
+					table: 'endorsements'
+				},
+				(payload) => {
+					const { id } = payload.old;
+					const idx = endorsements.findIndex((ele) => ele.id === id);
+
+					if (idx !== -1) {
+						endorsements.splice(idx, 1);
+						endorsements = endorsements;
+					}
+				}
 			)
 			.subscribe();
+
+		// clean up
+		return () => realtime.unsubscribe();
 	});
 </script>
 
@@ -188,11 +225,10 @@
 						<p>Endorsed by</p>
 						<span>🫡</span>
 					</span>
-
-					<!-- TODO lets make this realtime for the flex, you know what I mean? -->
-					{profile.endorsements.length}
+					{endorsements.length}
 					<span class="flex -space-x-2">
-						{#each profile.endorsements as endorsement}
+						<!-- FIXME idk why avatar isn't re-rendering, fix later -->
+						{#each endorsements as endorsement, _ (endorsement.id)}
 							<Avatar class="h-8 w-8 border-2 border-background">
 								<AvatarImage src={endorsement.profiles.pfp_url} />
 							</Avatar>
