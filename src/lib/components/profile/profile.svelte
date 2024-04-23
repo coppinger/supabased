@@ -10,9 +10,9 @@
 	import { allAvailabilities } from '$lib/components/profile/data';
 	import Project from '$lib/components/profile/project/project.svelte';
 	import { page } from '$app/stores';
-	import type { Profile } from './mock';
+	import type { Tables } from '$lib/types/DatabaseDefinitions';
 
-	export let profile: Profile;
+	export let profile: Tables<'profiles'> & { projects: Tables<'projects'>[] };
 
 	$: ({ endorse } = $page.data);
 </script>
@@ -21,13 +21,13 @@
 	<div class="w-full flex items-center justify-between">
 		<div class="flex gap-2">
 			<Avatar class="h-12 w-12">
-				<AvatarImage src={profile.profile_pic} alt={profile.firstName} />
+				<AvatarImage src={profile.pfp_url} alt={profile.display_name} />
 				<AvatarFallback>CN</AvatarFallback>
 			</Avatar>
 			<div>
-				<h5>{profile.firstName} {profile.lastName}</h5>
+				<h5>{profile.display_name}</h5>
 				<p class="text-foreground text-opacity-40">
-					{capitalize(profile.devType.replaceAll('_', ' '))} Developer
+					<!-- {capitalize(profile.)} Developer -->
 				</p>
 			</div>
 		</div>
@@ -38,8 +38,8 @@
 						<Twitter class="h-5 w-5" />
 					</Button>
 				</a>
-				{#if Boolean(profile.github)}
-					<a href={profile.github} target="_blank">
+				{#if Boolean(profile.github_username)}
+					<a href={profile.github_username} target="_blank">
 						<Button variant="ghost" size="icon" class="p-1 h-auto w-auto rounded-md">
 							<GithubLogo class="h-5 w-5" />
 						</Button>
@@ -59,10 +59,10 @@
 			<p class="text-foreground text-opacity-40 text-sm">UTC-08:00 - Australia</p>
 		</div>
 	</div>
-	<div class="text-lg">{profile.description}</div>
+	<div class="text-lg">{profile.bio}</div>
 	<div class="flex items-center gap-4 flex-wrap">
 		{#each allAvailabilities as availability}
-			{#if profile.availabilities.includes(availability)}
+			{#if profile.availibility?.includes(availability)}
 				<div class="flex gap-2 items-center">
 					{availability}
 					<CheckIcon class="text-primary" />
@@ -83,7 +83,7 @@
 		<Button variant="ghost" class="gap-2">
 			<span class="flex gap-1">
 				<span class="text-opacity-40">
-					{profile.endorsement_num}
+					<!-- {profile.endorsement_num} -->
 				</span>
 				<span>🫡</span>
 			</span>
@@ -103,8 +103,11 @@
 			</span>
 		</Button>
 	</div>
-	{#each profile.projects as project}
-		<Project {project} />
-	{/each}
+	<!-- TODO needs projects data -->
+	{#if profile.projects}
+		{#each profile.projects as project}
+			<Project {project} />
+		{/each}
+	{/if}
 	<div class="text-">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
 </div>

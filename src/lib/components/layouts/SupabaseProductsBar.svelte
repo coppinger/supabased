@@ -1,18 +1,8 @@
 <script lang="ts">
+	import { supabaseProductIcons } from './supabaseProductIcons';
 	export let supabase;
 
-	import { Box, Cloud, Database, Lock, MousePointerClick, Triangle } from 'lucide-svelte';
-
 	const supabaseProducts = supabase.from('supabase_products').select().order('sort');
-
-	const supabaseProductIcons = {
-		Database: Database,
-		Auth: Lock,
-		Storage: Cloud,
-		Edge: Triangle,
-		Realtime: MousePointerClick,
-		Vector: Box
-	};
 </script>
 
 <div class="border-b border-neutral-800">
