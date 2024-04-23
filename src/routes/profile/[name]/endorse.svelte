@@ -63,7 +63,7 @@ Usage:
 	</form>
 {:else}
 	<Dialog.Root>
-		<Dialog.Trigger>
+		<Dialog.Trigger class="w-full">
 			<slot />
 		</Dialog.Trigger>
 		<Dialog.Content>
