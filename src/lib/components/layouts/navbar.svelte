@@ -29,7 +29,7 @@
 			</DropdownMenu.Root>
 		{:else}
 			<div class="flex gap-6 items-center">
-				<Button href="/auth/signin" variant="outline">Sign In</Button>
+				<Button href="/login" variant="outline">Sign In</Button>
 				<button class="h-8 w-8 flex items-center justify-center"
 					><span class="material-symbols-outlined text-[20px]">lunch_dining</span></button
 				>

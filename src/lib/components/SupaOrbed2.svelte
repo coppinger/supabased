@@ -4,161 +4,258 @@ Command: npx @threlte/gltf@2.0.3 C:\Users\harry\Desktop\gltf\supaorbed2.glb --tr
 -->
 
 <script lang="ts">
-  import type * as THREE from 'three'
-  import { Group } from 'three'
-  import { T, type Props, type Events, type Slots, forwardEventHandlers } from '@threlte/core'
-  import { useGltf, useGltfAnimations, interactivity, FakeGlowMaterial } from '@threlte/extras'
-  interactivity()
-  
+	import type * as THREE from 'three';
+	import { Group } from 'three';
+	import { T, type Props, type Events, type Slots, forwardEventHandlers } from '@threlte/core';
+	import { useGltf, useGltfAnimations, interactivity, FakeGlowMaterial } from '@threlte/extras';
+	interactivity();
 
-  type $$Props = Props<THREE.Group>
-  type $$Events = Events<THREE.Group>
-  type $$Slots = Slots<THREE.Group> & { fallback: {}; error: { error: any } }
+	type $$Props = Props<THREE.Group>;
+	type $$Events = Events<THREE.Group>;
+	type $$Slots = Slots<THREE.Group> & { fallback: {}; error: { error: any } };
 
-  export const ref = new Group()
+	export const ref = new Group();
 
-  type ActionName = 'Animation'
-  type GLTFResult = {
-    nodes: {
-      Object_6: THREE.Mesh
-      Object_8: THREE.Mesh
-      Object_10: THREE.Mesh
-      Object_12: THREE.Mesh
-      Object_14: THREE.Mesh
-      Object_16: THREE.Mesh
-      Object_18: THREE.Mesh
-      Object_20: THREE.Mesh
-      Object_22: THREE.Mesh
-      Object_24: THREE.Mesh
-      Object_26: THREE.Mesh
-      Object_28: THREE.Mesh
-      Object_30: THREE.Mesh
-      Object_32: THREE.Mesh
-      Object_34: THREE.Mesh
-      Object_36: THREE.Mesh
-      Object_38: THREE.Mesh
-      Object_40: THREE.Mesh
-      Object_42: THREE.Mesh
-      Object_44: THREE.Mesh
-      Object_46: THREE.Mesh
-      Object_48: THREE.Mesh
-      Object_4: THREE.Mesh
-      Object_51: THREE.Mesh
-      Object_53: THREE.Mesh
-      Object_55: THREE.Mesh
-    }
-    materials: {
-      light: THREE.MeshStandardMaterial
-    }
-  }
-  
+	type ActionName = 'Animation';
+	type GLTFResult = {
+		nodes: {
+			Object_6: THREE.Mesh;
+			Object_8: THREE.Mesh;
+			Object_10: THREE.Mesh;
+			Object_12: THREE.Mesh;
+			Object_14: THREE.Mesh;
+			Object_16: THREE.Mesh;
+			Object_18: THREE.Mesh;
+			Object_20: THREE.Mesh;
+			Object_22: THREE.Mesh;
+			Object_24: THREE.Mesh;
+			Object_26: THREE.Mesh;
+			Object_28: THREE.Mesh;
+			Object_30: THREE.Mesh;
+			Object_32: THREE.Mesh;
+			Object_34: THREE.Mesh;
+			Object_36: THREE.Mesh;
+			Object_38: THREE.Mesh;
+			Object_40: THREE.Mesh;
+			Object_42: THREE.Mesh;
+			Object_44: THREE.Mesh;
+			Object_46: THREE.Mesh;
+			Object_48: THREE.Mesh;
+			Object_4: THREE.Mesh;
+			Object_51: THREE.Mesh;
+			Object_53: THREE.Mesh;
+			Object_55: THREE.Mesh;
+		};
+		materials: {
+			light: THREE.MeshStandardMaterial;
+		};
+	};
 
-  const gltf = useGltf<GLTFResult>('/supaorbed2-transformed.glb', { useDraco: true })
-  export const { actions, mixer } = useGltfAnimations<ActionName>(gltf, ref)
+	const gltf = useGltf<GLTFResult>('/supaorbed2-transformed.glb', { useDraco: true });
+	export const { actions, mixer } = useGltfAnimations<ActionName>(gltf, ref);
 
-  const component = forwardEventHandlers()
-
-
-
+	const component = forwardEventHandlers();
 </script>
 
+<T is={ref} dispose={false} {...$$restProps} bind:this={$component}>
+	{#await gltf}
+		<slot name="fallback" />
+	{:then gltf}
+		<T.Group name="Scene" position={[0, 0, 0]}>
+			<T.Group name="Sketchfab_model" rotation={[-Math.PI / 2, 0, 0]}>
+				<T.Group name="root">
+					<T.Group name="GLTF_SceneRootNode" rotation={[Math.PI / 2, 0, 0]}>
+						<T.Group name="Cone001_1" rotation={[-Math.PI, 0, 0]} scale={1.06}>
+							<T.Mesh
+								name="Object_6"
+								geometry={gltf.nodes.Object_6.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone002_2" rotation={[Math.PI / 2, 0, 0]}>
+							<T.Mesh
+								name="Object_8"
+								geometry={gltf.nodes.Object_8.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone003_3" rotation={[-Math.PI / 2, 0, 0]} scale={0.94}>
+							<T.Mesh
+								name="Object_10"
+								geometry={gltf.nodes.Object_10.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone004_4" rotation={[Math.PI / 4, 0, 0]} scale={0.84}>
+							<T.Mesh
+								name="Object_12"
+								geometry={gltf.nodes.Object_12.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone006_5" rotation={[2.36, 0, 0]} scale={0.94}>
+							<T.Mesh
+								name="Object_14"
+								geometry={gltf.nodes.Object_14.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone007_6" rotation={[-Math.PI / 4, 0, 0]} scale={1.06}>
+							<T.Mesh
+								name="Object_16"
+								geometry={gltf.nodes.Object_16.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone008_7" rotation={[0, 0, -Math.PI / 2]}>
+							<T.Mesh
+								name="Object_18"
+								geometry={gltf.nodes.Object_18.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone009_8" rotation={[-Math.PI, 0, Math.PI / 2]} scale={0.94}>
+							<T.Mesh
+								name="Object_20"
+								geometry={gltf.nodes.Object_20.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone010_9" rotation={[0, -Math.PI / 4, -Math.PI / 2]} scale={0.84}>
+							<T.Mesh
+								name="Object_22"
+								geometry={gltf.nodes.Object_22.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone011_10" rotation={[-Math.PI, Math.PI / 4, Math.PI / 2]} scale={0.84}>
+							<T.Mesh
+								name="Object_24"
+								geometry={gltf.nodes.Object_24.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone013_11" rotation={[0, Math.PI / 4, -Math.PI / 2]} scale={0.94}>
+							<T.Mesh
+								name="Object_26"
+								geometry={gltf.nodes.Object_26.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone014_12" rotation={[0, 0, -2.36]} scale={1.18}>
+							<T.Mesh
+								name="Object_28"
+								geometry={gltf.nodes.Object_28.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone015_13" rotation={[-Math.PI, 0, 2.36]} scale={1.18}>
+							<T.Mesh
+								name="Object_30"
+								geometry={gltf.nodes.Object_30.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone016_14" rotation={[-0.62, -Math.PI / 6, -2.53]} scale={1.06}>
+							<T.Mesh
+								name="Object_32"
+								geometry={gltf.nodes.Object_32.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone017_15" rotation={[2.53, Math.PI / 6, 2.53]} scale={0.84}>
+							<T.Mesh
+								name="Object_34"
+								geometry={gltf.nodes.Object_34.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone018_16" rotation={[-2.53, -Math.PI / 6, 2.53]} scale={0.94}>
+							<T.Mesh
+								name="Object_36"
+								geometry={gltf.nodes.Object_36.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone019_17" rotation={[0.62, Math.PI / 6, -2.53]} scale={0.84}>
+							<T.Mesh
+								name="Object_38"
+								geometry={gltf.nodes.Object_38.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone021_18" rotation={[-Math.PI, 0, -2.36]}>
+							<T.Mesh
+								name="Object_40"
+								geometry={gltf.nodes.Object_40.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone022_19" rotation={[-0.62, Math.PI / 6, 2.53]} scale={0.84}>
+							<T.Mesh
+								name="Object_42"
+								geometry={gltf.nodes.Object_42.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone023_20" rotation={[2.53, -Math.PI / 6, -2.53]} scale={0.84}>
+							<T.Mesh
+								name="Object_44"
+								geometry={gltf.nodes.Object_44.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone024_21" rotation={[-2.53, Math.PI / 6, -2.53]} scale={0.84}>
+							<T.Mesh
+								name="Object_46"
+								geometry={gltf.nodes.Object_46.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone025_22" rotation={[0.62, -Math.PI / 6, 2.53]} scale={1.18}>
+							<T.Mesh
+								name="Object_48"
+								geometry={gltf.nodes.Object_48.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Cone_0">
+							<T.Mesh
+								name="Object_4"
+								geometry={gltf.nodes.Object_4.geometry}
+								material={gltf.materials.light}
+							/>
+						</T.Group>
+						<T.Group name="Light_26">
+							<T.Group name="Cone005_23" rotation={[-2.36, 0, 0]}>
+								<T.Mesh
+									name="Object_51"
+									geometry={gltf.nodes.Object_51.geometry}
+									material={gltf.materials.light}
+								/>
+							</T.Group>
+							<T.Group name="Cone012_24" rotation={[-Math.PI, -Math.PI / 4, Math.PI / 2]}>
+								<T.Mesh
+									name="Object_53"
+									geometry={gltf.nodes.Object_53.geometry}
+									material={gltf.materials.light}
+								/>
+							</T.Group>
+							<T.Group name="Cone020_25" rotation={[0, 0, 2.36]}>
+								<T.Mesh
+									name="Object_55"
+									geometry={gltf.nodes.Object_55.geometry}
+									material={gltf.materials.light}
+								/>
+							</T.Group>
+						</T.Group>
+					</T.Group>
+				</T.Group>
+			</T.Group>
+		</T.Group>
+	{:catch error}
+		<slot name="error" {error} />
+	{/await}
 
-<T is={ref}  dispose={false} {...$$restProps} bind:this={$component}>
-  {#await gltf}
-    <slot name="fallback" />
-  {:then gltf}
-    <T.Group name="Scene" position={[0,0,0]}>
-      <T.Group name="Sketchfab_model" rotation={[-Math.PI / 2, 0, 0]}>
-        <T.Group name="root">
-          <T.Group name="GLTF_SceneRootNode" rotation={[Math.PI / 2, 0, 0]}>
-            <T.Group name="Cone001_1" rotation={[-Math.PI, 0, 0]} scale={1.06}>
-              <T.Mesh name="Object_6" geometry={gltf.nodes.Object_6.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone002_2" rotation={[Math.PI / 2, 0, 0]}>
-              
-              <T.Mesh name="Object_8" geometry={gltf.nodes.Object_8.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone003_3" rotation={[-Math.PI / 2, 0, 0]} scale={0.94}>
-              <T.Mesh name="Object_10" geometry={gltf.nodes.Object_10.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone004_4" rotation={[Math.PI / 4, 0, 0]} scale={0.84}>
-              <T.Mesh name="Object_12" geometry={gltf.nodes.Object_12.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone006_5" rotation={[2.36, 0, 0]} scale={0.94}>
-              <T.Mesh name="Object_14" geometry={gltf.nodes.Object_14.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone007_6" rotation={[-Math.PI / 4, 0, 0]} scale={1.06}>
-              <T.Mesh name="Object_16" geometry={gltf.nodes.Object_16.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone008_7" rotation={[0, 0, -Math.PI / 2]}>
-              <T.Mesh name="Object_18" geometry={gltf.nodes.Object_18.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone009_8" rotation={[-Math.PI, 0, Math.PI / 2]} scale={0.94}>
-              <T.Mesh name="Object_20" geometry={gltf.nodes.Object_20.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone010_9" rotation={[0, -Math.PI / 4, -Math.PI / 2]} scale={0.84}>
-              <T.Mesh name="Object_22" geometry={gltf.nodes.Object_22.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone011_10" rotation={[-Math.PI, Math.PI / 4, Math.PI / 2]} scale={0.84}>
-              <T.Mesh name="Object_24" geometry={gltf.nodes.Object_24.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone013_11" rotation={[0, Math.PI / 4, -Math.PI / 2]} scale={0.94}>
-              <T.Mesh name="Object_26" geometry={gltf.nodes.Object_26.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone014_12" rotation={[0, 0, -2.36]} scale={1.18}>
-              <T.Mesh name="Object_28" geometry={gltf.nodes.Object_28.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone015_13" rotation={[-Math.PI, 0, 2.36]} scale={1.18}>
-              <T.Mesh name="Object_30" geometry={gltf.nodes.Object_30.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone016_14" rotation={[-0.62, -Math.PI / 6, -2.53]} scale={1.06}>
-              <T.Mesh name="Object_32" geometry={gltf.nodes.Object_32.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone017_15" rotation={[2.53, Math.PI / 6, 2.53]} scale={0.84}>
-              <T.Mesh name="Object_34" geometry={gltf.nodes.Object_34.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone018_16" rotation={[-2.53, -Math.PI / 6, 2.53]} scale={0.94}>
-              <T.Mesh name="Object_36" geometry={gltf.nodes.Object_36.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone019_17" rotation={[0.62, Math.PI / 6, -2.53]} scale={0.84}>
-              <T.Mesh name="Object_38" geometry={gltf.nodes.Object_38.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone021_18" rotation={[-Math.PI, 0, -2.36]}>
-              <T.Mesh name="Object_40" geometry={gltf.nodes.Object_40.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone022_19" rotation={[-0.62, Math.PI / 6, 2.53]} scale={0.84}>
-              <T.Mesh name="Object_42" geometry={gltf.nodes.Object_42.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone023_20" rotation={[2.53, -Math.PI / 6, -2.53]} scale={0.84}>
-              <T.Mesh name="Object_44" geometry={gltf.nodes.Object_44.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone024_21" rotation={[-2.53, Math.PI / 6, -2.53]} scale={0.84}>
-              <T.Mesh name="Object_46" geometry={gltf.nodes.Object_46.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone025_22" rotation={[0.62, -Math.PI / 6, 2.53]} scale={1.18}>
-              <T.Mesh name="Object_48" geometry={gltf.nodes.Object_48.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Cone_0">
-              <T.Mesh name="Object_4" geometry={gltf.nodes.Object_4.geometry} material={gltf.materials.light} />
-            </T.Group>
-            <T.Group name="Light_26">
-              <T.Group name="Cone005_23" rotation={[-2.36, 0, 0]}>
-                <T.Mesh name="Object_51" geometry={gltf.nodes.Object_51.geometry} material={gltf.materials.light} />
-              </T.Group>
-              <T.Group name="Cone012_24" rotation={[-Math.PI, -Math.PI / 4, Math.PI / 2]}>
-                <T.Mesh name="Object_53" geometry={gltf.nodes.Object_53.geometry} material={gltf.materials.light} />
-              </T.Group>
-              <T.Group name="Cone020_25" rotation={[0, 0, 2.36]}>
-                <T.Mesh name="Object_55" geometry={gltf.nodes.Object_55.geometry} material={gltf.materials.light} />
-              </T.Group>
-            </T.Group>
-          </T.Group>
-        </T.Group>
-      </T.Group>
-    </T.Group>
-  {:catch error}
-    <slot name="error" {error} />
-  {/await}
-
-  <slot {ref} />
+	<slot {ref} />
 </T>
