@@ -36,3 +36,10 @@ UPDATE USING (
             auth.uid ()
     ) = endorsed_by
 );
+
+CREATE POLICY "Profiles can delete their own endorsements" ON endorsements FOR DELETE USING (
+    (
+        SELECT
+            auth.uid ()
+    ) = endorsed_by
+);

@@ -1,20 +1,23 @@
+<script context="module" lang="ts">
+	let realtime: ReturnType<SupabaseClient['channel']> | undefined;
+	let components = writable(new Map<ReturnType<typeof crypto.randomUUID>, ProfilesResult>());
+</script>
+
 <script lang="ts">
 	import { Avatar, AvatarFallback } from '$lib/components/ui/avatar';
 	import AvatarImage from '$lib/components/ui/avatar/avatar-image.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
-
-	import { capitalize } from 'lodash-es';
-
 	import { Separator } from '$lib/components/ui/separator';
 	import Endorse from '$routes/profile/[name]/endorse.svelte';
-	import { DotsThree, GithubLogo } from 'phosphor-svelte';
+	import { DotsThree } from 'phosphor-svelte';
 	import { allAvailabilities } from '$lib/components/profile/data';
 	import { page } from '$app/stores';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import type { EndorsementsResult, ProfilesResult } from '$lib/db/query';
-
 	import { Box, Cloud, Database, Lock, MousePointerClick, Triangle } from 'lucide-svelte';
 	import type { Tables } from '$lib/types/DatabaseDefinitions';
+	import type { SupabaseClient } from '@supabase/supabase-js';
+	import { writable } from 'svelte/store';
 
 	const supabaseProducts = [
 		{
@@ -46,55 +49,73 @@
 	export let profile: ProfilesResult;
 	$: ({ endorse, supabase, user } = $page.data);
 
-	let endorsements = profile.endorsements;
+	const id = crypto.randomUUID();
 
 	onMount(() => {
-		let realtime = supabase
-			.channel('endorsements')
-			.on(
-				'postgres_changes',
-				{
-					event: 'INSERT',
-					schema: 'public',
-					table: 'endorsements'
-				},
-				async (payload) => {
-					const { endorsement_to, endorsed_by } = payload.new;
-					if (endorsement_to === profile.id) {
-						const { data, error } = await supabase
-							.from('profiles')
-							.select()
-							.eq('id', endorsed_by)
-							.returns<Tables<'profiles'>>();
+		$components.set(id, profile);
+		$components = $components;
 
-						if (!error) {
-							endorsements.push({ ...payload.new, profiles: data } as EndorsementsResult);
-							endorsements = endorsements;
+		if (!realtime)
+			realtime = supabase
+				.channel('endorsements')
+				.on(
+					'postgres_changes',
+					{
+						event: 'INSERT',
+						schema: 'public',
+						table: 'endorsements'
+					},
+					async (payload) => {
+						const { endorsement_to, endorsed_by } = payload.new;
+						for (const [_, profile] of $components) {
+							if (endorsement_to === profile.id) {
+								const { data, error } = await supabase
+									.from('profiles')
+									.select()
+									.eq('id', endorsed_by)
+									.returns<Tables<'profiles'>>();
+
+								if (!error) {
+									profile.endorsements.push({
+										...payload.new,
+										profiles: data
+									} as EndorsementsResult);
+									$components = $components;
+								}
+							}
 						}
 					}
-				}
-			)
-			.on(
-				'postgres_changes',
-				{
-					event: 'DELETE',
-					schema: 'public',
-					table: 'endorsements'
-				},
-				(payload) => {
-					const { id } = payload.old;
-					const idx = endorsements.findIndex((ele) => ele.id === id);
+				)
+				.on(
+					'postgres_changes',
+					{
+						event: 'DELETE',
+						schema: 'public',
+						table: 'endorsements'
+					},
+					(payload) => {
+						const { id } = payload.old;
+						for (const [_, profile] of $components) {
+							const idx = profile.endorsements.findIndex((ele) => ele.id === id);
 
-					if (idx !== -1) {
-						endorsements.splice(idx, 1);
-						endorsements = endorsements;
+							if (idx !== -1) {
+								profile.endorsements.splice(idx, 1);
+								$components = $components;
+							}
+						}
 					}
-				}
-			)
-			.subscribe();
+				)
+				.subscribe();
 
 		// clean up
-		return () => realtime.unsubscribe();
+		return () => {
+			$components.delete(id);
+			$components = $components;
+			if ($components.size === 0) {
+				realtime?.unsubscribe();
+				realtime = undefined;
+			}
+		};
 	});
 </script>
 
@@ -220,31 +241,36 @@
 				<Endorse form={endorse} {profile} endorser={user}>
 					<Button variant="outline" class="w-full">Endorse 🫡</Button>
 				</Endorse>
-				<Button variant="ghost" class="gap-2">
-					<span class="flex gap-1">
-						<p>Endorsed by</p>
-						<span>🫡</span>
-						{endorsements.length}
-					</span>
-					<span class="flex -space-x-2">
-						<!-- FIXME idk why avatar isn't re-rendering, fix later -->
-						{#each endorsements as endorsement, _ (endorsement.id)}
-							<Avatar class="h-8 w-8 border-2 border-background">
-								<AvatarImage src={endorsement.profiles.pfp_url} />
-							</Avatar>
-						{/each}
-					</span>
-					<span>
-						<DotsThree class="w-5 h-5 opacity-30" />
-					</span>
-				</Button>
-				<!-- TODO: Add the project count of this profile to this button -->
-				{#if profile.projects.length > 0}
-					<Button
-						variant="outline"
-						class="w-full md:w-fit md:place-self-end text-emerald-400 border-emer"
-						>View {profile.projects.length} project{profile.projects.length > 1 ? 's' : ''} -></Button
-					>
+				{#if $components}
+					{@const profile = $components.get(id)}
+					{#if profile}
+						<Button variant="ghost" class="gap-2">
+							<span class="flex gap-1">
+								<p>Endorsed by</p>
+								<span>🫡</span>
+								{$components.get(id)?.endorsements.length}
+							</span>
+							<span class="flex -space-x-2">
+								<!-- FIXME idk why avatar isn't re-rendering, fix later -->
+								{#each profile.endorsements as endorsement, _ (endorsement.id)}
+									<Avatar class="h-8 w-8 border-2 border-background">
+										<AvatarImage src={endorsement.profiles.pfp_url} />
+									</Avatar>
+								{/each}
+							</span>
+							<span>
+								<DotsThree class="w-5 h-5 opacity-30" />
+							</span>
+						</Button>
+						<!-- TODO: Add the project count of this profile to this button -->
+						{#if profile.projects.length > 0}
+							<Button
+								variant="outline"
+								class="w-full md:w-fit md:place-self-end text-emerald-400 border-emer"
+								>View {profile.projects.length} project{profile.projects.length > 1 ? 's' : ''} -></Button
+							>
+						{/if}
+					{/if}
 				{/if}
 			</div>
 		</div>

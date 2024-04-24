@@ -5,6 +5,7 @@
 	import Logo from '$lib/components/Logo.svelte';
 
 	$: ({ session, supabase } = $page.data);
+
 	async function signOut() {
 		const { error } = await supabase.auth.signOut();
 	}

@@ -25,8 +25,10 @@
 			if (form.valid) {
 				const { message } = form;
 				if (!message) return;
-
-				toast.success('Endorsed!', { description: `${message.text}` });
+				const { status } = message;
+				if (status === 'success')
+					toast.success('Endorsement Action', { description: `${message.text}` });
+				if (status === 'error') toast.error('Oops!', { description: message.text });
 			} else {
 				toast.error('Error');
 			}
@@ -35,7 +37,6 @@
 			toast.error('error');
 		}
 	});
-	$: console.log(endorser);
 
 	const { form: formData, enhance } = form;
 </script>
