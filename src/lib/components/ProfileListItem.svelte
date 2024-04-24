@@ -224,6 +224,7 @@
 					<span class="flex gap-1">
 						<p>Endorsed by</p>
 						<span>🫡</span>
+						{endorsements.length}
 					</span>
 					<span class="flex -space-x-2">
 						<!-- FIXME idk why avatar isn't re-rendering, fix later -->
