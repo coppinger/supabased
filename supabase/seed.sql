@@ -161,9 +161,9 @@ INSERT INTO stacks("name", "url", "slug")
 ('Shoutout', 'https://shoutout.io/', 'shoutout');
 
 -- Seed data for profiles
-INSERT INTO "profiles"("id", "display_name", "skills", "bio", "twitter_username", "github_username", "website_url", "linkedin_url", "location", "timezone", "availibility", "pfp_url")
-    VALUES ('c1e426ee-3b77-4a20-bff3-9079d0c362f2', 'John Doe', 'JavaScript, React, Node.js', 'Passionate developer with expertise in building web applications.', 'johndoe', 'johndoe', 'https://johndoe.com', 'https://linkedin.com/in/johndoe', 'New York', 'UTC-05:00', 'Full Time', 'https://avatars.githubusercontent.com/u/420'),
-('a2e716ed-7d3d-4f1b-b6d7-7a9d8c2f5031', 'Jane Smith', 'Python, Django, Flask', 'Experienced backend developer specializing in Python web frameworks.', 'janesmith', 'janesmith', 'https://janesmith.com', 'https://linkedin.com/in/janesmith', 'San Francisco', 'UTC-08:00', 'Part Time', 'https://avatars.githubusercontent.com/u/69');
+INSERT INTO "profiles"("id", "display_name", "username", "skills", "bio", "twitter_username", "github_username", "website_url", "linkedin_url", "location", "timezone", "availibility", "pfp_url")
+    VALUES ('c1e426ee-3b77-4a20-bff3-9079d0c362f2', 'John Doe', 'johndoe', 'JavaScript, React, Node.js', 'Passionate developer with expertise in building web applications.', 'johndoe', 'johndoe', 'https://johndoe.com', 'https://linkedin.com/in/johndoe', 'New York', 'UTC-05:00', 'Full Time', 'https://avatars.githubusercontent.com/u/420'),
+('a2e716ed-7d3d-4f1b-b6d7-7a9d8c2f5031', 'Jane Smith', 'janesmith', 'Python, Django, Flask', 'Experienced backend developer specializing in Python web frameworks.', 'janesmith', 'janesmith', 'https://janesmith.com', 'https://linkedin.com/in/janesmith', 'San Francisco', 'UTC-08:00', 'Part Time', 'https://avatars.githubusercontent.com/u/69');
 
 -- Seed data for projects
 INSERT INTO "projects"("id", "profile_id", "project_name", "project_url", "repository_url", "description")
