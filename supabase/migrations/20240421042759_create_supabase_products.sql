@@ -1,9 +1,5 @@
 CREATE TABLE
-    "supabase_products" (
-        "id" uuid PRIMARY KEY DEFAULT gen_random_uuid (),
-        "name" text,
-        "sort" int
-    );
+    "supabase_products" ("id" SERIAL PRIMARY KEY, "name" TEXT, "sort" INT);
 
 -- Set up RLS
 ALTER TABLE supabase_products ENABLE ROW LEVEL SECURITY;
@@ -16,8 +12,9 @@ SELECT
 CREATE TABLE
     "supabase_products_projects" (
         "id" uuid PRIMARY KEY DEFAULT gen_random_uuid (),
-        "supabase_product_id" uuid REFERENCES supabase_products (id),
-        "project_id" uuid REFERENCES projects (id)
+        "project_id" uuid REFERENCES projects (id),
+        "supabase_product_id" INT REFERENCES supabase_products (id),
+        CONSTRAINT supabase_products_projects_unique UNIQUE (supabase_product_id, project_id)
     );
 
 CREATE INDEX ix_supabase_products_projects_product_id ON supabase_products_projects (supabase_product_id);
@@ -26,6 +23,8 @@ CREATE INDEX ix_supabase_products_projects_project_id ON supabase_products_proje
 
 -- Set up RLS
 ALTER TABLE supabase_products_projects ENABLE ROW LEVEL SECURITY;
+
+ALTER PUBLICATION supabase_realtime ADD TABLE supabase_products_projects;
 
 CREATE POLICY "Supabase products projects are viewable by everyone." ON supabase_products_projects FOR
 SELECT
@@ -49,6 +48,20 @@ WITH
 
 CREATE POLICY "Profiles can update their own supabase_products_projects" ON supabase_products_projects FOR
 UPDATE USING (
+    (
+        SELECT
+            auth.uid ()
+    ) = (
+        SELECT
+            profile_id
+        FROM
+            projects
+        WHERE
+            id = project_id
+    )
+);
+
+CREATE POLICY "Profiles can delete their own supabase_products_projects" ON supabase_products_projects FOR DELETE USING (
     (
         SELECT
             auth.uid ()

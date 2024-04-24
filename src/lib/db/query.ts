@@ -1,27 +1,37 @@
-import type { Tables } from '$lib/types/DatabaseDefinitions';
+import type { Tables } from '$lib/types/DatabaseDefinitions'
 
 export const PROFILE_QUERY = `*, 
-profile_availability_types!profile_availability_types_profile_id_fkey(*, availability_types(id, name)), 
-profiles_roles(*, roles(id, name)), 
-projects!projects_profile_id_fkey(*, projects_stacks!projects_stacks_project_id_fkey(*, stacks!projects_stacks_stack_id_fkey(*))), 
-endorsements!endorsements_endorsement_to_fkey(*, profiles!endorsements_endorsed_by_fkey(*))` as const;
+availabilities:profile_availability_types!inner(availability:availability_types!inner(name)), 
+roles:profiles_roles(role:roles!inner(name)), 
+projects!inner(*,stacks:projects_stacks!inner(stack:stacks!inner(name)), products:supabase_products_projects!inner(product:supabase_products!inner(name))), 
+endorsements!endorsements_endorsement_to_fkey(*, profiles!endorsements_endorsed_by_fkey(*))` as const
 
 export interface ProfilesResult extends Tables<'profiles'> {
-	profiles_roles: Tables<'profiles_roles'>[];
-	projects: ProjectsResult[];
-	profile_availability_types: Tables<'profile_availability_types'>[];
-	endorsements: EndorsementsResult[];
+    roles: RolesResult[]
+    projects: ProjectsResult[]
+    availabilities: AvailabilitiesResult[]
+    endorsements: EndorsementsResult[]
+}
+
+export interface RolesResult {
+    role: Pick<Tables<'roles'>, 'name'>
+}
+export interface AvailabilitiesResult {
+    availability: Pick<Tables<'availability_types'>, 'name'>
 }
 
 export interface ProjectsResult extends Tables<'projects'> {
-	projects_stacks: ProjectsStacksResult[];
-}
-export interface ProjectsStacksResult extends Tables<'projects_stacks'> {
-	stacks: StacksResult[];
+    stacks: ProjectsStacksResult[]
+    products: { product: Pick<Tables<'supabase_products'>, 'name'> }[]
 }
 
-export interface StacksResult extends Tables<'stacks'> {}
+
+export interface ProjectsStacksResult extends Tables<'projects_stacks'> {
+    stacks: StacksResult[]
+}
+
+export interface StacksResult extends Pick<Tables<'stacks'>, 'name'> { }
 
 export interface EndorsementsResult extends Tables<'endorsements'> {
-	profiles: Tables<'profiles'>;
+    profiles: Tables<'profiles'>
 }

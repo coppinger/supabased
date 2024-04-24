@@ -18,6 +18,7 @@
 	import type { Tables } from '$lib/types/DatabaseDefinitions';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import { writable } from 'svelte/store';
+	import { cn } from '$lib/utils';
 
 	const supabaseProducts = [
 		{
@@ -121,10 +122,15 @@
 
 <div class="flex flex-col gap-6 rounded-md border border-neutral-800 p-6 w-full">
 	<div class="flex flex-col gap-6">
-		<!-- TODO: Light up the apporpriate icons based on an aggregate of the users projects products -->
 		<div class="flex gap-6 items-center justify-between w-full md:hidden">
-			{#each supabaseProducts as { Icon }}
-				<div class="flex gap-4 items-center text-emerald-400 font-bold">
+			{#each supabaseProducts as { Icon, label }}
+				<div
+					class={cn('flex gap-4 items-center text-neutral-400 font-bold', {
+						'text-emerald-400': $components
+							.get(id)
+							?.projects.some((ele) => ele.products.some((ele) => ele.product.name === label))
+					})}
+				>
 					<Icon class="h-5 w-5" />
 				</div>
 			{/each}
@@ -145,8 +151,14 @@
 			</div>
 			<div class="flex flex-col items-end justify-center gap-4">
 				<div class="hidden md:flex gap-6 w-full">
-					{#each supabaseProducts as { Icon }}
-						<div class="flex gap-6 items-center text-emerald-400 font-bold">
+					{#each supabaseProducts as { Icon, label }}
+						<div
+							class={cn('flex gap-6 items-center text-neutral-400 font-bold', {
+								'text-emerald-400': $components
+									.get(id)
+									?.projects.some((ele) => ele.products.some((ele) => ele.product.name === label))
+							})}
+						>
 							<Icon class="h-4 w-4" />
 						</div>
 					{/each}
@@ -193,15 +205,14 @@
 	>
 		{#each allAvailabilities as availability}
 			<li class="flex gap-2 items-center text-neutral-200 text-sm">
-				<!-- {#if profile.availabilities.includes(availability)}
-					{availability}
+				{availability}
+				{#if $components
+					.get(id)
+					?.availabilities.find((ele) => ele.availability.name === availability)}
 					<span class="material-symbols-outlined text-[16px] text-emerald-400">check</span>
 				{:else}
-					{availability}
 					<span class="material-symbols-outlined text-[16px] text-neutral-600">close</span>
-				{/if} -->
-				{availability}
-				<span class="material-symbols-outlined text-[16px] text-emerald-400">check</span>
+				{/if}
 			</li>
 		{/each}
 	</ul>
@@ -258,10 +269,10 @@
 	</ul>
 	<!-- End social icons -->
 	<div class="flex flex-col gap-6 md:flex-row md:justify-between">
-		<Button variant="outline" class="flex gap-2 items-center"
-			>Contact <span class="material-symbols-outlined text-[20px] gap-4 items-center">mail</span
-			></Button
-		>
+		<Button variant="outline" class="flex gap-2 items-center">
+			Contact
+			<span class="material-symbols-outlined text-[20px] gap-4 items-center"> mail </span>
+		</Button>
 		<div class="flex flex-col gap-6 items-center w-full md:flex-row">
 			<Endorse form={endorse} {profile} endorser={user}>
 				<Button variant="outline" class="w-full md:w-fit">Endorse 🫡</Button>
@@ -287,13 +298,13 @@
 							<DotsThree class="w-5 h-5 opacity-30" />
 						</span>
 					</Button>
-					<!-- TODO: Add the project count of this profile to this button -->
 					{#if profile.projects.length > 0}
 						<Button
 							variant="outline"
 							class="w-full md:w-fit md:place-self-end text-emerald-400 border-emer"
-							>View {profile.projects.length} project{profile.projects.length > 1 ? 's' : ''} -></Button
 						>
+							View {profile.projects.length} project{profile.projects.length > 1 ? 's' : ''} ->
+						</Button>
 					{:else}
 						<div class="w-full"></div>
 					{/if}

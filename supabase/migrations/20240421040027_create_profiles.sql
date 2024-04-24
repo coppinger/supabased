@@ -1,7 +1,7 @@
 CREATE TABLE "profiles"(
     "id" uuid PRIMARY KEY,
     "display_name" text,
-    "username" varchar(32),
+    "username" varchar(32) UNIQUE,
     "skills" text,
     "bio" text,
     "twitter_username" text,
@@ -10,7 +10,6 @@ CREATE TABLE "profiles"(
     "linkedin_url" text,
     "location" text,
     "timezone" text,
-    "availibility" text,
     "pfp_url" text,
     "created_at" timestamptz DEFAULT now(),
     "updated_at" timestamptz,
@@ -63,7 +62,9 @@ CREATE TRIGGER on_auth_user_created
 
 -- Set up Storage bucket for user avatars
 INSERT INTO storage.buckets(id, name, public)
-    VALUES ('profile_pictures', 'profile_pictures', TRUE);
+    VALUES ('profile_pictures', 'profile_pictures', TRUE)
+    ON CONFLICT DO NOTHING;
+
 -- Set the bucket to be publicly accessible
 CREATE POLICY "Profile pictures are publicly accessible." ON storage.buckets
     FOR SELECT

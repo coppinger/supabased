@@ -3,7 +3,9 @@ CREATE TABLE
         "id" uuid PRIMARY KEY DEFAULT gen_random_uuid (),
         "name" text,
         "url" text,
-        "slug" text
+        "slug" text,
+        -- CONSTRAINT can't be UNIQUE on just name since many tech might have the same name
+        CONSTRAINT unique_name_url UNIQUE (name, url)
     );
 
 -- Set up RLS for stacks
@@ -17,7 +19,8 @@ CREATE TABLE
     "projects_stacks" (
         "id" uuid PRIMARY KEY DEFAULT gen_random_uuid (),
         "project_id" uuid REFERENCES projects (id),
-        "stack_id" uuid REFERENCES stacks (id)
+        "stack_id" uuid REFERENCES stacks (id),
+        CONSTRAINT projects_stacks_unique UNIQUE (project_id, stack_id)
     );
 
 CREATE INDEX ix_projects_stacks_project_id ON projects_stacks (project_id);

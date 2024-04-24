@@ -9,7 +9,7 @@
 
 	import AvatarImage from '$lib/components/ui/avatar/avatar-image.svelte';
 
-	$: ({ session, supabase } = $page.data);
+	$: ({ session, supabase, user } = $page.data);
 
 	async function signOut() {
 		const { error } = await supabase.auth.signOut();

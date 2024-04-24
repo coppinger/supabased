@@ -19,8 +19,6 @@ export const createProfilesState = (init: PostgrestSingleResponse<ProfilesResult
 	const sort = writable('')
 	const search = writable('')
 	const profiles = derived([filter, sort, search], ([$filter, $sort, $search], set) => {
-		const availability = $filter.availibility.map(term => term.replaceAll(' ', '+')).join(' | ')
-		const stacks = $filter.stacks.map(term => term.replaceAll(' ', '+')).join(' | ')
 
 		let query = supabase
 			.from('profiles')
@@ -28,13 +26,15 @@ export const createProfilesState = (init: PostgrestSingleResponse<ProfilesResult
 			.neq('display_name', null)
 
 		if ($search.length) query = query.textSearch('display_name', `${$search.replaceAll(' ', '+')}:*`)
-		if (availability.length) query = query.textSearch('availibility', availability)
-		if ($filter.stacks.length) query = query.textSearch('projects.projects_stacks.stacks.name', stacks)
+		if ($filter.availibility.length) query = query.in('availabilities.availability.name', $filter.availibility)
+		if ($filter.stacks.length) query = query.in('projects.stacks.stack.name', $filter.stacks)
+		if ($filter.experiences.length) query = query.in('projects.products.product.name', $filter.experiences)
+
 
 		query.returns<ProfilesResult[]>()
 			.then(({ data, error }) => {
 				if (!error) set(data)
-				else console.log(error)
+				// else console.log(error)
 			})
 
 	}, initital.data)

@@ -4,7 +4,6 @@ CREATE TABLE
         "endorsement_to" uuid REFERENCES profiles (id),
         "endorsed_by" uuid REFERENCES profiles (id),
         "created_at" timestamptz DEFAULT now (),
-        "deleted_at" timestamptz,
         CONSTRAINT unique_endorsement UNIQUE (endorsement_to, endorsed_by)
     );
 
