@@ -11,6 +11,8 @@ CREATE TABLE
         "deleted_at" timestamptz
     );
 
+CREATE INDEX ix_projects_profiles_id ON projects (profile_id);
+
 -- Set up Row Level Security
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 

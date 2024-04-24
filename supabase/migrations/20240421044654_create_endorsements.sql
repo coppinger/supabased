@@ -8,6 +8,10 @@ CREATE TABLE
         CONSTRAINT unique_endorsement UNIQUE (endorsement_to, endorsed_by)
     );
 
+CREATE INDEX ix_endorsements_by_id ON endorsements (endorsed_by);
+
+CREATE INDEX ix_endorsements_to_id ON endorsements (endorsement_to);
+
 ALTER TABLE endorsements ENABLE ROW LEVEL SECURITY;
 
 ALTER publication supabase_realtime ADD TABLE endorsements;

@@ -20,6 +20,10 @@ CREATE TABLE
         "project_id" uuid REFERENCES projects (id)
     );
 
+CREATE INDEX ix_supabase_products_projects_product_id ON supabase_products_projects (supabase_product_id);
+
+CREATE INDEX ix_supabase_products_projects_project_id ON supabase_products_projects (project_id);
+
 -- Set up RLS
 ALTER TABLE supabase_products_projects ENABLE ROW LEVEL SECURITY;
 

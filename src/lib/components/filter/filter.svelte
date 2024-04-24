@@ -74,7 +74,7 @@
 								on:click={() => handleFilter(filter, 'stacks', name)}
 							>
 								{name}
-								<Checkbox checked={$filter['stacks'].includes(name)} />
+								<Checkbox checked={$filter['stacks'].includes(name)} tabindex={0} />
 							</Button>
 						{/if}
 					{/each}
@@ -117,7 +117,7 @@
 								on:click={() => handleFilter(filter, 'availibility', name)}
 							>
 								{name}
-								<Checkbox checked={$filter['availibility'].includes(name)} />
+								<Checkbox checked={$filter['availibility'].includes(name)} tabindex={0} />
 							</Button>
 						{/if}
 					{/each}

@@ -18,6 +18,10 @@ CREATE TABLE
         "availability_type_id" uuid REFERENCES availability_types (id)
     );
 
+CREATE INDEX ix_profiles_availability_types_profile_id ON profile_availability_types (profile_id);
+
+CREATE INDEX ix_profiles_availability_types_type_id ON profile_availability_types (availability_type_id);
+
 ALTER TABLE profile_availability_types ENABLE ROW LEVEL SECURITY;
 
 -- Set up RLS

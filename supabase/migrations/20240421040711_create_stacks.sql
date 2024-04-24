@@ -20,6 +20,10 @@ CREATE TABLE
         "stack_id" uuid REFERENCES stacks (id)
     );
 
+CREATE INDEX ix_projects_stacks_project_id ON projects_stacks (project_id);
+
+CREATE INDEX ix_projects_stacks_stack_id ON projects_stacks (stack_id);
+
 -- Set up RLS for projects_stacks
 ALTER TABLE projects_stacks ENABLE ROW LEVEL SECURITY;
 

@@ -20,6 +20,10 @@ CREATE TABLE
         "role_id" uuid REFERENCES roles (id)
     );
 
+CREATE INDEX ix_profiles_roles_profile_id ON profiles_roles (profile_id);
+
+CREATE INDEX ix_profiles_roles_role_id ON profiles_roles (role_id);
+
 -- Set up RLS
 ALTER TABLE profiles_roles ENABLE ROW LEVEL SECURITY;
 
