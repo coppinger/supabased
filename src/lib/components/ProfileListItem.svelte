@@ -239,11 +239,13 @@
 					</span>
 				</Button>
 				<!-- TODO: Add the project count of this profile to this button -->
-				<Button
-					variant="outline"
-					class="w-full md:w-fit md:place-self-end text-emerald-400 border-emer"
-					>View {profile.projects.length} projects -></Button
-				>
+				{#if profile.projects.length > 0}
+					<Button
+						variant="outline"
+						class="w-full md:w-fit md:place-self-end text-emerald-400 border-emer"
+						>View {profile.projects.length} project{profile.projects.length > 1 ? 's' : ''} -></Button
+					>
+				{/if}
 			</div>
 		</div>
 	</div>
