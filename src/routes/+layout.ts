@@ -6,10 +6,8 @@ import {
 	PUBLIC_SUPABASE_DEV_URL
 } from '$env/static/public'
 import type { Database, Tables } from '$lib/types/DatabaseDefinitions'
-import { error } from '@sveltejs/kit'
 import type { LayoutLoad } from './$types'
 import { createBrowserClient, isBrowser, parse } from '@supabase/ssr'
-import type { PostgrestMaybeSingleResponse } from '@supabase/supabase-js'
 
 const _URL = false ? PUBLIC_SUPABASE_DEV_URL : PUBLIC_SUPABASE_URL
 const _ANON = false ? PUBLIC_SUPABASE_DEV_ANON : PUBLIC_SUPABASE_ANON_KEY
@@ -42,18 +40,18 @@ export const load = (async ({ fetch, data, depends }) => {
 		data: { session }
 	} = await supabase.auth.getSession()
 
-	const profile = supabase
-		.from('profiles')
-		.select()
-		.eq('id', session?.user?.id ?? '')
-		.maybeSingle<Tables<'profiles'>>()
+	const user = session?.user ? {
+		...session.user,
+		profile: supabase
+			.from('profiles')
+			.select()
+			.eq('id', session?.user?.id)
+			.maybeSingle<Tables<'profiles'>>()
+	} : undefined
+
 	return {
 		supabase,
 		session,
-		user: {
-			...session?.user,
-			profile
-		} as NonNullable<typeof session>['user'] & { profile: typeof profile },
-		endorse: data.endorse,
+		user,
 	}
 }) satisfies LayoutLoad

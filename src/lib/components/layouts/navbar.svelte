@@ -7,20 +7,27 @@
 	import { Avatar, AvatarFallback } from '$lib/components/ui/avatar';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { Skeleton } from '$lib/components/ui/skeleton';
-
 	import AvatarImage from '$lib/components/ui/avatar/avatar-image.svelte';
+	import type { PageData } from '../../../routes/$types';
+	import { invalidateAll } from '$app/navigation';
 
-	$: ({ session, supabase, user } = $page.data);
+	$: ({ supabase, user } = $page.data as PageData);
+
+	$: console.log(user);
 
 	async function signOut() {
 		const { error } = await supabase.auth.signOut();
+		if (error) console.log(error);
+		await invalidateAll();
 	}
 
 	let profile: Tables<'profiles'> | undefined;
+
 	async function loadProfile() {
-		profile = await user.profile;
+		const result = await user?.profile;
+		profile = result && result.data ? result.data : undefined;
 	}
-	$: if (user.profile) loadProfile();
+	$: if (user?.profile) loadProfile();
 </script>
 
 <div class="border-b w-full">
@@ -29,7 +36,7 @@
 			<Logo />
 		</a>
 
-		{#if !session?.user}
+		{#if !user?.id}
 			<div class="flex gap-6 items-center">
 				<Button href="/login" variant="outline">Sign In</Button>
 				<Menu />
@@ -41,7 +48,7 @@
 						<Avatar class="">
 							{#if profile}
 								<AvatarImage
-									src={profile.pfp_url ?? user.user_metadata.avatar_url}
+									src={profile.pfp_url ?? user.user_metadata?.avatar_url}
 									alt={profile.display_name}
 								/>
 								<AvatarFallback>{profile.display_name}</AvatarFallback>
@@ -54,7 +61,7 @@
 						<DropdownMenu.Group>
 							<DropdownMenu.Label>My Account</DropdownMenu.Label>
 							<DropdownMenu.Separator />
-							{#if profile}
+							{#if profile?.username}
 								<DropdownMenu.Item href="/profile/{profile.username}">Profile</DropdownMenu.Item>
 							{/if}
 

@@ -16,9 +16,10 @@
 	import type { EndorsementsResult, ProfilesResult } from '$lib/db/query';
 	import { Box, Cloud, Database, Lock, MousePointerClick, Triangle } from 'lucide-svelte';
 	import type { Tables } from '$lib/types/DatabaseDefinitions';
-	import type { SupabaseClient } from '@supabase/supabase-js';
+	import type { SupabaseClient, User } from '@supabase/supabase-js';
 	import { writable } from 'svelte/store';
 	import { cn } from '$lib/utils';
+	import type { PageData } from '../../routes/$types';
 
 	const supabaseProducts = [
 		{
@@ -48,9 +49,10 @@
 	];
 
 	export let profile: ProfilesResult;
-	$: ({ endorse, supabase, user } = $page.data);
+	$: ({ endorse, supabase, user } = $page.data as PageData);
 
 	const id = crypto.randomUUID();
+	$: if ($components.has(id)) profile = $components.get(id)!;
 
 	onMount(() => {
 		$components.set(id, profile);
@@ -218,24 +220,21 @@
 	</ul>
 
 	<ul class="flex flex-wrap gap-4">
-		{#if profile.projects}
-			{@const profile = $components.get(id)}
-			{#if profile}
-				{@const products = [
-					...new Set(
-						profile.projects.flatMap((project) =>
-							project.products.flatMap((product) => product.product.name)
-						)
+		{#if profile}
+			{@const products = [
+				...new Set(
+					profile.projects.flatMap((project) =>
+						project.products.flatMap((product) => product.product.name)
 					)
-				]}
-				{#each products as product}
-					<li
-						class="flex items-center justify-center text-neutral-600 text-sm px-4 py-2 rounded-full border border-neutral-800"
-					>
-						{product}
-					</li>
-				{/each}
-			{/if}
+				)
+			]}
+			{#each products as product (product)}
+				<li
+					class="flex items-center justify-center text-neutral-600 text-sm px-4 py-2 rounded-full border border-neutral-800"
+				>
+					{product}
+				</li>
+			{/each}
 		{/if}
 	</ul>
 
@@ -280,40 +279,37 @@
 			<span class="material-symbols-outlined text-[20px] gap-4 items-center"> mail </span>
 		</Button>
 		<div class="flex flex-col gap-6 items-center w-full md:flex-row">
-			<Endorse form={endorse} {profile} endorser={user}>
+			<Endorse form={endorse} {profile}>
 				<Button variant="outline" class="w-full md:w-fit">Endorse 🫡</Button>
 			</Endorse>
-			{#if $components}
-				{@const profile = $components.get(id)}
-				{#if profile}
-					<Button variant="ghost" class="gap-2">
-						<span class="flex gap-1">
-							<p>Endorsed by</p>
-							<span>🫡</span>
-							{$components.get(id)?.endorsements.length}
-						</span>
-						<span class="flex -space-x-2">
-							<!-- FIXME idk why avatar isn't re-rendering, fix later -->
-							{#each profile.endorsements as endorsement, _ (endorsement.id)}
-								<Avatar class="h-8 w-8 border-2 border-background">
-									<AvatarImage src={endorsement.profiles.pfp_url} />
-								</Avatar>
-							{/each}
-						</span>
-						<span>
-							<DotsThree class="w-5 h-5 opacity-30" />
-						</span>
+			{#if profile}
+				<Button variant="ghost" class="gap-2">
+					<span class="flex gap-1">
+						<p>Endorsed by</p>
+						<span>🫡</span>
+						{$components.get(id)?.endorsements.length}
+					</span>
+					<span class="flex -space-x-2">
+						<!-- FIXME idk why avatar isn't re-rendering, fix later -->
+						{#each profile.endorsements as endorsement, _ (endorsement.id)}
+							<Avatar class="h-8 w-8 border-2 border-background">
+								<AvatarImage src={endorsement.profiles.pfp_url} />
+							</Avatar>
+						{/each}
+					</span>
+					<span>
+						<DotsThree class="w-5 h-5 opacity-30" />
+					</span>
+				</Button>
+				{#if profile.projects.length > 0}
+					<Button
+						variant="outline"
+						class="w-full md:w-fit md:place-self-end text-emerald-400 border-emer"
+					>
+						View {profile.projects.length} project{profile.projects.length > 1 ? 's' : ''} ->
 					</Button>
-					{#if profile.projects.length > 0}
-						<Button
-							variant="outline"
-							class="w-full md:w-fit md:place-self-end text-emerald-400 border-emer"
-						>
-							View {profile.projects.length} project{profile.projects.length > 1 ? 's' : ''} ->
-						</Button>
-					{:else}
-						<div class="w-full"></div>
-					{/if}
+				{:else}
+					<div class="w-full"></div>
 				{/if}
 			{/if}
 		</div>

@@ -10,10 +10,8 @@ declare global {
 			safeGetSession(): Promise<{ session: Session | null; user: User | null }>
 		}
 		interface PageData {
-			supabase: SupabaseClient<Database>
 			session: Session | null
 			user: User | null
-			endorse: SuperValidated<Infer<EndorseSchema>>
 		}
 		// interface Error {}
 		// interface Platform {}

@@ -64,3 +64,16 @@ UPDATE USING (
             id = project_id
     )
 );
+
+CREATE VIEW
+    stacks_count AS
+SELECT
+    name,
+    COUNT(stack_id)
+FROM
+    stacks
+    LEFT JOIN projects_stacks ON stacks.id = projects_stacks.stack_id
+GROUP BY
+    stacks.name
+ORDER BY
+    COUNT(stack_id) DESC;

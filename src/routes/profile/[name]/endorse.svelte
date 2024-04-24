@@ -15,7 +15,7 @@
 	export { data as form };
 
 	export let profile: ProfilesResult;
-	export let endorser: PageData['user'] | undefined = undefined;
+	$: ({ user } = $page.data as PageData);
 
 	const form = superForm(data, {
 		validators: zodClient(endorseSchema),
@@ -60,15 +60,9 @@ Usage:
 ```
 -->
 
-{#if endorser}
-	<form
-		method="POST"
-		use:enhance
-		action="/profile/{profile.github_username}?/endorse"
-		class="!w-full"
-	>
+{#if user?.id}
+	<form method="POST" use:enhance action="/profile/{profile.username}?/endorse" class="!w-full">
 		<input type="hidden" value={profile.id} name="profile" />
-		<input type="hidden" value={endorser.id} name="endorser" />
 		<button class="!w-full" tabindex={-1}>
 			<slot />
 		</button>

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Combox from '$lib/components/combobox/combox.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 	import type { CreateProfilesState } from '$lib/stores/profiles';
@@ -8,7 +7,6 @@
 	import { Input } from '$lib/components/ui/input';
 	import type { PageData } from '../../../routes/$types';
 	import { supabaseProductIcons } from '../layouts/supabaseProductIcons';
-	import { ArrowRight, Info } from 'lucide-svelte';
 	export let filter: ReturnType<CreateProfilesState>['filter'];
 	export let availabilityTypes: PageData['availabilityTypes'];
 	export let stacks: PageData['stacks'];
@@ -33,14 +31,6 @@
 	}
 </script>
 
-<!-- <Combox
-	selected={$filter['stacks']}
-	data={[{ label: 'React', value: 'react' }]}
-	placeholder="Search Stacks..."
-	multiple
-	inputClassName="w-full"
-/> -->
-
 <div class="flex flex-col gap-8 p-8 w-[360px] rounded-md">
 	<div class="flex flex-col gap-8">
 		<div class="flex items-center gap-2">
@@ -63,10 +53,9 @@
 				{#each [...Array(10)] as _}
 					<div class="animate-pulse bg-neutral-700 h-10 w-20 rounded" />
 				{/each}
-			{:then result}
-				{#if result.data}
-					{@const results = result.data}
-					{#each results as { name }}
+			{:then { data, error }}
+				{#if data}
+					{#each data as { name } (name)}
 						{#if name}
 							<Button
 								variant="filter"
@@ -78,8 +67,6 @@
 							</Button>
 						{/if}
 					{/each}
-				{:else if result.error}
-					{console.log(result.error)}
 				{/if}
 			{:catch err}
 				{console.log('stacks error', err)}
@@ -106,10 +93,9 @@
 				{#each [...Array(6)] as _}
 					<div class="animate-pulse bg-neutral-700 h-10 w-20 rounded" />
 				{/each}
-			{:then result}
-				{#if result.data}
-					{@const results = result.data}
-					{#each results as { name }}
+			{:then { data, error }}
+				{#if data}
+					{#each data as { name } (name)}
 						{#if name}
 							<Button
 								variant="filter"
@@ -145,10 +131,9 @@
 				{#each [...Array(6)] as _}
 					<div class="animate-pulse bg-neutral-700 h-10 w-24 rounded" />
 				{/each}
-			{:then result}
-				{#if result.data}
-					{@const results = result.data}
-					{#each results as { name }}
+			{:then { data, error }}
+				{#if data}
+					{#each data as { name } (name)}
 						{#if name}
 							<Button
 								variant="filter"

@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { Checkbox as CheckboxPrimitive } from 'bits-ui';
+	//@ts-expect-error
 	import Check from 'lucide-svelte/icons/check';
+	//@ts-expect-error
 	import Minus from 'lucide-svelte/icons/minus';
 	import { cn } from '$lib/utils.js';
 

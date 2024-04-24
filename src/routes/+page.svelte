@@ -18,6 +18,7 @@
 	import Filter from '$lib/components/filter/filter.svelte';
 
 	export let data;
+	let { supabase, availabilityTypes, products, profiles: init, stacks } = data;
 	$: ({ supabase, availabilityTypes, products, profiles: init, stacks } = data);
 	$: ({ profiles, filter, activeFilters, search, clearFilters } = createProfilesState(
 		init,
@@ -140,7 +141,7 @@
 			{/if}
 		</div>
 		{#if $profiles}
-			{#each $profiles as profile}
+			{#each $profiles as profile (profile.id)}
 				<ProfileListItem {profile} />
 			{/each}
 		{/if}

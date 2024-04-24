@@ -12,26 +12,16 @@ export interface Message {
 }
 
 export const load = (async ({ locals: { supabase, safeGetSession }, params: { name } }) => {
-  // TODO add constraints
-  // const profile = locals.supabase.from('profiles').select()
-
-  // FIXME test data
-  const profile = {
-    name
-  }
+  const profile = supabase.from('profiles').select().eq('username', name).maybeSingle<Tables<'profiles'>>()
 
   return {
     profile,
-    // supabase
-    // like: await superValidate(zod(likeSchema))
+    endorse: await superValidate(zod(endorseSchema))
   }
 
 }) satisfies PageServerLoad
 
 export const actions = {
-  like: async ({ locals, params: { name } }) => {
-    // return message()
-  },
   endorse: async ({ request, locals: { safeGetSession, supabase }, params: { name } }) => {
     const { user }: { user: User | null } = await safeGetSession()
     const form = await superValidate<Infer<EndorseSchema>, Message>(request, zod(endorseSchema))
@@ -53,9 +43,13 @@ export const actions = {
     }
 
     if (data) {
-      console.log(data)
-      const { data: deletedData, error: deletedError } = await supabase.from('endorsements').delete().eq('id', data.id).select().single()
-      console.log(deletedData, deletedError)
+      const { error: deletedError } = await supabase.from('endorsements').delete().eq('id', data.id).select().single()
+      if (deletedError) {
+        console.log(deletedError)
+        return message(form, { status: 'error', text: `There was an error in removing your endorsement of ${name}` }, {
+          status: 500
+        })
+      }
       return message(form, { status: 'success', text: `Your endorsement to ${name} was removed` })
     }
 

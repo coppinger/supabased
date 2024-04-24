@@ -6,7 +6,7 @@ import {
 } from '$env/static/public'
 import { createServerClient } from '@supabase/ssr'
 import type { Database } from '$lib/types/DatabaseDefinitions'
-import { type Handle, type HandleServerError } from '@sveltejs/kit'
+import { redirect, type Handle, type HandleServerError } from '@sveltejs/kit'
 import { dev } from '$app/environment'
 import type { AuthError, Session, User } from '@supabase/supabase-js'
 
@@ -63,7 +63,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 export const handleError: HandleServerError = async ({ error, event, status, message }) => {
 	const errorId = crypto.randomUUID()
 
-	console.log('Unexpect server error', error, status, message)
+	console.log('Unexpect server error', error, status, message, event)
 
 	return {
 		message: 'Whoops!',
