@@ -217,7 +217,7 @@
 				></Button
 			>
 			<div class="flex flex-col gap-6 items-center w-full">
-				<Endorse form={endorse} {profile}>
+				<Endorse form={endorse} {profile} endorser={user}>
 					<Button variant="outline" class="w-full">Endorse 🫡</Button>
 				</Endorse>
 				<Button variant="ghost" class="gap-2">
@@ -242,7 +242,7 @@
 				<Button
 					variant="outline"
 					class="w-full md:w-fit md:place-self-end text-emerald-400 border-emer"
-					>View 7 projects -></Button
+					>View {profile.projects.length} projects -></Button
 				>
 			</div>
 		</div>
