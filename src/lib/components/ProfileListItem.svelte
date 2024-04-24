@@ -237,7 +237,13 @@
 					<span>
 						<DotsThree class="w-5 h-5 opacity-30" />
 					</span>
-				</Button> -->
+				</Button>
+				<!-- TODO: Add the project count of this profile to this button -->
+				<Button
+					variant="outline"
+					class="w-full md:w-fit md:place-self-end text-emerald-400 border-emer"
+					>View 7 projects -></Button
+				>
 			</div>
 		</div>
 	</div>
