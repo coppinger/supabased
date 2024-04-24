@@ -107,11 +107,9 @@
 	<div class="flex flex-col gap-6 p-4 md:p-0 w-full">
 		<div class="flex flex-col gap-4 w-full">
 			<Input placeholder="Search profiles..." on:input={(e) => ($search = e.currentTarget.value)} />
-			<Button variant="outline">
+			<Button variant="outline" class="flex md:hidden">
 				Filter profiles
-				<button class="h-8 w-8 flex items-center justify-center">
-					<span class="material-symbols-outlined text-[20px]">filter_alt</span>
-				</button>
+				<span class="material-symbols-outlined text-[20px]">filter_alt</span>
 			</Button>
 		</div>
 		<div class="flex flex-wrap gap-4 items-center w-full min-h-10">

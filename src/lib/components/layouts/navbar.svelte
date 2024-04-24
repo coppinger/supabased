@@ -3,12 +3,20 @@
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button';
 	import Logo from '$lib/components/Logo.svelte';
+	import type { Tables } from '$lib/types/DatabaseDefinitions';
+	import { Avatar, AvatarFallback } from '$lib/components/ui/avatar';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+
+	import AvatarImage from '$lib/components/ui/avatar/avatar-image.svelte';
 
 	$: ({ session, supabase } = $page.data);
 
 	async function signOut() {
 		const { error } = await supabase.auth.signOut();
 	}
+
+	export let profileData: Tables<'profiles'> | null = null;
+	const { display_name, pfp_url } = profileData ?? {};
 </script>
 
 <div class="border-b w-full">
@@ -24,7 +32,24 @@
 			</div>
 		{:else}
 			<div class="flex gap-6 items-center">
-				<Button on:click={signOut} variant="outline">Sign Out</Button>
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger
+						><Avatar class="">
+							<AvatarImage src={pfp_url} alt={display_name} />
+							<AvatarFallback>{display_name}</AvatarFallback>
+						</Avatar></DropdownMenu.Trigger
+					>
+					<DropdownMenu.Content>
+						<DropdownMenu.Group>
+							<DropdownMenu.Label>My Account</DropdownMenu.Label>
+							<DropdownMenu.Separator />
+							<DropdownMenu.Item href="/profile">Profile</DropdownMenu.Item>
+							<DropdownMenu.Item href="/settings">Settings</DropdownMenu.Item>
+							<DropdownMenu.Item on:click={signOut}>Sign Out</DropdownMenu.Item>
+						</DropdownMenu.Group>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
+
 				<Menu />
 			</div>
 		{/if}
