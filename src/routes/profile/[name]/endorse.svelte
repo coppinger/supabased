@@ -68,7 +68,7 @@ Usage:
 	>
 		<input type="hidden" value={profile.id} name="profile" />
 		<input type="hidden" value={endorser.id} name="endorser" />
-		<button class="!w-full">
+		<button class="!w-full" tabindex={-1}>
 			<slot />
 		</button>
 	</form>

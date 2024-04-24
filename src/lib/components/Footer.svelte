@@ -13,7 +13,7 @@
 	>
 		<Logo />
 		<div class="flex flex-col items-center gap-2">
-			<h1 class="text-2xl font-bold text-center">
+			<h1 class="text-2xl font-bold text-center text-neutral-50">
 				Discover & connect with folks who are building with
 			</h1>
 			<SupabaseLogo />
@@ -34,7 +34,7 @@
 				href="https://twitter.com/supabasedcom"
 				target="_blank"
 				class="flex gap-2 items-center"
-				>@supabasedcom <iconify-icon icon="mdi:twitter"></iconify-icon></Button
+				>Twitter <iconify-icon icon="mdi:twitter"></iconify-icon></Button
 			>
 		</div>
 	</div>
@@ -115,10 +115,10 @@
 			</li>
 		</ul>
 	</div>
-	<div class="px-4 py-6 inline-flex flex-col gap-2 items-center justify-center w-full">
-		<p class="text-neutral-500 text-center">
+	<div class="px-4 py-6 inline-flex flex-col gap-2 items-center justify-center w-full md:flex-row">
+		<p class="text-neutral-600 text-center">
 			Made with &lt;3 live on Twitch using BasedKit: SvelteKit, ShadCN, Typescript &
 		</p>
-		<SupabaseLogo />
+		<a href="https://supabase.com" target="_blank"><SupabaseLogo /></a>
 	</div>
 </footer>

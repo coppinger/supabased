@@ -101,35 +101,77 @@
 <div class="flex flex-col gap-6 rounded-md border border-neutral-800 p-6 w-full">
 	<div class="flex flex-col gap-6">
 		<!-- TODO: Light up the apporpriate icons based on an aggregate of the users projects products -->
-		<div class="flex gap-6 items-center justify-between w-full">
+		<div class="flex gap-6 items-center justify-between w-full md:hidden">
 			{#each supabaseProducts as { Icon }}
 				<div class="flex gap-4 items-center text-emerald-400 font-bold">
 					<Icon class="h-5 w-5" />
 				</div>
 			{/each}
 		</div>
-		<div class="flex gap-4 items-center w-full">
-			<Avatar class="h-12 w-12">
-				<AvatarImage src={profile.pfp_url} alt={profile.display_name} />
-				<AvatarFallback>{profile.display_name}</AvatarFallback>
-			</Avatar>
-			<div>
-				<h5 class="text-neutral-50">{profile.display_name}</h5>
-				<p class="text-neutral-600">
-					{profile.location}
-					{profile.timezone ? ` • ${profile.timezone}` : ''}
-				</p>
+		<div class="flex justify-between w-full items-center">
+			<div class="flex gap-4 items-center w-full">
+				<Avatar class="h-16 w-16">
+					<AvatarImage src={profile.pfp_url} alt={profile.display_name} />
+					<AvatarFallback>{profile.display_name}</AvatarFallback>
+				</Avatar>
+				<div>
+					<h5 class="text-neutral-50">{profile.display_name}</h5>
+					<p class="text-neutral-600">
+						{profile.location}
+						{profile.timezone ? ` • ${profile.timezone}` : ''}
+					</p>
+				</div>
+			</div>
+			<div class="flex flex-col items-end justify-center gap-4">
+				<div class="hidden md:flex gap-6 w-full">
+					{#each supabaseProducts as { Icon }}
+						<div class="flex gap-6 items-center text-emerald-400 font-bold">
+							<Icon class="h-4 w-4" />
+						</div>
+					{/each}
+				</div>
+				<!-- Social icons -->
+				<ul class="hidden md:flex items-center gap-6 text-neutral-600">
+					{#if profile.github_username}
+						<li class="hover:text-neutral-50 transition-all ease-linear duration-300">
+							<a href={`https://github.com/${profile.github_username}`} target="_blank">
+								<iconify-icon icon="mdi:github"></iconify-icon>
+							</a>
+						</li>
+					{/if}
+					{#if profile.linkedin_url}
+						<li class="hover:text-neutral-50 transition-all ease-linear duration-300">
+							<a href={profile.linkedin_url} target="_blank">
+								<iconify-icon icon="mdi:linkedin"></iconify-icon>
+							</a>
+						</li>
+					{/if}
+
+					{#if profile.twitter_username}
+						<li class="hover:text-neutral-50 transition-all ease-linear duration-300">
+							<a href={`https://twitter.com/${profile.twitter_username}`} target="_blank">
+								<iconify-icon icon="mdi:twitter"></iconify-icon>
+							</a>
+						</li>
+					{/if}
+
+					{#if profile.website_url}
+						<li class="hover:text-neutral-50 transition-all ease-linear duration-300">
+							<a href={profile.website_url} target="_blank">
+								<iconify-icon icon="mdi:globe"></iconify-icon>
+							</a>
+						</li>
+					{/if}
+				</ul>
+				<!-- End social icons -->
 			</div>
 		</div>
-		<div class="flex gap-2 items-center text-neutral-600">
-			<p>UTC-08:00</p>
-			<p>•</p>
-			<p>Australia</p>
-		</div>
 	</div>
-	<div class="flex flex-wrap gap-6 py-4 px-6 border border-neutral-800 rounded-md">
+	<ul
+		class="flex md:justify-between flex-wrap gap-6 py-4 px-6 border border-neutral-800 rounded-md"
+	>
 		{#each allAvailabilities as availability}
-			<div class="flex gap-2 items-center text-neutral-200">
+			<li class="flex gap-2 items-center text-neutral-200 text-sm">
 				<!-- {#if profile.availabilities.includes(availability)}
 					{availability}
 					<span class="material-symbols-outlined text-[16px] text-emerald-400">check</span>
@@ -139,9 +181,9 @@
 				{/if} -->
 				{availability}
 				<span class="material-symbols-outlined text-[16px] text-emerald-400">check</span>
-			</div>
+			</li>
 		{/each}
-	</div>
+	</ul>
 
 	<ul class="flex flex-wrap gap-4">
 		<!-- TODO: Add the usedTech data to the profile here -->
@@ -158,26 +200,10 @@
 			React
 		</li>
 	</ul>
-	<div class="flex flex-col gap-6">
-		<!-- <p class="text-neutral-200">
-			{profile.firstName} has built {profile.projects.length} project{profile.projects.length
-				? 's'
-				: ''} with Supabase using:
-		</p>
-		<div class="flex gap-6 items-center">
-			{#each supabaseProducts as { label, Icon }}
-				<div class="flex gap-4 items-center text-emerald-400 font-bold">
-					<Icon class="h-4 w-4" />
-				</div>
-			{/each}
-		</div> -->
-		<!-- <Button variant="outline" class="w-full md:w-fit md:place-self-end"
-			>View {profile.projects.length} project{profile.projects.length ? 's' : ''} -></Button
-		> -->
-	</div>
+
 	<Separator />
 	<!-- Social icons -->
-	<ul class="flex gap-6 text-neutral-600 text-2xl md:text-xl place-self-center">
+	<ul class="flex gap-6 text-neutral-600 text-2xl md:text-xl place-self-center md:hidden">
 		{#if profile.github_username}
 			<li class="hover:text-neutral-50 transition-all ease-linear duration-300">
 				<a href={`https://github.com/${profile.github_username}`} target="_blank">
@@ -210,43 +236,43 @@
 		{/if}
 	</ul>
 	<!-- End social icons -->
-	<div class="flex flex-col gap-6">
-		<div class="flex flex-col gap-6">
-			<Button variant="outline" class="flex gap-2 items-center"
-				>Contact <span class="material-symbols-outlined text-[20px] gap-4 items-center">mail</span
-				></Button
-			>
-			<div class="flex flex-col gap-6 items-center w-full">
-				<Endorse form={endorse} {profile} endorser={user}>
-					<Button variant="outline" class="w-full">Endorse 🫡</Button>
-				</Endorse>
-				<Button variant="ghost" class="gap-2">
-					<span class="flex gap-1">
-						<p>Endorsed by</p>
-						<span>🫡</span>
-						{endorsements.length}
-					</span>
-					<span class="flex -space-x-2">
-						<!-- FIXME idk why avatar isn't re-rendering, fix later -->
-						{#each endorsements as endorsement, _ (endorsement.id)}
-							<Avatar class="h-8 w-8 border-2 border-background">
-								<AvatarImage src={endorsement.profiles.pfp_url} />
-							</Avatar>
-						{/each}
-					</span>
-					<span>
-						<DotsThree class="w-5 h-5 opacity-30" />
-					</span>
-				</Button>
-				<!-- TODO: Add the project count of this profile to this button -->
-				{#if profile.projects.length > 0}
-					<Button
-						variant="outline"
-						class="w-full md:w-fit md:place-self-end text-emerald-400 border-emer"
-						>View {profile.projects.length} project{profile.projects.length > 1 ? 's' : ''} -></Button
-					>
-				{/if}
-			</div>
+	<div class="flex flex-col gap-6 md:flex-row md:justify-between">
+		<Button variant="outline" class="flex gap-2 items-center"
+			>Contact <span class="material-symbols-outlined text-[20px] gap-4 items-center">mail</span
+			></Button
+		>
+		<div class="flex flex-col gap-6 items-center w-full md:flex-row">
+			<Endorse form={endorse} {profile} endorser={user}>
+				<Button variant="outline" class="w-full md:w-fit">Endorse 🫡</Button>
+			</Endorse>
+			<Button variant="ghost" class="gap-2">
+				<span class="flex gap-1">
+					<p>Endorsed by</p>
+					<span>🫡</span>
+					{endorsements.length}
+				</span>
+				<span class="flex -space-x-2">
+					<!-- FIXME idk why avatar isn't re-rendering, fix later -->
+					{#each endorsements as endorsement, _ (endorsement.id)}
+						<Avatar class="h-8 w-8 border-2 border-background">
+							<AvatarImage src={endorsement.profiles.pfp_url} />
+						</Avatar>
+					{/each}
+				</span>
+				<span>
+					<DotsThree class="w-5 h-5 opacity-30" />
+				</span>
+			</Button>
+			<!-- TODO: Add the project count of this profile to this button -->
+			{#if profile.projects.length > 0}
+				<Button
+					variant="outline"
+					class="w-full md:w-fit md:place-self-end text-emerald-400 border-emer"
+					>View {profile.projects.length} project{profile.projects.length > 1 ? 's' : ''} -></Button
+				>
+			{:else}
+				<div class="w-full"></div>
+			{/if}
 		</div>
 	</div>
 </div>

@@ -10,16 +10,19 @@
 	let className: $$Props['class'] = undefined;
 	export let checked: $$Props['checked'] = false;
 	export { className as class };
+	export let tabbable: boolean = true;
 </script>
 
 <CheckboxPrimitive.Root
 	class={cn(
-		'peer box-content h-4 w-4 shrink-0 rounded-sm border border-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[disabled=true]:cursor-not-allowed data-[state=checked]:bg-foreground data-[state=checked]:text-primary-foreground data-[disabled=true]:opacity-50',
-		className
+		'peer box-content h-4 w-4 shrink-0 rounded-sm border ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[disabled=true]:cursor-not-allowed data-[state=checked]:bg-foreground data-[state=checked]:text-primary-foreground data-[disabled=true]:opacity-50',
+		className,
+		tabbable ? 'border-foreground' : 'border-neutral-800'
 	)}
 	bind:checked
 	{...$$restProps}
 	on:click
+	tabindex={tabbable ? 0 : -1}
 >
 	<CheckboxPrimitive.Indicator
 		class={cn('flex h-4 w-4 items-center justify-center text-current')}
