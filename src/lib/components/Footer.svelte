@@ -115,7 +115,7 @@
 			</li>
 		</ul>
 	</div>
-	<div class="px-4 py-6 inline-flex flex-col gap-2 items-center">
+	<div class="px-4 py-6 inline-flex flex-col gap-2 items-center justify-center w-full">
 		<p class="text-neutral-500 text-center">
 			Made with &lt;3 live on Twitch using BasedKit: SvelteKit, ShadCN, Typescript &
 		</p>

@@ -1,4 +1,4 @@
-import { Box, Cloud, Database, Lock, MousePointerClick, Triangle } from 'lucide-svelte';
+import { Box, Cloud, Database, Lock, MousePointerClick, Triangle } from 'lucide-svelte'
 
 export const supabaseProductIcons = {
 	Database: Database,
@@ -7,4 +7,4 @@ export const supabaseProductIcons = {
 	Edge: Triangle,
 	Realtime: MousePointerClick,
 	Vector: Box
-};
+} as const

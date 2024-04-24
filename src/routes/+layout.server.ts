@@ -7,8 +7,6 @@ import { endorseSchema } from './profile/[name]/schema'
 export const load = (async ({ locals: { safeGetSession } }) => {
 	const { session, user } = await safeGetSession()
 
-	console.log('server session', session)
-
 	return {
 		session,
 		user,

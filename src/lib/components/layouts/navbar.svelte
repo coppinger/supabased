@@ -1,19 +1,12 @@
 <script lang="ts">
-	import { Menu } from 'lucide-svelte';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import Menu from '$lib/components/menu/Menu.svelte';
 	import { page } from '$app/stores';
 	import { Button } from '$lib/components/ui/button';
 	import Logo from '$lib/components/Logo.svelte';
-	import * as Avatar from '$lib/components/ui/avatar';
-	import { goto } from '$app/navigation';
 
-	$: ({ user } = $page.data);
-
+	$: ({ session, supabase } = $page.data);
 	async function signOut() {
-		const { error } = await $page.data.supabase.auth.signOut();
-		await goto($page.url, {
-			invalidateAll: true
-		});
+		const { error } = await supabase.auth.signOut();
 	}
 </script>
 
@@ -23,35 +16,15 @@
 			<Logo />
 		</a>
 
-		{#if user}
-			<DropdownMenu.Root>
-				<DropdownMenu.Trigger>
-					{#if user.user_metadata.avatar_url}
-						{@const src = user.user_metadata.avatar_url}
-						<Avatar.Root>
-							<Avatar.Image {src} alt="@shadcn" />
-							<Avatar.Fallback>CN</Avatar.Fallback>
-						</Avatar.Root>
-					{:else}
-						<Menu />
-					{/if}
-				</DropdownMenu.Trigger>
-				<DropdownMenu.Content side="bottom" align="end">
-					<DropdownMenu.Group>
-						<DropdownMenu.Label>{user.user_metadata.user_name}</DropdownMenu.Label>
-						<DropdownMenu.Separator />
-						<DropdownMenu.Item>Profile</DropdownMenu.Item>
-						<DropdownMenu.Separator />
-						<DropdownMenu.Item on:click={signOut}>Sign Out</DropdownMenu.Item>
-					</DropdownMenu.Group>
-				</DropdownMenu.Content>
-			</DropdownMenu.Root>
-		{:else}
+		{#if !session?.user}
 			<div class="flex gap-6 items-center">
 				<Button href="/login" variant="outline">Sign In</Button>
-				<button class="h-8 w-8 flex items-center justify-center">
-					<span class="material-symbols-outlined text-[20px]">lunch_dining</span>
-				</button>
+				<Menu />
+			</div>
+		{:else}
+			<div class="flex gap-6 items-center">
+				<Button on:click={signOut} variant="outline">Sign Out</Button>
+				<Menu />
 			</div>
 		{/if}
 	</div>

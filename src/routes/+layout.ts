@@ -1,13 +1,16 @@
-import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
+import { dev } from '$app/environment'
+import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_DEV_ANON, PUBLIC_SUPABASE_DEV_URL } from '$env/static/public'
 import type { Database } from '$lib/types/DatabaseDefinitions'
-import { redirect } from '@sveltejs/kit'
 import type { LayoutLoad } from './$types'
 import { createBrowserClient, isBrowser, parse } from '@supabase/ssr'
+
+const _URL = false ? PUBLIC_SUPABASE_DEV_URL : PUBLIC_SUPABASE_URL
+const _ANON = false ? PUBLIC_SUPABASE_DEV_ANON : PUBLIC_SUPABASE_ANON_KEY
 
 export const load = (async ({ fetch, data, depends }) => {
 	depends('supabase:auth')
 
-	const supabase = createBrowserClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+	const supabase = createBrowserClient<Database>(_URL, _ANON, {
 		global: {
 			fetch
 		},
@@ -28,15 +31,9 @@ export const load = (async ({ fetch, data, depends }) => {
 	 * safe, and on the server, it reads `session` from the `LayoutData`, which
 	 * safely checked the session using `safeGetSession`.
 	 */
-	let {
+	const {
 		data: { session }
 	} = await supabase.auth.getSession()
-
-	// TODO maybe look into what events we can hook into
-	supabase.auth.onAuthStateChange((event) => {
-		// if (event === 'SIGNED_OUT')
-	})
-
 
 	return {
 		supabase,

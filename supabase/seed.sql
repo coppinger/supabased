@@ -369,7 +369,7 @@ VALUES
         'New York',
         'UTC-05:00',
         'Full Time',
-        'https://example.com/profile_pictures/johndoe.jpg'
+        'https://avatars.githubusercontent.com/u/420'
     ),
     (
         'a2e716ed-7d3d-4f1b-b6d7-7a9d8c2f5031',
@@ -383,7 +383,7 @@ VALUES
         'San Francisco',
         'UTC-08:00',
         'Part Time',
-        'https://example.com/profile_pictures/janesmith.jpg'
+        'https://avatars.githubusercontent.com/u/69'
     );
 
 -- Seed data for projects
@@ -446,37 +446,10 @@ VALUES
         'd12d629e-f52e-4b1b-9a88-1d77c13b59e2'
     );
 
--- Seed data for roles
 INSERT INTO
-    "roles" ("id", "name", "sort")
+    "endorsements" ("endorsement_to", "endorsed_by")
 VALUES
     (
-        '3e4b5b3b-d585-40c4-b0a3-924b0e492d65',
-        'Front-end',
-        0
-    ),
-    (
-        'f4176ab4-7b96-43ec-b74f-58fb27234526',
-        'Back-end',
-        1
-    ),
-    (
-        '8a49507b-0460-4b89-8fb7-1f58f0f1c5c1',
-        'Full-stack',
-        2
-    );
-
--- Seed data for profiles_roles (associating profiles with roles)
-INSERT INTO
-    "profiles_roles" ("id", "profile_id", "role_id")
-VALUES
-    (
-        'a1b2c3d4-e5f6-4a3b-8c7d-9e0f1a2b3c4d',
         'c1e426ee-3b77-4a20-bff3-9079d0c362f2',
-        '3e4b5b3b-d585-40c4-b0a3-924b0e492d65'
-    ),
-    (
-        'b2c3d4e5-f6g7-5b4c-7d8e-0f1a2b3c4d5e',
-        'a2e716ed-7d3d-4f1b-b6d7-7a9d8c2f5031',
-        'f4176ab4-7b96-43ec-b74f-58fb27234526'
+        'a2e716ed-7d3d-4f1b-b6d7-7a9d8c2f5031'
     );
