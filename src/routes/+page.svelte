@@ -23,7 +23,6 @@
 		init,
 		supabase
 	));
-	$: console.log($profiles);
 </script>
 
 <SupabaseProductsBar {supabase} />

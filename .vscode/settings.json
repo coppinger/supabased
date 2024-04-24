@@ -1,0 +1,12 @@
+{
+	"workbench.editor.customLabels.patterns": {
+		"**/src/routes/**/+layout.svelte": "${dirname} - layout",
+		"**/src/routes/**/+layout.server.ts": "${dirname} - layout server",
+		"**/src/routes/**/+layout.reset.svelte": "${dirname} - layout reset",
+		"**/src/routes/**/+page.svelte": "${dirname} - page",
+		"**/src/routes/**/+page.server.ts": "${dirname} - page server",
+		"**/src/routes/**/+page.ts": "${dirname} - page script",
+		"**/src/routes/**/+error.svelte": "${dirname} - error",
+		"**/src/routes/**/+layout.ts": "${dirname} - layout script"
+	}
+}

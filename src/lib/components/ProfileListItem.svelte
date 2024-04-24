@@ -218,19 +218,25 @@
 	</ul>
 
 	<ul class="flex flex-wrap gap-4">
-		<!-- TODO: Add the usedTech data to the profile here -->
-		<!-- {#each profile.usedTech as usedTech}
-			<li
-				class="flex items-center justify-center text-neutral-600 text-sm px-4 py-2 rounded-full border border-neutral-800"
-			>
-				{usedTech}
-			</li>
-		{/each} -->
-		<li
-			class="flex items-center justify-center text-neutral-600 text-sm px-4 py-2 rounded-full border border-neutral-800"
-		>
-			React
-		</li>
+		{#if profile.projects}
+			{@const profile = $components.get(id)}
+			{#if profile}
+				{@const products = [
+					...new Set(
+						profile.projects.flatMap((project) =>
+							project.products.flatMap((product) => product.product.name)
+						)
+					)
+				]}
+				{#each products as product}
+					<li
+						class="flex items-center justify-center text-neutral-600 text-sm px-4 py-2 rounded-full border border-neutral-800"
+					>
+						{product}
+					</li>
+				{/each}
+			{/if}
+		{/if}
 	</ul>
 
 	<Separator />

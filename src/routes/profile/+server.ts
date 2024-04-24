@@ -1,12 +1,12 @@
-import type { Tables } from '$lib/types/DatabaseDefinitions.js';
-import { redirect } from '@sveltejs/kit';
-import { error } from '@sveltejs/kit';
+import type { Tables } from '$lib/types/DatabaseDefinitions.js'
+import { redirect } from '@sveltejs/kit'
+import { error } from '@sveltejs/kit'
 
 export const GET = async ({ locals }) => {
-	const { session } = await locals.safeGetSession();
+	const { session } = await locals.safeGetSession()
 
 	if (!session?.user) {
-		redirect(303, '/login');
+		redirect(303, '/login')
 	} else {
 		// TODO: Make sure this isn't fucked future Charlie!
 
@@ -14,14 +14,14 @@ export const GET = async ({ locals }) => {
 			.from('profiles')
 			.select(`username`)
 			.eq('id', session.user.id)
-			.single<Tables<'profiles'>>();
+			.single<Tables<'profiles'>>()
 
 		if (queryError) {
-			error(500, 'Error fetching username');
+			error(500, 'Error fetching username')
 		}
 
-		console.log(data);
+		if (!data.username) redirect(303, '/onboarding/profile')
 
-		redirect(303, `/profiles/${data.username}`);
+		redirect(303, `/profile/${data.username}`)
 	}
-};
+}

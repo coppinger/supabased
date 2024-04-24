@@ -3,7 +3,8 @@
 
 	export let data: PageData;
 
-	$: ({ profile, user, supabase } = data);
+	// $: ({ profile, user, supabase } = data);
+	$: console.log(data);
 </script>
 
 <!-- TODO add profile view-->

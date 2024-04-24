@@ -22,7 +22,7 @@ export const load = (async ({ locals: { supabase, safeGetSession }, params: { na
 
   return {
     profile,
-    supabase
+    // supabase
     // like: await superValidate(zod(likeSchema))
   }
 

@@ -6,6 +6,7 @@
 	import type { Tables } from '$lib/types/DatabaseDefinitions';
 	import { Avatar, AvatarFallback } from '$lib/components/ui/avatar';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import { Skeleton } from '$lib/components/ui/skeleton';
 
 	import AvatarImage from '$lib/components/ui/avatar/avatar-image.svelte';
 
@@ -15,8 +16,11 @@
 		const { error } = await supabase.auth.signOut();
 	}
 
-	export let profileData: Tables<'profiles'> | null = null;
-	const { display_name, pfp_url } = profileData ?? {};
+	let profile: Tables<'profiles'> | undefined;
+	async function loadProfile() {
+		profile = await user.profile;
+	}
+	$: if (user.profile) loadProfile();
 </script>
 
 <div class="border-b w-full">
@@ -33,17 +37,27 @@
 		{:else}
 			<div class="flex gap-6 items-center">
 				<DropdownMenu.Root>
-					<DropdownMenu.Trigger
-						><Avatar class="">
-							<AvatarImage src={pfp_url} alt={display_name} />
-							<AvatarFallback>{display_name}</AvatarFallback>
-						</Avatar></DropdownMenu.Trigger
-					>
+					<DropdownMenu.Trigger>
+						<Avatar class="">
+							{#if profile}
+								<AvatarImage
+									src={profile.pfp_url ?? user.user_metadata.avatar_url}
+									alt={profile.display_name}
+								/>
+								<AvatarFallback>{profile.display_name}</AvatarFallback>
+							{:else}
+								<Skeleton class="size-10" />
+							{/if}
+						</Avatar>
+					</DropdownMenu.Trigger>
 					<DropdownMenu.Content>
 						<DropdownMenu.Group>
 							<DropdownMenu.Label>My Account</DropdownMenu.Label>
 							<DropdownMenu.Separator />
-							<DropdownMenu.Item href="/profile">Profile</DropdownMenu.Item>
+							{#if profile}
+								<DropdownMenu.Item href="/profile/{profile.username}">Profile</DropdownMenu.Item>
+							{/if}
+
 							<DropdownMenu.Item href="/settings">Settings</DropdownMenu.Item>
 							<DropdownMenu.Item on:click={signOut}>Sign Out</DropdownMenu.Item>
 						</DropdownMenu.Group>

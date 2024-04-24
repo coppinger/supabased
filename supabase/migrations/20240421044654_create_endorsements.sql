@@ -13,7 +13,7 @@ CREATE INDEX ix_endorsements_to_id ON endorsements (endorsement_to);
 
 ALTER TABLE endorsements ENABLE ROW LEVEL SECURITY;
 
-ALTER publication supabase_realtime ADD TABLE endorsements;
+ALTER PUBLICATION supabase_realtime ADD TABLE endorsements;
 
 CREATE POLICY "Endorsements are viewable by everyone." ON endorsements FOR
 SELECT
