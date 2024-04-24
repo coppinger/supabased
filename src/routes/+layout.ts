@@ -41,27 +41,17 @@ export const load = (async ({ fetch, data, depends }) => {
 		data: { session }
 	} = await supabase.auth.getSession();
 
-	let profileData: Tables<'profiles'> | null = null;
-
-	if (session?.user) {
-		const { data, error: profileError } = await supabase
-			.from('profiles')
-			.select(`display_name, pfp_url`)
-			.eq('id', session.user.id)
-			.single<Tables<'profiles'>>();
-
-		if (profileError) {
-			error(500, 'Error fetching profile data');
-		}
-
-		profileData = data;
-	}
-
 	return {
 		supabase,
 		session,
-		user: session?.user,
+		user: {
+			...session?.user,
+			 profile: supabase
+			.from('profiles')
+			.select()
+			.eq('id', session?.user?.id)
+			.maybeSingle<Tables<'profiles'>>()
+		},
 		endorse: data.endorse,
-		profileData
 	};
 }) satisfies LayoutLoad;

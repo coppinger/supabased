@@ -62,8 +62,8 @@ CREATE TRIGGER on_auth_user_created
     EXECUTE PROCEDURE public.handle_new_user();
 
 -- Set up Storage bucket for user avatars
--- INSERT INTO storage.buckets(id, name, public)
---     VALUES ('profile_pictures', 'profile_pictures', TRUE);
+INSERT INTO storage.buckets(id, name, public)
+    VALUES ('profile_pictures', 'profile_pictures', TRUE);
 -- Set the bucket to be publicly accessible
 CREATE POLICY "Profile pictures are publicly accessible." ON storage.buckets
     FOR SELECT
