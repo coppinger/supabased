@@ -38,6 +38,8 @@
 	}
 
 	const { form, errors, constraints, message, enhance } = superForm(data.form);
+
+	$: email = $form.email;
 </script>
 
 <div class="border-neutral-800 mx-auto max-w-md p-10 my-10 border rounded-md">

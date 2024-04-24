@@ -40,7 +40,6 @@ export const actions = {
     if (!user?.id) return message(form, { status: 'error', text: 'Please Login to Endorse.' }, {
       status: 401
     })
-    // console.log('FORM ACTION', form.data.endorser, form.data.profile)
 
     // TODO add constraints
     // WARN don't return the full profile, just the name (or whatever else we need) for context
