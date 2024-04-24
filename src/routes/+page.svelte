@@ -19,7 +19,10 @@
 
 	export let data;
 	$: ({ supabase, availabilityTypes, products, profiles: init, stacks } = data);
-	$: ({ profiles, filter, activeFilters, clearFilters } = createProfilesState(init, supabase));
+	$: ({ profiles, filter, activeFilters, search, clearFilters } = createProfilesState(
+		init,
+		supabase
+	));
 	$: console.log($profiles);
 </script>
 
@@ -87,20 +90,23 @@
 				href="https://discord.gg/skunkworks"
 				target="_blank"
 				class="flex gap-2 items-center w-full"
-				>Discord <iconify-icon icon="ic:baseline-discord"></iconify-icon></Button
 			>
+				Discord
+				<iconify-icon icon="ic:baseline-discord"></iconify-icon>
+			</Button>
 			<Button
 				variant="outline"
 				href="https://twitter.com/supabasedcom"
 				target="_blank"
 				class="flex gap-2 items-center w-full"
-				>Twitter <iconify-icon icon="mdi:twitter"></iconify-icon></Button
 			>
+				Twitter <iconify-icon icon="mdi:twitter"></iconify-icon>
+			</Button>
 		</div>
 	</div>
 	<div class="flex flex-col gap-6 p-4 md:p-0 w-full">
 		<div class="flex flex-col gap-4 w-full">
-			<Input placeholder="Search profiles..." />
+			<Input placeholder="Search profiles..." on:input={(e) => ($search = e.currentTarget.value)} />
 			<Button variant="outline" class="flex md:hidden">
 				Filter profiles
 				<span class="material-symbols-outlined text-[20px]">filter_alt</span>

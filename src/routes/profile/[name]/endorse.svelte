@@ -35,6 +35,7 @@
 			toast.error('error');
 		}
 	});
+	$: console.log(endorser);
 
 	const { form: formData, enhance } = form;
 </script>
