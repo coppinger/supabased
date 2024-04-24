@@ -217,7 +217,7 @@
 				></Button
 			>
 			<div class="flex flex-col gap-6 items-center w-full">
-				<!-- <Endorse form={endorse} {profile}>
+				<Endorse form={endorse} {profile}>
 					<Button variant="outline" class="w-full">Endorse 🫡</Button>
 				</Endorse>
 				<Button variant="ghost" class="gap-2">

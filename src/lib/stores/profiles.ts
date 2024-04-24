@@ -27,7 +27,7 @@ export const createProfilesState = (init: PostgrestSingleResponse<ProfilesResult
 
 		if (availability.length) query = query.textSearch('availibility', availability)
 
-		query.eq('projects.projects_stacks.stacks.name', $filter.stacks)
+		query.neq('projects.projects_stacks.stacks.name', null)
 			.returns<ProfilesResult[]>()
 			.then(({ data, error }) => {
 				if (!error) set(data)
