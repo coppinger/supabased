@@ -29,7 +29,7 @@ WITH
     CHECK ((SELECT auth.uid ()) = id);
 
 CREATE POLICY "Users can update own profile." ON profiles FOR
-UPDATE USING (auth.uid () = id);
+UPDATE USING ((SELECT auth.uid ()) = id);
 
 -- Set up Triggers
 ---- Set the `updated_at` column on every update
