@@ -29,7 +29,17 @@ SELECT
 
 CREATE POLICY "Profiles can insert into profiles_roles for their own profile" ON profiles_roles FOR INSERT
 WITH
-    CHECK (auth.uid () = profile_id);
+    CHECK (
+        (
+            SELECT
+                auth.uid ()
+        ) = profile_id
+    );
 
 CREATE POLICY "Profiles can update their own profiles_roles" ON profiles_roles FOR
-UPDATE USING (auth.uid () = profile_id);
+UPDATE USING (
+    (
+        SELECT
+            auth.uid ()
+    ) = profile_id
+);

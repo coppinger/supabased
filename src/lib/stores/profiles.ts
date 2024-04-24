@@ -19,6 +19,7 @@ export const createProfilesState = (init: PostgrestSingleResponse<ProfilesResult
 	const sort = writable('')
 	const profiles = derived([filter, sort], ([$filter, $sort], set) => {
 		const availability = $filter.availibility.map(term => term.replaceAll(' ', '+')).join(' | ')
+		const stacks = $filter.stacks.map(term => term.replaceAll(' ', '+')).join(' | ')
 
 		let query = supabase
 			.from('profiles')
@@ -26,9 +27,9 @@ export const createProfilesState = (init: PostgrestSingleResponse<ProfilesResult
 			.neq('display_name', null)
 
 		if (availability.length) query = query.textSearch('availibility', availability)
+		if ($filter.stacks.length) query = query.in('projects.projects_stacks.stacks.name', $filter.stacks)
 
-		query.neq('projects.projects_stacks.stacks.name', null)
-			.returns<ProfilesResult[]>()
+		query.returns<ProfilesResult[]>()
 			.then(({ data, error }) => {
 				if (!error) set(data)
 				else console.log(error)

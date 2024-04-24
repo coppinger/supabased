@@ -26,7 +26,7 @@ SELECT
 
 CREATE POLICY "Users can insert their own profile." ON profiles FOR INSERT
 WITH
-    CHECK (auth.uid () = id);
+    CHECK ((SELECT auth.uid ()) = id);
 
 CREATE POLICY "Users can update own profile." ON profiles FOR
 UPDATE USING (auth.uid () = id);
@@ -72,6 +72,6 @@ WITH
     CHECK (bucket_id = 'profile_pictures');
 
 CREATE POLICY "Anyone can update their own profile picture." ON storage.objects FOR
-UPDATE USING (auth.uid () = OWNER)
+UPDATE USING ((SELECT auth.uid ()) = OWNER)
 WITH
     CHECK (bucket_id = 'profile_pictures');

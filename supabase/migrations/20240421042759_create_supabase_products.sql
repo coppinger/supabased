@@ -30,7 +30,10 @@ SELECT
 CREATE POLICY "Profiles can insert into supabase_products_projects for their own projects" ON supabase_products_projects FOR INSERT
 WITH
     CHECK (
-        auth.uid () = (
+        (
+            SELECT
+                auth.uid ()
+        ) = (
             SELECT
                 profile_id
             FROM
@@ -42,7 +45,10 @@ WITH
 
 CREATE POLICY "Profiles can update their own supabase_products_projects" ON supabase_products_projects FOR
 UPDATE USING (
-    auth.uid () = (
+    (
+        SELECT
+            auth.uid ()
+    ) = (
         SELECT
             profile_id
         FROM

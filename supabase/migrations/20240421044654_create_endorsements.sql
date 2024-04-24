@@ -18,7 +18,17 @@ SELECT
 
 CREATE POLICY "Profiles can insert into endorsements for their own profile" ON endorsements FOR INSERT
 WITH
-    CHECK (auth.uid () = endorsed_by);
+    CHECK (
+        (
+            SELECT
+                auth.uid ()
+        ) = endorsed_by
+    );
 
 CREATE POLICY "Profiles can update their own endorsements" ON endorsements FOR
-UPDATE USING (auth.uid () = endorsed_by);
+UPDATE USING (
+    (
+        SELECT
+            auth.uid ()
+    ) = endorsed_by
+);

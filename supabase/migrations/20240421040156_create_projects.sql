@@ -20,10 +20,20 @@ SELECT
 
 CREATE POLICY "Users can insert their own projects." ON projects FOR INSERT
 WITH
-    CHECK (auth.uid () = profile_id);
+    CHECK (
+        (
+            SELECT
+                auth.uid ()
+        ) = profile_id
+    );
 
 CREATE POLICY "Users can update their own projects." ON projects FOR
-UPDATE USING (auth.uid () = profile_id);
+UPDATE USING (
+    (
+        SELECT
+            auth.uid ()
+    ) = profile_id
+);
 
 -- Set up Triggers
 ---- Set the `updated_at` column on every update

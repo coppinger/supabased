@@ -30,7 +30,10 @@ SELECT
 CREATE POLICY "Profiles can insert into projects_stacks for their own projects" ON projects_stacks FOR INSERT
 WITH
     CHECK (
-        auth.uid () = (
+        (
+            SELECT
+                auth.uid ()
+        ) = (
             SELECT
                 profile_id
             FROM
@@ -42,7 +45,10 @@ WITH
 
 CREATE POLICY "Profiles can update their own projects_stacks" ON projects_stacks FOR
 UPDATE USING (
-    auth.uid () = (
+    (
+        SELECT
+            auth.uid ()
+    ) = (
         SELECT
             profile_id
         FROM
