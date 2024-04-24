@@ -69,12 +69,12 @@
 					{#each results as { name }}
 						{#if name}
 							<Button
-								variant="outline"
+								variant="filter"
 								class="flex gap-4"
 								on:click={() => handleFilter(filter, 'stacks', name)}
 							>
 								{name}
-								<Checkbox checked={$filter['stacks'].includes(name)} />
+								<Checkbox tabbable={false} checked={$filter['stacks'].includes(name)} />
 							</Button>
 						{/if}
 					{/each}
@@ -112,12 +112,12 @@
 					{#each results as { name }}
 						{#if name}
 							<Button
-								variant="outline"
+								variant="filter"
 								class="flex gap-4"
 								on:click={() => handleFilter(filter, 'availibility', name)}
 							>
 								{name}
-								<Checkbox checked={$filter['availibility'].includes(name)} />
+								<Checkbox tabbable={false} checked={$filter['availibility'].includes(name)} />
 							</Button>
 						{/if}
 					{/each}
@@ -151,7 +151,7 @@
 					{#each results as { name }}
 						{#if name}
 							<Button
-								variant="outline"
+								variant="filter"
 								class={cn('flex gap-4 flex-wrap', {
 									'text-primary': $filter.experiences.includes(name)
 								})}
