@@ -9,9 +9,12 @@
 	import Endorse from '$routes/profile/[name]/endorse.svelte';
 	import { DotsThree, GithubLogo } from 'phosphor-svelte';
 	import { allAvailabilities } from '$lib/components/profile/data';
+	import { page } from '$app/stores';
+	import { onDestroy, onMount } from 'svelte';
+	import type { EndorsementsResult, ProfilesResult } from '$lib/db/query';
 
-	import type { Tables } from '$lib/types/DatabaseDefinitions';
 	import { Box, Cloud, Database, Lock, MousePointerClick, Triangle } from 'lucide-svelte';
+	import type { Tables } from '$lib/types/DatabaseDefinitions';
 
 	const supabaseProducts = [
 		{
@@ -40,26 +43,58 @@
 		}
 	];
 
-	export let profile: Tables<'profiles'>;
+	export let profile: ProfilesResult;
+	$: ({ endorse, supabase, user } = $page.data);
 
-	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
+	let endorsements = profile.endorsements;
 
-	$: ({ endorse, supabase } = $page.data);
+	onMount(() => {
+		let realtime = supabase
+			.channel('endorsements')
+			.on(
+				'postgres_changes',
+				{
+					event: 'INSERT',
+					schema: 'public',
+					table: 'endorsements'
+				},
+				async (payload) => {
+					const { endorsement_to, endorsed_by } = payload.new;
+					if (endorsement_to === profile.id) {
+						const { data, error } = await supabase
+							.from('profiles')
+							.select()
+							.eq('id', endorsed_by)
+							.returns<Tables<'profiles'>>();
 
-	let endorseCount: number = 0;
+						if (!error) {
+							endorsements.push({ ...payload.new, profiles: data } as EndorsementsResult);
+							endorsements = endorsements;
+						}
+					}
+				}
+			)
+			.on(
+				'postgres_changes',
+				{
+					event: 'DELETE',
+					schema: 'public',
+					table: 'endorsements'
+				},
+				(payload) => {
+					const { id } = payload.old;
+					const idx = endorsements.findIndex((ele) => ele.id === id);
 
-	onMount(async () => {
-		const { count, error } = await supabase
-			.from('endorsements')
-			.select('*', { count: 'estimated', head: true })
-			.eq('endoresement_to', profile.id);
+					if (idx !== -1) {
+						endorsements.splice(idx, 1);
+						endorsements = endorsements;
+					}
+				}
+			)
+			.subscribe();
 
-		if (error) {
-			console.log(error);
-		}
-
-		endorseCount = count;
+		// clean up
+		return () => realtime.unsubscribe();
 	});
 </script>
 
@@ -76,10 +111,10 @@
 		<div class="flex gap-4 items-center w-full">
 			<Avatar class="h-12 w-12">
 				<AvatarImage src={profile.pfp_url} alt={profile.display_name} />
-				<AvatarFallback>{profile.display_name[0]}</AvatarFallback>
+				<AvatarFallback>{profile.display_name}</AvatarFallback>
 			</Avatar>
 			<div>
-				<h5>{profile.display_name}</h5>
+				<h5 class="text-neutral-50">{profile.display_name}</h5>
 				<p class="text-neutral-600">
 					{profile.location}
 					{profile.timezone ? ` • ${profile.timezone}` : ''}
@@ -182,7 +217,7 @@
 				></Button
 			>
 			<div class="flex flex-col gap-6 items-center w-full">
-				<Endorse form={endorse} {profile}>
+				<!-- <Endorse form={endorse} {profile}>
 					<Button variant="outline" class="w-full">Endorse 🫡</Button>
 				</Endorse>
 				<Button variant="ghost" class="gap-2">
@@ -190,28 +225,18 @@
 						<p>Endorsed by</p>
 						<span>🫡</span>
 					</span>
-					{endorseCount}
 					<span class="flex -space-x-2">
-						<Avatar class="h-8 w-8 border-2 border-background">
-							<AvatarImage src="https://i.kym-cdn.com/photos/images/original/002/307/265/9a6" />
-						</Avatar>
-						<Avatar class="h-8 w-8 border-2 border-background">
-							<AvatarImage src="https://i.redd.it/l0m6jy5zqwxa1.png" />
-						</Avatar>
-						<Avatar class="h-8 w-8 border-2 border-background">
-							<AvatarImage src="https://media.tenor.com/Mfk5cU9Jdg8AAAAe/chad-face-chad.png" />
-						</Avatar>
+						<!-- FIXME idk why avatar isn't re-rendering, fix later -->
+						{#each endorsements as endorsement, _ (endorsement.id)}
+							<Avatar class="h-8 w-8 border-2 border-background">
+								<AvatarImage src={endorsement.profiles.pfp_url} />
+							</Avatar>
+						{/each}
 					</span>
 					<span>
 						<DotsThree class="w-5 h-5 opacity-30" />
 					</span>
-				</Button>
-				<!-- TODO: Add the project count of this profile to this button -->
-				<Button
-					variant="outline"
-					class="w-full md:w-fit md:place-self-end text-emerald-400 border-emer"
-					>View 7 projects -></Button
-				>
+				</Button> -->
 			</div>
 		</div>
 	</div>

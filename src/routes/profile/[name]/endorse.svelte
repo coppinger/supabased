@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto, preloadData, pushState } from '$app/navigation';
 	import { page } from '$app/stores';
 	import type { Message } from '$routes/profile/[name]/+page.server';
 	import { endorseSchema, type EndorseSchema } from '$routes/profile/[name]/schema';
@@ -9,26 +8,31 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Auth } from '@supabase/auth-ui-svelte';
 	import { ThemeSupa } from '@supabase/auth-ui-shared';
-	import type { Profile } from '$lib/components/profile/mock';
+	import type { PageData } from './$types';
+	import type { ProfilesResult } from '$lib/db/query';
 
 	let data: SuperValidated<Infer<EndorseSchema>, Message>;
 	export { data as form };
 
-	export let profile: Profile;
-
-	// TODO put correct User type
-	export let endorser: { firstName: string } | undefined = undefined;
+	export let profile: ProfilesResult;
+	export let endorser: PageData['user'] | undefined = undefined;
 
 	const form = superForm(data, {
 		validators: zodClient(endorseSchema),
-		id: profile.firstName,
+		id: profile.github_username ?? profile.display_name ?? crypto.randomUUID(),
+		invalidateAll: false,
 		onUpdated: ({ form }) => {
 			if (form.valid) {
 				const { message } = form;
-				if (!message || !message.profile) return;
+				if (!message) return;
 
-				toast.success('Endorsed!', { description: `${message.text} ${message.profile.name}` });
+				toast.success('Endorsed!', { description: `${message.text}` });
+			} else {
+				toast.error('Error');
 			}
+		},
+		onError: ({ result }) => {
+			toast.error('error');
 		}
 	});
 
@@ -54,9 +58,14 @@ Usage:
 ```
 -->
 {#if endorser}
-	<form method="POST" use:enhance action="/profile/{profile.firstName}?/endorse" class="!w-full">
-		<input type="hidden" value={profile.firstName} name="profile" />
-		<input type="hidden" value={endorser.firstName} name="endorser" />
+	<form
+		method="POST"
+		use:enhance
+		action="/profile/{profile.github_username}?/endorse"
+		class="!w-full"
+	>
+		<input type="hidden" value={profile.id} name="profile" />
+		<input type="hidden" value={endorser.id} name="endorser" />
 		<button class="!w-full">
 			<slot />
 		</button>

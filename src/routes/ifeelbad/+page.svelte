@@ -38,7 +38,8 @@
 	const supabaseProfiles = supabase.from('profiles').select();
 	const supabaseProducts = supabase.from('supabase_products').select().order('sort');
 	const availabilityTypes = supabase.from('availability_types').select().order('sort');
-	const popularStacks = supabase.from('stacks').select('name').limit(10); // TODO: Create a DB View to get the most popular stacks by grouping/counting on the projects table - https://stackoverflow.com/questions/71905843/how-can-i-do-select-count-with-group-by-in-supabase-js
+	const popularStacks = supabase.from('stacks').select('name').limit(10);
+	// TODO: Create a DB View to get the most popular stacks by grouping/counting on the projects table - https://stackoverflow.com/questions/71905843/how-can-i-do-select-count-with-group-by-in-supabase-js
 
 	// Send to profiles component
 	import { Box, Cloud, Database, Lock, MousePointerClick, Triangle } from 'lucide-svelte';
