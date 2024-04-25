@@ -25,7 +25,7 @@
 	const { user } = data;
 </script>
 
-<SupabaseProductsBar {supabase} />
+<SupabaseProductsBar {supabase} {filter} />
 
 <header class="border-b border-neutral-800">
 	<div
@@ -45,13 +45,13 @@
 				<Button
 					variant="outline"
 					class="text-emerald-400 border-emerald-400 md:w-fit"
-					href="/onboarding/project">Add a project -></Button
+					href="/onboarding/project">Add a project -&gt;</Button
 				>
 			{:else}
 				<Button
 					variant="outline"
 					class="text-emerald-400 border-emerald-400 md:w-fit"
-					href="/auth/signin">Submit your profile -></Button
+					href="/auth/signin">Submit your profile -&gt;</Button
 				>
 			{/if}
 		</div>
@@ -65,12 +65,15 @@
 	</div>
 </header>
 
-<div class="flex flex-col md:flex-row gap-10 max-w-screen-xl mx-auto md:p-10 md:px-20">
+<div
+	id="profiles"
+	class="flex flex-col md:flex-row gap-10 max-w-screen-xl mx-auto md:p-10 md:px-20"
+>
 	<div class="hidden md:flex flex-col gap-6">
 		<Filter {filter} {availabilityTypes} {stacks} {products} />
 
 		<Button variant="outline" class="text-emerald-400 border-emerald-400">
-			Submit your profile ->
+			Submit your profile -&gt;
 		</Button>
 	</div>
 	<div class="flex flex-col gap-6 p-4 md:p-0 w-full">
