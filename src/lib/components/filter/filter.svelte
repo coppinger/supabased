@@ -48,9 +48,9 @@
 		</div>
 		<Input placeholder="Search stacks..." bind:value />
 		<p class="text-neutral-50 font-bold">Popular stacks</p>
-		<div class="flex gap-4 flex-wrap">
+		<div class="grid gap-4 grid-cols-2">
 			{#await stacks}
-				{#each [...Array(10)] as _}
+				{#each [...Array(6)] as _}
 					<div class="animate-pulse bg-neutral-700 h-10 w-20 rounded" />
 				{/each}
 			{:then { data, error }}
@@ -59,11 +59,17 @@
 						{#if name}
 							<Button
 								variant="filter"
-								class="flex gap-4"
+								class={cn('flex gap-4 flex-wrap backdrop-blur shadow-sm shadow-neutral-800', {
+									'text-primary': $filter.stacks.includes(name)
+								})}
 								on:click={() => handleFilter(filter, 'stacks', name)}
 							>
 								{name}
-								<Checkbox tabindex={-1} checked={$filter['stacks'].includes(name)} />
+								<Checkbox
+									class="ml-auto"
+									tabindex={-1}
+									checked={$filter['stacks'].includes(name)}
+								/>
 							</Button>
 						{/if}
 					{/each}
@@ -99,11 +105,13 @@
 						{#if name}
 							<Button
 								variant="filter"
-								class="flex gap-4"
+								class={cn('flex gap-4 flex-wrap backdrop-blur shadow-sm shadow-neutral-800', {
+									'text-primary': $filter.availibility.includes(name)
+								})}
 								on:click={() => handleFilter(filter, 'availibility', name)}
 							>
 								{name}
-								<Checkbox tabindex={-1} checked={$filter['availibility'].includes(name)} />
+								<!-- <Checkbox tabindex={-1} checked={$filter['availibility'].includes(name)} /> -->
 							</Button>
 						{/if}
 					{/each}
@@ -137,7 +145,7 @@
 						{#if name}
 							<Button
 								variant="filter"
-								class={cn('flex gap-4 flex-wrap', {
+								class={cn('flex gap-4 flex-wrap backdrop-blur shadow-sm shadow-neutral-800', {
 									'text-primary': $filter.experiences.includes(name)
 								})}
 								on:click={() => handleFilter(filter, 'experiences', name)}

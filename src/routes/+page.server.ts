@@ -16,7 +16,7 @@ export async function load({ locals: { supabase } }) {
 			.returns<ProfilesResult[]>(),
 		availabilityTypes: supabase.from('availability_types').select().order('sort').returns<Tables<'availability_types'>[]>(),
 		products: supabase.from('supabase_products').select().order('sort').returns<Tables<'supabase_products'>[]>(),
-		stacks: supabase.from('stacks_count').select().limit(10).returns<Tables<'stacks_count'>[]>(),
+		stacks: supabase.from('stacks_count').select().limit(6).returns<Tables<'stacks_count'>[]>(),
 		endorse: await superValidate(zod(endorseSchema))
 	}
 }

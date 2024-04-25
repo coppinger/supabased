@@ -20,6 +20,7 @@
 	import { writable } from 'svelte/store';
 	import { cn } from '$lib/utils';
 	import type { PageData } from '../../routes/$types';
+	import { padStart } from 'lodash-es';
 
 	const supabaseProducts = [
 		{
@@ -278,34 +279,37 @@
 			Contact
 			<span class="material-symbols-outlined text-[20px] gap-4 items-center"> mail </span>
 		</Button>
-		<div class="flex flex-col gap-6 items-center w-full md:flex-row">
-			<Endorse form={endorse} {profile}>
+		<div class="flex flex-col gap-2 items-center w-full md:flex-row">
+			<Endorse {profile}>
 				<Button variant="outline" class="w-full md:w-fit">Endorse 🫡</Button>
 			</Endorse>
 			{#if profile}
-				<Button variant="ghost" class="gap-2">
-					<span class="flex gap-1">
+				<Button
+					variant="ghost"
+					class="gap-2 justify-center md:justify-start w-full grow md:w-[17.25rem]"
+				>
+					<span class="flex gap-1 min-w-32">
 						<p>Endorsed by</p>
 						<span>🫡</span>
-						{$components.get(id)?.endorsements.length}
+						<span class="whitespace-pre">
+							{profile.endorsements.length.toString().padStart(4).padEnd(4, ' ')}
+						</span>
 					</span>
 					<span class="flex -space-x-2">
-						<!-- FIXME idk why avatar isn't re-rendering, fix later -->
 						{#each profile.endorsements as endorsement, _ (endorsement.id)}
 							<Avatar class="h-8 w-8 border-2 border-background">
-								<AvatarImage src={endorsement.profiles.pfp_url} />
+								<AvatarImage src={profile.pfp_url} />
 							</Avatar>
 						{/each}
 					</span>
-					<span>
-						<DotsThree class="w-5 h-5 opacity-30" />
-					</span>
+					{#if profile.endorsements.length > 3}
+						<span>
+							<DotsThree class="w-5 h-5 opacity-30" />
+						</span>
+					{/if}
 				</Button>
 				{#if profile.projects.length > 0}
-					<Button
-						variant="outline"
-						class="w-full md:w-fit md:place-self-end text-emerald-400 border-emer"
-					>
+					<Button variant="outline" class="w-full md:w-fit text-emerald-400 border-emer">
 						View {profile.projects.length} project{profile.projects.length > 1 ? 's' : ''} ->
 					</Button>
 				{:else}

@@ -10,12 +10,14 @@
 	import { ThemeSupa } from '@supabase/auth-ui-shared';
 	import type { PageData } from './$types';
 	import type { ProfilesResult } from '$lib/db/query';
+	import type { HTMLFormAttributes } from 'svelte/elements';
 
-	let data: SuperValidated<Infer<EndorseSchema>, Message>;
-	export { data as form };
+	type $$Props = HTMLFormAttributes & { profile: ProfilesResult };
 
 	export let profile: ProfilesResult;
-	$: ({ user } = $page.data as PageData);
+
+	let { user, endorse: data } = $page.data as PageData;
+	$: ({ user, endorse: data } = $page.data);
 
 	const form = superForm(data, {
 		validators: zodClient(endorseSchema),
@@ -61,9 +63,14 @@ Usage:
 -->
 
 {#if user?.id}
-	<form method="POST" use:enhance action="/profile/{profile.username}?/endorse" class="!w-full">
+	<form
+		method="POST"
+		use:enhance
+		action="/profile/{profile.username}?/endorse"
+		class="!w-full md:!w-fit"
+	>
 		<input type="hidden" value={profile.id} name="profile" />
-		<button class="!w-full" tabindex={-1}>
+		<button class="!w-full md:!w-fit" tabindex={-1}>
 			<slot />
 		</button>
 	</form>
