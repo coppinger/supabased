@@ -96,7 +96,6 @@
 						<span class="material-symbols-outlined text-[12px] leading-none">close</span>
 					</Button>
 				{/each}
-				<!-- TODO: This button should clear all existing applied filters -->
 				<Button
 					class="text-emerald-400 flex items-center gap-2 w-full"
 					variant="secondary"

@@ -165,4 +165,4 @@ s3_secret_key = "env(S3_SECRET_KEY)"
 enabled = true
 client_id = "env(GITHUB_CLIENT_ID)"
 secret = "env(GITHUB_CLIENT_SECRET)"
-redirect_uri = "http://localhost:54321/auth/callback"
+redirect_uri = "http://127.0.0.1:54321/auth/v1/callback"

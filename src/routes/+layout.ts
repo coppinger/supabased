@@ -9,8 +9,8 @@ import type { Database, Tables } from '$lib/types/DatabaseDefinitions'
 import type { LayoutLoad } from './$types'
 import { createBrowserClient, isBrowser, parse } from '@supabase/ssr'
 
-const _URL = false ? PUBLIC_SUPABASE_DEV_URL : PUBLIC_SUPABASE_URL
-const _ANON = false ? PUBLIC_SUPABASE_DEV_ANON : PUBLIC_SUPABASE_ANON_KEY
+const _URL = dev ? PUBLIC_SUPABASE_DEV_URL : PUBLIC_SUPABASE_URL
+const _ANON = dev ? PUBLIC_SUPABASE_DEV_ANON : PUBLIC_SUPABASE_ANON_KEY
 
 export const load = (async ({ fetch, data, depends }) => {
 	depends('supabase:auth')

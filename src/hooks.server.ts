@@ -6,12 +6,11 @@ import {
 } from '$env/static/public'
 import { createServerClient } from '@supabase/ssr'
 import type { Database } from '$lib/types/DatabaseDefinitions'
-import { redirect, type Handle, type HandleServerError } from '@sveltejs/kit'
+import { type Handle, type HandleServerError } from '@sveltejs/kit'
 import { dev } from '$app/environment'
-import type { AuthError, Session, User } from '@supabase/supabase-js'
 
-const _URL = false ? PUBLIC_SUPABASE_DEV_URL : PUBLIC_SUPABASE_URL
-const _ANON = false ? PUBLIC_SUPABASE_DEV_ANON : PUBLIC_SUPABASE_ANON_KEY
+const _URL = dev ? PUBLIC_SUPABASE_DEV_URL : PUBLIC_SUPABASE_URL
+const _ANON = dev ? PUBLIC_SUPABASE_DEV_ANON : PUBLIC_SUPABASE_ANON_KEY
 
 export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.supabase = createServerClient<Database>(_URL, _ANON, {

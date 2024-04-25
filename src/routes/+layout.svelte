@@ -14,8 +14,11 @@
 	import 'iconify-icon';
 	import Footer from '$lib/components/Footer.svelte';
 	import { menuItems } from '$lib/components/menu/menuItems';
+	import { dev } from '$app/environment';
 
 	export let data;
+
+	if (dev) console.log(data.session);
 </script>
 
 {#if $menuBoolean}
