@@ -31,7 +31,7 @@
 	}
 </script>
 
-<div class="flex flex-col gap-8 p-8 w-[360px] rounded-md">
+<div class="flex flex-col gap-8 py-8 w-[360px] rounded-md">
 	<div class="flex flex-col gap-8">
 		<div class="flex items-center gap-2">
 			<p class="text-xl font-bold">Stacks</p>
