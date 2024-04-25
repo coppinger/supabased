@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import type { Message } from '$routes/profile/[name]/+page.server';
 	import { endorseSchema, type EndorseSchema } from '$routes/profile/[name]/schema';
 	import { toast } from 'svelte-sonner';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';

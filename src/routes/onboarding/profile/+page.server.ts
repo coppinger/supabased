@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types'
 import { error } from '@sveltejs/kit'
-import { profileSchema } from './profileSchema'
+import { profileSchema } from './schema'
 import { fail, message, superValidate } from 'sveltekit-superforms'
 import { redirect } from '@sveltejs/kit'
 import { zod } from 'sveltekit-superforms/adapters'
@@ -9,20 +9,13 @@ const { randomUUID } = crypto
 
 export const load: PageServerLoad = async ({ locals: { safeGetSession, supabase } }) => {
 	const { session } = await safeGetSession()
-	console.log(session)
 
-	if (!session) {
+	if (!session?.user.id) {
 		throw redirect(303, '/login?redirectedFrom=onboarding')
 	}
-	const { data: profile } = await supabase
-		.from('profiles')
-		.select(`display_name, website, profile, pfp_url`)
-		.eq('id', session.user.id)
-		.single()
+
 	return {
 		form: await superValidate(zod(profileSchema)),
-		profile,
-		session
 	}
 }
 

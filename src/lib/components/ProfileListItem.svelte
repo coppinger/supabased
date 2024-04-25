@@ -298,7 +298,7 @@
 					<span class="flex -space-x-2">
 						{#each profile.endorsements as endorsement, _ (endorsement.id)}
 							<Avatar class="h-8 w-8 border-2 border-background">
-								<AvatarImage src={profile.pfp_url} />
+								<AvatarImage src={endorsement.profiles.pfp_url} />
 							</Avatar>
 						{/each}
 					</span>

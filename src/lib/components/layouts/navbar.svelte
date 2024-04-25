@@ -13,8 +13,6 @@
 
 	$: ({ supabase, user } = $page.data as PageData);
 
-	$: console.log(user);
-
 	async function signOut() {
 		const { error } = await supabase.auth.signOut();
 		if (error) console.log(error);
@@ -28,6 +26,7 @@
 		profile = result && result.data ? result.data : undefined;
 	}
 	$: if (user?.profile) loadProfile();
+	$: console.log(profile);
 </script>
 
 <div class="border-b w-full">

@@ -1,14 +1,11 @@
 <script lang="ts">
 	import { superForm, fileProxy } from 'sveltekit-superforms';
 	import { Field, Control, Description, FieldErrors } from 'formsnap';
-
 	import toast from 'svelte-french-toast';
-
-	import { error } from '@sveltejs/kit';
 
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import type { PageData } from './$types.js';
-	import { profileSchema } from './profileSchema.js';
+	import { profileSchema } from './schema.js';
 	import SuperDebug from 'sveltekit-superforms';
 	import * as Form from '$lib/components/ui/form';
 	import Input from '$lib/components/ui/input/input.svelte';
@@ -66,7 +63,6 @@
 
 		if (errorUsername) {
 			console.log(errorUsername);
-			error(500, 'Error fetching username');
 		}
 
 		usernameUnavailable = !!data;
@@ -142,7 +138,7 @@
 	<Form.Field {form} name="pfp_url">
 		<Form.Control let:attrs>
 			<Form.Label>Profile picture</Form.Label>
-			<Input {...attrs} isFileType={true} bind:files={$file} />
+			<Input {...attrs} type="file" bind:files={$file} />
 		</Form.Control>
 		<Form.Description>Select a spiffy picture of yourself ^_^</Form.Description>
 		<Form.FieldErrors />

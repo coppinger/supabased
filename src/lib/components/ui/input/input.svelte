@@ -3,21 +3,21 @@
 	import type { InputEvents } from './index.js';
 	import { cn } from '$lib/utils.js';
 
-	type $$Props = HTMLInputAttributes;
+	type $$Props = HTMLInputAttributes & { files?: FileList };
 	type $$Events = InputEvents;
 
 	let className: $$Props['class'] = undefined;
-	export let value: $$Props['value'] = undefined;
-	export let files: FileList | undefined | null = undefined;
-	export let isFileType: boolean = false;
 	export { className as class };
+	export let value: $$Props['value'] = undefined;
+	export let files: $$Props['files'] = undefined;
+	export let type: $$Props['type'] = undefined;
 
 	// Workaround for https://github.com/sveltejs/svelte/issues/9305
 	// Fixed in Svelte 5, but not backported to 4.x.
 	export let readonly: $$Props['readonly'] = undefined;
 </script>
 
-{#if isFileType}
+{#if type === 'file'}
 	<input
 		class={cn(
 			'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',

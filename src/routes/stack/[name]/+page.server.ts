@@ -25,7 +25,6 @@ export const actions = {
         // if (!form.valid) return message(form, { status: 'error', text: 'Invalid form' })
 
         // TODO remove, for testing only
-        console.table(form.data)
 
         // if (!user) return message(form, { status: 'error', text: 'Please login to submit.' }, {
         //   status: 401

@@ -12,7 +12,7 @@ export interface Message {
 }
 
 export const load = (async ({ locals: { supabase, safeGetSession }, params: { name } }) => {
-  const profile = supabase.from('profiles').select().eq('username', name).maybeSingle<Tables<'profiles'>>()
+  const profile = await supabase.from('profiles').select().eq('username', name).maybeSingle<Tables<'profiles'>>()
 
   return {
     profile,
