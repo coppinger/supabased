@@ -10,15 +10,15 @@
 	import AvatarImage from '$lib/components/ui/avatar/avatar-image.svelte';
 	import type { PageData } from '../../../routes/$types';
 	import { invalidateAll } from '$app/navigation';
+	import { redirect } from '@sveltejs/kit';
 
 	$: ({ supabase, user } = $page.data as PageData);
-
-	$: console.log(user);
 
 	async function signOut() {
 		const { error } = await supabase.auth.signOut();
 		if (error) console.log(error);
 		await invalidateAll();
+		redirect(302, '/');
 	}
 
 	let profile: Tables<'profiles'> | undefined;
