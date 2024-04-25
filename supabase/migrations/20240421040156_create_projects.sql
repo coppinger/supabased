@@ -1,7 +1,7 @@
 CREATE TABLE
     "projects" (
         "id" uuid PRIMARY KEY DEFAULT gen_random_uuid (),
-        "profile_id" uuid REFERENCES profiles (id),
+        "profile_id" uuid REFERENCES profiles (id) ON DELETE CASCADE,
         "project_name" text,
         "project_url" text UNIQUE,
         "repository_url" text UNIQUE,

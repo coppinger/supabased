@@ -1,12 +1,11 @@
 import type { PostgrestSingleResponse, SupabaseClient } from '@supabase/supabase-js'
 import { derived, get, writable, type Writable } from 'svelte/store'
 import { PROFILE_QUERY, type ProfilesResult } from '$lib/db/query'
-import type { Tables } from '$lib/types/DatabaseDefinitions'
 
 export interface FilterOptions {
-	stacks: string[];
-	availibility: string[];
-	experiences: string[];
+	stacks: string[]
+	availibility: string[]
+	experiences: string[]
 }
 
 export const createProfilesState = (init: PostgrestSingleResponse<ProfilesResult[]>, supabase: SupabaseClient) => {
@@ -26,9 +25,9 @@ export const createProfilesState = (init: PostgrestSingleResponse<ProfilesResult
 			.neq('display_name', null)
 
 		if ($search.length) query = query.textSearch('display_name', `${$search.replaceAll(' ', '+')}:*`)
-		if ($filter.availibility.length) query = query.in('availabilities.availability.name', $filter.availibility)
-		if ($filter.stacks.length) query = query.in('projects.stacks.stack.name', $filter.stacks)
-		if ($filter.experiences.length) query = query.in('projects.products.product.name', $filter.experiences)
+		if ($filter.availibility.length) query = query.contains('availabilities', $filter.availibility)
+		if ($filter.stacks.length) query = query.contains('stacks', $filter.stacks)
+		if ($filter.experiences.length) query = query.contains('products', $filter.experiences)
 
 
 		query.returns<ProfilesResult[]>()

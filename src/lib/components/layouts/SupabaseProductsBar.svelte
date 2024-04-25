@@ -2,11 +2,11 @@
 	import type { Writable } from 'svelte/store';
 	import { supabaseProductIcons } from './supabaseProductIcons';
 	import type { FilterOptions } from '$lib/stores/profiles';
-	export let supabase;
-
-	const supabaseProducts = supabase.from('supabase_products').select().order('sort');
-
+	import type { PageData } from '../../../routes/$types';
+	export let supabase: PageData['supabase'];
 	export let filter: Writable<FilterOptions>;
+
+	const supabaseProducts = supabase.from('products').select().order('sort');
 
 	const handleClick = (supabaseProductName: string) => () => {
 		filter.update((val) => {
@@ -25,19 +25,23 @@
 			{#each [...Array(6)] as _}
 				<div class="animate-pulse bg-neutral-700 h-6 w-24 rounded" />
 			{/each}
-		{:then data}
-			{#each data.data as { name }}
-				<a
-					class="px-1 flex gap-4 items-center text-emerald-400 font-bold"
-					href="#profiles"
-					on:click={handleClick(name)}
-				>
-					{name}
-					{#if supabaseProductIcons[name]}
-						<svelte:component this={supabaseProductIcons[name]} class="h-4 w-4" />
+		{:then { data }}
+			{#if data}
+				{#each data as { name }}
+					{#if name}
+						<a
+							class="px-1 flex gap-4 items-center text-emerald-400 font-bold"
+							href="#profiles"
+							on:click={handleClick(name)}
+						>
+							{name}
+							{#if supabaseProductIcons[name]}
+								<svelte:component this={supabaseProductIcons[name]} class="h-4 w-4" />
+							{/if}
+						</a>
 					{/if}
-				</a>
-			{/each}
+				{/each}
+			{/if}
 		{:catch error}
 			{console.log(error)}
 		{/await}

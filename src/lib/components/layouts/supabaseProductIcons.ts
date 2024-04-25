@@ -1,6 +1,7 @@
 import { Box, Cloud, Database, Lock, MousePointerClick, Triangle } from 'lucide-svelte'
 
-export const supabaseProductIcons = {
+type SupabaseProductsIcons = typeof Box | typeof Cloud | typeof Database | typeof Lock | typeof MousePointerClick | typeof Triangle
+export const supabaseProductIcons: Record<string, SupabaseProductsIcons> = {
 	Database: Database,
 	Auth: Lock,
 	Storage: Cloud,

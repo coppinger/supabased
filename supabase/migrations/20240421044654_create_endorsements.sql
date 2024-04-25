@@ -1,8 +1,8 @@
 CREATE TABLE
     "endorsements" (
         "id" uuid PRIMARY KEY DEFAULT gen_random_uuid (),
-        "endorsement_to" uuid REFERENCES profiles (id),
-        "endorsed_by" uuid REFERENCES profiles (id),
+        "endorsement_to" uuid REFERENCES profiles (id) ON DELETE CASCADE,
+        "endorsed_by" uuid REFERENCES profiles (id) ON DELETE CASCADE,
         "created_at" timestamptz DEFAULT now (),
         CONSTRAINT unique_endorsement UNIQUE (endorsement_to, endorsed_by)
     );

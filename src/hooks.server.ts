@@ -6,16 +6,18 @@ import {
 } from '$env/static/public'
 import { createServerClient } from '@supabase/ssr'
 import type { Database } from '$lib/types/DatabaseDefinitions'
-import { type Handle, type HandleServerError } from '@sveltejs/kit'
+import { redirect, type Handle, type HandleServerError } from '@sveltejs/kit'
 import { dev } from '$app/environment'
 
 const _URL = dev ? PUBLIC_SUPABASE_DEV_URL : PUBLIC_SUPABASE_URL
 const _ANON = dev ? PUBLIC_SUPABASE_DEV_ANON : PUBLIC_SUPABASE_ANON_KEY
 
 export const handle: Handle = async ({ event, resolve }) => {
-	event.locals.supabase = createServerClient<Database>(_URL, _ANON, {
+	const { locals, url, cookies } = event
+
+	locals.supabase = createServerClient<Database>(_URL, _ANON, {
 		cookies: {
-			get: (key) => event.cookies.get(key),
+			get: (key) => cookies.get(key),
 			/**
 			 * Note: You have to add the `path` variable to the
 			 * set and remove method due to sveltekit's cookie API
@@ -23,10 +25,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 			 * will replicate previous/standard behaviour (https://kit.svelte.dev/docs/types#public-types-cookies)
 			 */
 			set: (key, value, options) => {
-				event.cookies.set(key, value, { ...options, path: '/' })
+				cookies.set(key, value, { ...options, path: '/' })
 			},
 			remove: (key, options) => {
-				event.cookies.delete(key, { ...options, path: '/' })
+				cookies.delete(key, { ...options, path: '/' })
 			}
 		}
 	})
@@ -36,11 +38,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 	 * doesn't validate the JWT, this function validates the JWT by first calling
 	 * `getUser` and aborts early if the JWT signature is invalid.
 	 */
-	event.locals.safeGetSession = async () => {
+	locals.safeGetSession = async () => {
 		const {
 			data: { user },
 			error
-		} = await event.locals.supabase.auth.getUser()
+		} = await locals.supabase.auth.getUser()
 
 		if (error) {
 			return { session: null, user: null }
@@ -48,9 +50,13 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 		const {
 			data: { session }
-		} = await event.locals.supabase.auth.getSession()
+		} = await locals.supabase.auth.getSession()
 		return { session, user }
 	}
+
+	const { session } = await locals.safeGetSession()
+
+	if (url.pathname.startsWith('/settings') && !session?.user.id) redirect(303, '/login')
 
 	return resolve(event, {
 		filterSerializedResponseHeaders(name) {

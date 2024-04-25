@@ -1,6 +1,6 @@
 -- Add supabase_products seed data
 INSERT INTO
-    "supabase_products" ("name", "sort")
+    products ("name", "sort")
 VALUES
     ('Database', 0),
     ('Auth', 1),
@@ -11,7 +11,7 @@ VALUES
 
 -- Add availability_types seed data
 INSERT INTO
-    "availability_types" ("name", "sort")
+    availabilities ("name", "sort")
 VALUES
     ('Full Time', 0),
     ('Part Time', 1),
@@ -21,7 +21,7 @@ VALUES
     ('Task', 5);
 
 INSERT INTO
-    "roles" ("name", "sort")
+    roles ("name", "sort")
 VALUES
     ('Front-end', 0),
     ('Back-end', 1),
@@ -342,19 +342,19 @@ VALUES
 
 -- Seed data for profiles
 INSERT INTO
-    "profiles" (
-        "id",
-        "display_name",
-        "username",
-        "skills",
-        "bio",
-        "twitter_username",
-        "github_username",
-        "website_url",
-        "linkedin_url",
-        "location",
-        "timezone",
-        "pfp_url"
+    profiles (
+        id,
+        display_name,
+        username,
+        skills,
+        bio,
+        twitter_username,
+        github_username,
+        website_url,
+        linkedin_url,
+        location,
+        timezone,
+        pfp_url
     )
 VALUES
     (
@@ -452,7 +452,7 @@ VALUES
     );
 
 INSERT INTO
-    profile_availability_types (profile_id, availability_type_id)
+    profiles_availabilities (profile_id, availability_id)
 VALUES
     ('c1e426ee-3b77-4a20-bff3-9079d0c362f2', 1),
     ('c1e426ee-3b77-4a20-bff3-9079d0c362f2', 2),
@@ -473,12 +473,71 @@ VALUES
     ('a2e716ed-7d3d-4f1b-b6d7-7a9d8c2f5031', 5);
 
 INSERT INTO
-    supabase_products_projects (supabase_product_id, project_id)
+    projects_products (project_id, product_id)
 VALUES
-    (1, '335cf024-9347-4b94-86bb-63a787a4e109'),
-    (2, '335cf024-9347-4b94-86bb-63a787a4e109'),
-    (3, '335cf024-9347-4b94-86bb-63a787a4e109'),
-    (5, '335cf024-9347-4b94-86bb-63a787a4e109'),
-    (4, '9a99e786-c1bb-45a9-a43d-014ef2185a68'),
-    (5, '9a99e786-c1bb-45a9-a43d-014ef2185a68'),
-    (6, '9a99e786-c1bb-45a9-a43d-014ef2185a68');
+    ('335cf024-9347-4b94-86bb-63a787a4e109', 1),
+    ('335cf024-9347-4b94-86bb-63a787a4e109', 2),
+    ('335cf024-9347-4b94-86bb-63a787a4e109', 3),
+    ('335cf024-9347-4b94-86bb-63a787a4e109', 5),
+    ('9a99e786-c1bb-45a9-a43d-014ef2185a68', 4),
+    ('9a99e786-c1bb-45a9-a43d-014ef2185a68', 5),
+    ('9a99e786-c1bb-45a9-a43d-014ef2185a68', 6);
+
+INSERT INTO
+    languages (name)
+VALUES
+    ('JavaScript'),
+    ('Python'),
+    ('Java'),
+    ('C#'),
+    ('C++'),
+    ('TypeScript'),
+    ('Ruby'),
+    ('Swift'),
+    ('Go'),
+    ('PHP'),
+    ('HTML'),
+    ('CSS'),
+    ('SQL'),
+    ('Kotlin'),
+    ('Rust'),
+    ('Perl'),
+    ('Objective-C'),
+    ('Scala'),
+    ('Shell'),
+    ('Lua'),
+    ('Dart'),
+    ('Assembly'),
+    ('R'),
+    ('Groovy'),
+    ('Haskell'),
+    ('Matlab'),
+    ('Scheme'),
+    ('VBA'),
+    ('Clojure'),
+    ('F#'),
+    ('Ada'),
+    ('COBOL'),
+    ('Fortran'),
+    ('Delphi'),
+    ('Erlang'),
+    ('Lisp'),
+    ('Prolog'),
+    ('ABAP'),
+    ('Apex'),
+    ('PowerShell'),
+    ('PL/SQL'),
+    ('T-SQL'),
+    ('VBScript'),
+    ('Transact-SQL'),
+    ('XQuery'),
+    ('XSLT'),
+    ('Racket'),
+    ('Bash');
+
+INSERT INTO
+    projects_languages (project_id, language_id)
+VALUES
+    ('335cf024-9347-4b94-86bb-63a787a4e109', 1),
+    ('335cf024-9347-4b94-86bb-63a787a4e109', 3),
+    ('335cf024-9347-4b94-86bb-63a787a4e109', 25);

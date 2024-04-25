@@ -13,6 +13,10 @@ CREATE TABLE
         "location" text,
         "timezone" text,
         "pfp_url" text,
+        "stacks" TEXT[] DEFAULT ARRAY[]::TEXT[],
+        "products" TEXT[] DEFAULT ARRAY[]::TEXT[],
+        "languages" TEXT[] DEFAULT ARRAY[]::TEXT[],
+        "availabilities" TEXT[] DEFAULT ARRAY[]::TEXT[],
         "created_at" timestamptz DEFAULT now (),
         "updated_at" timestamptz,
         "deleted_at" timestamptz
@@ -52,8 +56,10 @@ CREATE OR REPLACE FUNCTION public.handle_new_user()
     RETURNS TRIGGER
     AS $$
 BEGIN
-    INSERT INTO public.profiles(id)
-        VALUES(NEW.id);
+    INSERT INTO public.profiles(id, pfp_url)
+    -- We can get the user metadata column values like this if we need them
+    -- NEW.raw_user_meta_data->>'user_name', NEW.email, NEW.raw_user_meta_data->>'avatar_url'       
+ VALUES(NEW.id, NEW.raw_user_meta_data->>'avatar_url');
     RETURN new;
 END;
 $$

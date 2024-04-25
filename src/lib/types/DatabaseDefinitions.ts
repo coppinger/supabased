@@ -9,7 +9,7 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      availability_types: {
+      availabilities: {
         Row: {
           id: number
           name: string | null
@@ -63,51 +63,56 @@ export type Database = {
           },
         ]
       }
-      profile_availability_types: {
+      languages: {
         Row: {
-          availability_type_id: number | null
-          id: string
-          profile_id: string | null
+          id: number
+          name: string
         }
         Insert: {
-          availability_type_id?: number | null
-          id?: string
-          profile_id?: string | null
+          id?: number
+          name: string
         }
         Update: {
-          availability_type_id?: number | null
-          id?: string
-          profile_id?: string | null
+          id?: number
+          name?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "profile_availability_types_availability_type_id_fkey"
-            columns: ["availability_type_id"]
-            isOneToOne: false
-            referencedRelation: "availability_types"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "profile_availability_types_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
+      }
+      products: {
+        Row: {
+          id: number
+          name: string | null
+          sort: number | null
+        }
+        Insert: {
+          id?: number
+          name?: string | null
+          sort?: number | null
+        }
+        Update: {
+          id?: number
+          name?: string | null
+          sort?: number | null
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
+          availabilities: string[] | null
           bio: string | null
           created_at: string | null
           deleted_at: string | null
           display_name: string | null
+          email: string | null
           github_username: string | null
           id: string
+          languages: string[] | null
           linkedin_url: string | null
           location: string | null
           pfp_url: string | null
+          products: string[] | null
           skills: string | null
+          stacks: string[] | null
           timezone: string | null
           twitter_username: string | null
           updated_at: string | null
@@ -115,16 +120,21 @@ export type Database = {
           website_url: string | null
         }
         Insert: {
+          availabilities?: string[] | null
           bio?: string | null
           created_at?: string | null
           deleted_at?: string | null
           display_name?: string | null
+          email?: string | null
           github_username?: string | null
           id: string
+          languages?: string[] | null
           linkedin_url?: string | null
           location?: string | null
           pfp_url?: string | null
+          products?: string[] | null
           skills?: string | null
+          stacks?: string[] | null
           timezone?: string | null
           twitter_username?: string | null
           updated_at?: string | null
@@ -132,16 +142,21 @@ export type Database = {
           website_url?: string | null
         }
         Update: {
+          availabilities?: string[] | null
           bio?: string | null
           created_at?: string | null
           deleted_at?: string | null
           display_name?: string | null
+          email?: string | null
           github_username?: string | null
           id?: string
+          languages?: string[] | null
           linkedin_url?: string | null
           location?: string | null
           pfp_url?: string | null
+          products?: string[] | null
           skills?: string | null
+          stacks?: string[] | null
           timezone?: string | null
           twitter_username?: string | null
           updated_at?: string | null
@@ -149,6 +164,39 @@ export type Database = {
           website_url?: string | null
         }
         Relationships: []
+      }
+      profiles_availabilities: {
+        Row: {
+          availability_id: number | null
+          id: string
+          profile_id: string | null
+        }
+        Insert: {
+          availability_id?: number | null
+          id?: string
+          profile_id?: string | null
+        }
+        Update: {
+          availability_id?: number | null
+          id?: string
+          profile_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_availabilities_availability_id_fkey"
+            columns: ["availability_id"]
+            isOneToOne: false
+            referencedRelation: "availabilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_availabilities_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles_roles: {
         Row: {
@@ -227,6 +275,72 @@ export type Database = {
           },
         ]
       }
+      projects_languages: {
+        Row: {
+          id: string
+          language_id: number
+          project_id: string
+        }
+        Insert: {
+          id?: string
+          language_id: number
+          project_id: string
+        }
+        Update: {
+          id?: string
+          language_id?: number
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_languages_language_id_fkey"
+            columns: ["language_id"]
+            isOneToOne: false
+            referencedRelation: "languages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projects_languages_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects_products: {
+        Row: {
+          id: string
+          product_id: number | null
+          project_id: string | null
+        }
+        Insert: {
+          id?: string
+          product_id?: number | null
+          project_id?: string | null
+        }
+        Update: {
+          id?: string
+          product_id?: number | null
+          project_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projects_products_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects_stacks: {
         Row: {
           id: string
@@ -298,57 +412,6 @@ export type Database = {
           url?: string | null
         }
         Relationships: []
-      }
-      supabase_products: {
-        Row: {
-          id: number
-          name: string | null
-          sort: number | null
-        }
-        Insert: {
-          id?: number
-          name?: string | null
-          sort?: number | null
-        }
-        Update: {
-          id?: number
-          name?: string | null
-          sort?: number | null
-        }
-        Relationships: []
-      }
-      supabase_products_projects: {
-        Row: {
-          id: string
-          project_id: string | null
-          supabase_product_id: number | null
-        }
-        Insert: {
-          id?: string
-          project_id?: string | null
-          supabase_product_id?: number | null
-        }
-        Update: {
-          id?: string
-          project_id?: string | null
-          supabase_product_id?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "supabase_products_projects_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "supabase_products_projects_supabase_product_id_fkey"
-            columns: ["supabase_product_id"]
-            isOneToOne: false
-            referencedRelation: "supabase_products"
-            referencedColumns: ["id"]
-          },
-        ]
       }
     }
     Views: {

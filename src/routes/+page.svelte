@@ -17,10 +17,11 @@
 	export let data;
 	let { supabase, availabilityTypes, products, profiles: init, stacks } = data;
 	$: ({ supabase, availabilityTypes, products, profiles: init, stacks } = data);
-	$: ({ profiles, filter, activeFilters, search, clearFilters } = createProfilesState(
+
+	let { profiles, filter, activeFilters, search, clearFilters } = createProfilesState(
 		init,
 		supabase
-	));
+	);
 
 	const { user } = data;
 </script>

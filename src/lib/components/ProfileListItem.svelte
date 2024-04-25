@@ -10,7 +10,6 @@
 	import { Separator } from '$lib/components/ui/separator';
 	import Endorse from '$routes/profile/[name]/endorse.svelte';
 	import { DotsThree } from 'phosphor-svelte';
-	import { allAvailabilities } from '$lib/components/profile/data';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import type { EndorsementsResult, ProfilesResult } from '$lib/db/query';
@@ -20,7 +19,6 @@
 	import { writable } from 'svelte/store';
 	import { cn } from '$lib/utils';
 	import type { PageData } from '../../routes/$types';
-	import { padStart } from 'lodash-es';
 
 	const supabaseProducts = [
 		{
@@ -50,7 +48,9 @@
 	];
 
 	export let profile: ProfilesResult;
-	$: ({ endorse, supabase, user } = $page.data as PageData);
+	let { supabase, user, availabilityTypes } = $page.data as PageData;
+	$: ({ supabase, user, availabilityTypes } = $page.data);
+	$: ({ data: availabilities } = availabilityTypes);
 
 	const id = crypto.randomUUID();
 	$: if ($components.has(id)) profile = $components.get(id)!;
@@ -77,15 +77,13 @@
 									.from('profiles')
 									.select()
 									.eq('id', endorsed_by)
-									.returns<Tables<'profiles'>>();
-
-								if (!error) {
+									.single<Tables<'profiles'>>();
+								if (!error)
 									profile.endorsements.push({
 										...payload.new,
 										profiles: data
 									} as EndorsementsResult);
-									$components = $components;
-								}
+								$components = $components;
 							}
 						}
 					}
@@ -129,9 +127,7 @@
 			{#each supabaseProducts as { Icon, label }}
 				<div
 					class={cn('flex gap-4 items-center text-neutral-400 font-bold', {
-						'text-emerald-400': $components
-							.get(id)
-							?.projects.some((ele) => ele.products.some((ele) => ele.product.name === label))
+						'text-emerald-400': $components.get(id)?.products?.includes(label)
 					})}
 				>
 					<Icon class="h-5 w-5" />
@@ -159,9 +155,7 @@
 					{#each supabaseProducts as { Icon, label }}
 						<div
 							class={cn('flex gap-6 items-center text-neutral-400 font-bold', {
-								'text-emerald-400': $components
-									.get(id)
-									?.projects.some((ele) => ele.products.some((ele) => ele.product.name === label))
+								'text-emerald-400': $components.get(id)?.products?.includes(label)
 							})}
 						>
 							<Icon class="h-4 w-4" />
@@ -208,36 +202,34 @@
 	<ul
 		class="flex md:justify-between flex-wrap gap-6 py-4 px-6 border border-neutral-800 rounded-md"
 	>
-		{#each allAvailabilities as availability}
-			<li class="flex gap-2 items-center text-neutral-200 text-sm">
-				{availability}
-				{#if $components
-					.get(id)
-					?.availabilities.find((ele) => ele.availability.name === availability)}
-					<span class="material-symbols-outlined text-[16px] text-emerald-400">check</span>
-				{:else}
-					<span class="material-symbols-outlined text-[16px] text-neutral-600">close</span>
+		{#if availabilities}
+			{#each availabilities as { name }}
+				{#if name}
+					<li class="flex gap-2 items-center text-neutral-200 text-sm">
+						{name}
+						{#if $components.get(id)?.availabilities?.includes(name)}
+							<span class="material-symbols-outlined text-[16px] text-emerald-400">check</span>
+						{:else}
+							<span class="material-symbols-outlined text-[16px] text-neutral-600">close</span>
+						{/if}
+					</li>
 				{/if}
-			</li>
-		{/each}
+			{/each}
+		{/if}
 	</ul>
 
 	<ul class="flex flex-wrap gap-4">
 		{#if profile}
-			{@const products = [
-				...new Set(
-					profile.projects.flatMap((project) =>
-						project.products.flatMap((product) => product.product.name)
-					)
-				)
-			]}
-			{#each products as product (product)}
-				<li
-					class="flex items-center justify-center text-neutral-600 text-sm px-4 py-2 rounded-full border border-neutral-800"
-				>
-					{product}
-				</li>
-			{/each}
+			{@const { products } = profile}
+			{#if products}
+				{#each products as product (product)}
+					<li
+						class="flex items-center justify-center text-neutral-600 text-sm px-4 py-2 rounded-full border border-neutral-800"
+					>
+						{product}
+					</li>
+				{/each}
+			{/if}
 		{/if}
 	</ul>
 
@@ -294,7 +286,7 @@
 						<p>Endorsed by</p>
 						<span>🫡</span>
 						<span class="whitespace-pre">
-							{profile.endorsements.length.toString().padStart(4).padEnd(4, ' ')}
+							{profile.endorsements.length.toString().padStart(4)}
 						</span>
 					</span>
 					<span class="flex -space-x-2">

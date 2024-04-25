@@ -16,7 +16,7 @@ SELECT
 CREATE TABLE
     "profiles_roles" (
         "id" uuid PRIMARY KEY DEFAULT gen_random_uuid (),
-        "profile_id" uuid REFERENCES profiles (id),
+        "profile_id" uuid REFERENCES profiles (id) ON DELETE CASCADE,
         "role_id" INT REFERENCES roles (id),
         CONSTRAINT profiles_roles_unique UNIQUE (profile_id, role_id)
     );
@@ -27,8 +27,6 @@ CREATE INDEX ix_profiles_roles_role_id ON profiles_roles (role_id);
 
 -- Set up RLS
 ALTER TABLE profiles_roles ENABLE ROW LEVEL SECURITY;
-
-ALTER PUBLICATION supabase_realtime ADD TABLE profiles_roles;
 
 CREATE POLICY "Profile roles are viewable by everyone." ON profiles_roles FOR
 SELECT

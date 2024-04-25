@@ -11,6 +11,7 @@
 	import type { PageData } from '../../../routes/$types';
 	import { invalidateAll } from '$app/navigation';
 
+	let { supabase, user } = $page.data as PageData;
 	$: ({ supabase, user } = $page.data as PageData);
 
 	async function signOut() {
@@ -26,7 +27,6 @@
 		profile = result && result.data ? result.data : undefined;
 	}
 	$: if (user?.profile) loadProfile();
-	$: console.log(profile);
 </script>
 
 <div class="border-b w-full">
