@@ -142,7 +142,9 @@
 			<div class="flex gap-4 items-center w-full">
 				<Avatar class="h-16 w-16">
 					<AvatarImage src={profile.pfp_url} alt={profile.display_name} />
-					<AvatarFallback>{profile.display_name}</AvatarFallback>
+					<AvatarFallback class="rounded-sm text-center text-xs"
+						>{profile.display_name}</AvatarFallback
+					>
 				</Avatar>
 				<div>
 					<h5 class="text-neutral-50">{profile.display_name}</h5>

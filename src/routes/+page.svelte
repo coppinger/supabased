@@ -9,9 +9,6 @@
 	// ThreeJS
 	import Supa3D from '$lib/components/Supa3D.svelte';
 
-	// Filter chip data
-	// TODO: Create a DB View to get the most popular stacks by grouping/counting on the projects table - https://stackoverflow.com/questions/71905843/how-can-i-do-select-count-with-group-by-in-supabase-js
-
 	// Send to profiles component
 	import ProfileListItem from '$lib/components/ProfileListItem.svelte';
 	import { createProfilesState } from '$lib/stores/profiles.js';
@@ -24,6 +21,8 @@
 		init,
 		supabase
 	));
+
+	const { user } = data;
 </script>
 
 <SupabaseProductsBar {supabase} />
@@ -42,32 +41,21 @@
 			<p class=" text-center md:text-left">
 				Supabased is a community created & run directory of folks who build with Supabase
 			</p>
-			<Button
-				variant="outline"
-				class="text-emerald-400 border-emerald-400 md:w-fit"
-				href="/auth/signin">Submit your profile -></Button
-			>
-			<div class="flex gap-6 items-center">
+			{#if user}
 				<Button
 					variant="outline"
-					href="https://discord.gg/skunkworks"
-					target="_blank"
-					class="flex gap-2 items-center"
-					>Discord <iconify-icon icon="ic:baseline-discord"></iconify-icon></Button
+					class="text-emerald-400 border-emerald-400 md:w-fit"
+					href="/onboarding/project">Add a project -></Button
 				>
+			{:else}
 				<Button
 					variant="outline"
-					href="https://twitter.com/supabasedcom"
-					target="_blank"
-					class="flex gap-2 items-center"
-					>Twitter <iconify-icon icon="mdi:twitter"></iconify-icon></Button
+					class="text-emerald-400 border-emerald-400 md:w-fit"
+					href="/auth/signin">Submit your profile -></Button
 				>
-			</div>
+			{/if}
 		</div>
-		<!-- TODO: Remove this pointer-events-none and use z-index instead -->
-		<div
-			class="w-full h-20 md:h-40 relative pointer-events-none md:flex md:items-center md:justify-center"
-		>
+		<div class="w-full h-20 md:h-40 relative md:flex md:items-center md:justify-center">
 			<div
 				class="absolute -top-32 w-[500px] h-[500px] md:w-[960px] md:h-[960px] left-1/2 -translate-x-1/2 md:top-1/2 md:-translate-y-1/2"
 			>
@@ -84,25 +72,6 @@
 		<Button variant="outline" class="text-emerald-400 border-emerald-400">
 			Submit your profile ->
 		</Button>
-		<div class="flex gap-6 items-center">
-			<Button
-				variant="outline"
-				href="https://discord.gg/skunkworks"
-				target="_blank"
-				class="flex gap-2 items-center w-full"
-			>
-				Discord
-				<iconify-icon icon="ic:baseline-discord"></iconify-icon>
-			</Button>
-			<Button
-				variant="outline"
-				href="https://twitter.com/supabasedcom"
-				target="_blank"
-				class="flex gap-2 items-center w-full"
-			>
-				Twitter <iconify-icon icon="mdi:twitter"></iconify-icon>
-			</Button>
-		</div>
 	</div>
 	<div class="flex flex-col gap-6 p-4 md:p-0 w-full">
 		<div class="flex flex-col gap-4 w-full">
