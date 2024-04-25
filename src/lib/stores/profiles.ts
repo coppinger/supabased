@@ -3,10 +3,10 @@ import { derived, get, writable, type Writable } from 'svelte/store'
 import { PROFILE_QUERY, type ProfilesResult } from '$lib/db/query'
 import type { Tables } from '$lib/types/DatabaseDefinitions'
 
-interface FilterOptions {
 	stacks: string[]
 	availibility: string[]
 	experiences: string[]
+export interface FilterOptions {
 }
 
 export const createProfilesState = (init: PostgrestSingleResponse<ProfilesResult[]>, supabase: SupabaseClient) => {
