@@ -340,74 +340,155 @@ VALUES
     ('Senja', 'https://senja.io/', 'senja'),
     ('Shoutout', 'https://shoutout.io/', 'shoutout');
 
--- Seed data for profiles
+-- from https://gist.github.com/khattaksd/4e8f4c89f4e928a2ecaad56d4a17ecd1
+-- create test users
 INSERT INTO
-    profiles (
+    auth.users (
+        instance_id,
         id,
-        display_name,
-        username,
-        skills,
-        bio,
-        twitter_username,
-        github_username,
-        website_url,
-        linkedin_url,
-        location,
-        timezone,
-        pfp_url
-    )
-VALUES
-    (
-        'c1e426ee-3b77-4a20-bff3-9079d0c362f2',
-        'John Doe',
-        'johndoe',
-        'JavaScript, React, Node.js',
-        'Passionate developer with expertise in building web applications.',
-        'johndoe',
-        'johndoe',
-        'https://johndoe.com',
-        'https://linkedin.com/in/johndoe',
-        'New York',
-        'UTC-05:00',
-        'https://avatars.githubusercontent.com/u/420'
-    ),
-    (
-        'a2e716ed-7d3d-4f1b-b6d7-7a9d8c2f5031',
-        'Jane Smith',
-        'janesmith',
-        'Python, Django, Flask',
-        'Experienced backend developer specializing in Python web frameworks.',
-        'janesmith',
-        'janesmith',
-        'https://janesmith.com',
-        'https://linkedin.com/in/janesmith',
-        'San Francisco',
-        'UTC-08:00',
-        'https://avatars.githubusercontent.com/u/69'
+        aud,
+        role,
+        email,
+        encrypted_password,
+        email_confirmed_at,
+        recovery_sent_at,
+        last_sign_in_at,
+        raw_app_meta_data,
+        raw_user_meta_data,
+        created_at,
+        updated_at,
+        confirmation_token,
+        email_change,
+        email_change_token_new,
+        recovery_token
+    ) (
+        select
+            '00000000-0000-0000-0000-000000000000',
+            uuid_generate_v4 (),
+            'authenticated',
+            'authenticated',
+            'user' || (ROW_NUMBER() OVER ()) || '@example.com',
+            crypt ('password123', gen_salt ('bf')),
+            current_timestamp,
+            current_timestamp,
+            current_timestamp,
+            '{"provider":"email","providers":["email"]}',
+            '{}',
+            current_timestamp,
+            current_timestamp,
+            '',
+            '',
+            '',
+            ''
+        FROM
+            generate_series(1, 10)
     );
+
+-- test user email identities
+INSERT INTO
+    auth.identities (
+        id,
+        user_id,
+        provider_id,
+        identity_data,
+        provider,
+        last_sign_in_at,
+        created_at,
+        updated_at
+    ) (
+        select
+            uuid_generate_v4 (),
+            id,
+            id,
+            format('{"sub":"%s","email":"%s"}', id::text, email)::jsonb,
+            'email',
+            current_timestamp,
+            current_timestamp,
+            current_timestamp
+        from
+            auth.users
+    );
+
+-- -- Seed data for profiles
+WITH user_data AS (
+    SELECT
+        id,
+        'John Doe' AS display_name,
+        'johndoe' AS username,
+        email,
+        'JavaScript, React, Node.js' AS skills,
+        'Passionate developer with expertise in building web applications.' AS bio,
+        'johndoe' AS twitter_username,
+        'johndoe' AS github_username,
+        'https://johndoe.com' AS website_url,
+        'https://linkedin.com/in/johndoe' AS linkedin_url,
+        'New York' AS location,
+        'UTC-05:00' AS timezone,
+        'https://avatars.githubusercontent.com/u/420' AS pfp_url
+    FROM
+        auth.users
+    WHERE
+        email = 'user1@example.com'
+
+    UNION ALL
+
+    SELECT
+        id,
+        'Jane Smith' AS display_name,
+        'janesmith' AS username,
+        email,
+        'Python, Django, Flask' AS skills,
+        'Experienced backend developer specializing in Python web frameworks.' AS bio,
+        'janesmith' AS twitter_username,
+        'janesmith' AS github_username,
+        'https://janesmith.com' AS website_url,
+        'https://linkedin.com/in/janesmith' AS linkedin_url,
+        'San Francisco' AS location,
+        'UTC-08:00' AS timezone,
+        'https://avatars.githubusercontent.com/u/69' AS pfp_url
+    FROM
+        auth.users
+    WHERE
+        email = 'user2@example.com'
+)
+UPDATE profiles AS p
+SET
+    display_name = u.display_name,
+    username = u.username,
+    email = u.email,
+    skills = u.skills,
+    bio = u.bio,
+    twitter_username = u.twitter_username,
+    github_username = u.github_username,
+    website_url = u.website_url,
+    linkedin_url = u.linkedin_url,
+    location = u.location,
+    timezone = u.timezone,
+    pfp_url = u.pfp_url
+FROM user_data AS u
+WHERE p.id = u.id;
+
+
 
 -- Seed data for projects
 INSERT INTO
-    "projects" (
-        "id",
-        "profile_id",
-        "project_name",
-        "project_url",
-        "repository_url",
-        "description"
+    projects (
+        profile_id,
+        project_name,
+        project_url,
+        repository_url,
+        description
     )
 VALUES
     (
-        '335cf024-9347-4b94-86bb-63a787a4e109',
-        'c1e426ee-3b77-4a20-bff3-9079d0c362f2',
+        (SELECT id FROM profiles WHERE username = 'johndoe'),
         'React App',
         'https://example.com/react-app',
         'https://github.com/johndoe/react-app',
         'A simple React application for demonstration.'
     ),
     (
-        '9a99e786-c1bb-45a9-a43d-014ef2185a68',
-        'a2e716ed-7d3d-4f1b-b6d7-7a9d8c2f5031',
+        (SELECT id FROM profiles WHERE username = 'janesmith'),
         'Django Project',
         'https://example.com/django-project',
         'https://github.com/janesmith/django-project',
@@ -416,72 +497,56 @@ VALUES
 
 -- Seed data for projects_stacks (associating projects with stacks)
 INSERT INTO
-    "projects_stacks" ("id", "project_id", "stack_id")
+    projects_stacks (project_id, stack_id)
 VALUES
     (
-        'a9c1e6a3-1213-45ef-964e-2532418f8be0',
-        '335cf024-9347-4b94-86bb-63a787a4e109',
-        (
-            SELECT
-                id
-            FROM
-                stacks
-            WHERE
-                name = 'React'
-        )
+        (SELECT id FROM projects WHERE project_name = 'React App'),
+        (SELECT id FROM stacks WHERE name = 'React')
     ),
     (
-        'bb6a83fc-3f12-4b90-9f11-9ab163c13d61',
-        '9a99e786-c1bb-45a9-a43d-014ef2185a68',
-        (
-            SELECT
-                id
-            FROM
-                stacks
-            WHERE
-                name = 'Django'
-        )
+        (SELECT id FROM projects WHERE project_name = 'Django Project'),
+        (SELECT id FROM stacks WHERE name = 'Django') 
     );
 
 INSERT INTO
-    "endorsements" ("endorsement_to", "endorsed_by")
+    endorsements (endorsement_to, endorsed_by)
 VALUES
     (
-        'c1e426ee-3b77-4a20-bff3-9079d0c362f2',
-        'a2e716ed-7d3d-4f1b-b6d7-7a9d8c2f5031'
+        (SELECT id FROM profiles WHERE username = 'johndoe'),
+        (SELECT id FROM profiles WHERE username = 'janesmith')
     );
 
 INSERT INTO
     profiles_availabilities (profile_id, availability_id)
 VALUES
-    ('c1e426ee-3b77-4a20-bff3-9079d0c362f2', 1),
-    ('c1e426ee-3b77-4a20-bff3-9079d0c362f2', 2),
-    ('c1e426ee-3b77-4a20-bff3-9079d0c362f2', 3),
-    ('a2e716ed-7d3d-4f1b-b6d7-7a9d8c2f5031', 1),
-    ('a2e716ed-7d3d-4f1b-b6d7-7a9d8c2f5031', 4),
-    ('a2e716ed-7d3d-4f1b-b6d7-7a9d8c2f5031', 6),
-    ('a2e716ed-7d3d-4f1b-b6d7-7a9d8c2f5031', 5);
+    ((SELECT id FROM profiles WHERE username = 'johndoe'), 1),
+    ((SELECT id FROM profiles WHERE username = 'johndoe'), 2),
+    ((SELECT id FROM profiles WHERE username = 'johndoe'), 3),
+    ((SELECT id FROM profiles WHERE username = 'janesmith'), 1),
+    ((SELECT id FROM profiles WHERE username = 'janesmith'), 4),
+    ((SELECT id FROM profiles WHERE username = 'janesmith'), 6),
+    ((SELECT id FROM profiles WHERE username = 'janesmith'), 5);
 
 INSERT INTO
     profiles_roles (profile_id, role_id)
 VALUES
-    ('c1e426ee-3b77-4a20-bff3-9079d0c362f2', 1),
-    ('c1e426ee-3b77-4a20-bff3-9079d0c362f2', 2),
-    ('c1e426ee-3b77-4a20-bff3-9079d0c362f2', 4),
-    ('a2e716ed-7d3d-4f1b-b6d7-7a9d8c2f5031', 2),
-    ('a2e716ed-7d3d-4f1b-b6d7-7a9d8c2f5031', 3),
-    ('a2e716ed-7d3d-4f1b-b6d7-7a9d8c2f5031', 5);
+    ((SELECT id FROM profiles WHERE username = 'johndoe'), 1),
+    ((SELECT id FROM profiles WHERE username = 'johndoe'), 2),
+    ((SELECT id FROM profiles WHERE username = 'johndoe'), 4),
+    ((SELECT id FROM profiles WHERE username = 'janesmith'), 2),
+    ((SELECT id FROM profiles WHERE username = 'janesmith'), 3),
+    ((SELECT id FROM profiles WHERE username = 'janesmith'), 5);
 
 INSERT INTO
     projects_products (project_id, product_id)
 VALUES
-    ('335cf024-9347-4b94-86bb-63a787a4e109', 1),
-    ('335cf024-9347-4b94-86bb-63a787a4e109', 2),
-    ('335cf024-9347-4b94-86bb-63a787a4e109', 3),
-    ('335cf024-9347-4b94-86bb-63a787a4e109', 5),
-    ('9a99e786-c1bb-45a9-a43d-014ef2185a68', 4),
-    ('9a99e786-c1bb-45a9-a43d-014ef2185a68', 5),
-    ('9a99e786-c1bb-45a9-a43d-014ef2185a68', 6);
+    ((SELECT id FROM projects WHERE project_name = 'React App'), 1),
+    ((SELECT id FROM projects WHERE project_name = 'React App'), 2),
+    ((SELECT id FROM projects WHERE project_name = 'React App'), 3),
+    ((SELECT id FROM projects WHERE project_name = 'React App'), 5),
+    ((SELECT id FROM projects WHERE project_name = 'Django Project'), 4),
+    ((SELECT id FROM projects WHERE project_name = 'Django Project'), 5),
+    ((SELECT id FROM projects WHERE project_name = 'Django Project'), 6);
 
 INSERT INTO
     languages (name)
@@ -538,6 +603,6 @@ VALUES
 INSERT INTO
     projects_languages (project_id, language_id)
 VALUES
-    ('335cf024-9347-4b94-86bb-63a787a4e109', 1),
-    ('335cf024-9347-4b94-86bb-63a787a4e109', 3),
-    ('335cf024-9347-4b94-86bb-63a787a4e109', 25);
+    ((SELECT id FROM projects WHERE project_name = 'React App'), 1),
+    ((SELECT id FROM projects WHERE project_name = 'Django Project'), 3),
+    ((SELECT id FROM projects WHERE project_name = 'Django Project'), 25);

@@ -14,19 +14,14 @@
 	let { supabase, user } = $page.data as PageData;
 	$: ({ supabase, user } = $page.data as PageData);
 
+	let profile = user?.profile.data;
+	$: if (user) profile = user.profile.data;
+
 	async function signOut() {
 		const { error } = await supabase.auth.signOut();
 		if (error) console.log(error);
 		await invalidateAll();
 	}
-
-	let profile: Tables<'profiles'> | undefined;
-
-	async function loadProfile() {
-		const result = await user?.profile;
-		profile = result && result.data ? result.data : undefined;
-	}
-	$: if (user?.profile) loadProfile();
 </script>
 
 <div class="border-b w-full">
@@ -35,7 +30,7 @@
 			<Logo />
 		</a>
 
-		{#if !user?.id}
+		{#if !user?.id || !profile}
 			<div class="flex gap-6 items-center">
 				<Button href="/login" variant="outline">Sign In</Button>
 				<Menu />
@@ -45,26 +40,22 @@
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger>
 						<Avatar class="">
-							{#if profile}
-								<AvatarImage
-									src={profile.pfp_url ?? user.user_metadata?.avatar_url}
-									alt={profile.display_name}
-								/>
-								<AvatarFallback>{profile.display_name}</AvatarFallback>
-							{:else}
-								<Skeleton class="size-10" />
-							{/if}
+							<AvatarImage
+								src={profile.pfp_url ?? user.user_metadata?.avatar_url}
+								alt={profile.display_name}
+							/>
+							<AvatarFallback>{profile.display_name}</AvatarFallback>
 						</Avatar>
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content>
 						<DropdownMenu.Group>
-							<DropdownMenu.Label>My Account</DropdownMenu.Label>
+							<DropdownMenu.Label>{profile.username ?? 'My Account'}</DropdownMenu.Label>
 							<DropdownMenu.Separator />
-							{#if profile?.username}
+							{#if profile.username}
 								<DropdownMenu.Item href="/profile/{profile.username}">Profile</DropdownMenu.Item>
 							{/if}
 
-							<DropdownMenu.Item href="/settings">Settings</DropdownMenu.Item>
+							<DropdownMenu.Item href="/settings/profile">Settings</DropdownMenu.Item>
 							<DropdownMenu.Item on:click={signOut}>Sign Out</DropdownMenu.Item>
 						</DropdownMenu.Group>
 					</DropdownMenu.Content>

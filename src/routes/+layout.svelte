@@ -33,9 +33,7 @@
 				<li>
 					<a
 						class="inline-flex gap-2 items-center justify-center p-5 text-xl"
-						on:click={() => {
-							toggleMenu();
-						}}
+						on:click={toggleMenu}
 						{href}
 						target={href.slice(0, 1) !== '/' ? '_blank' : '_self'}
 						tabindex="0"
@@ -45,9 +43,7 @@
 				</li>
 			{/each}
 			<button
-				on:click={() => {
-					toggleMenu();
-				}}
+				on:click={toggleMenu}
 				aria-label="Close menu"
 				aria-expanded={$menuBoolean}
 				class="p-5 flex items-center justify-center"
@@ -58,10 +54,13 @@
 	</nav>
 {/if}
 
-<Toaster />
-<main>
-	<NavBar />
-	<slot />
-</main>
-
-<Footer />
+<div class="min-h-svh flex flex-col">
+	<Toaster />
+	<nav>
+		<NavBar />
+	</nav>
+	<main class="grow">
+		<slot />
+	</main>
+	<Footer />
+</div>

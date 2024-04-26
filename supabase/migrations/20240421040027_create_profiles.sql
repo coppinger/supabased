@@ -1,22 +1,22 @@
 CREATE TABLE
     "profiles" (
-        "id" uuid PRIMARY KEY,
-        "display_name" text,
-        "email" TEXT UNIQUE,
+        "id" UUID PRIMARY KEY NOT NULL REFERENCES auth.users ON DELETE CASCADE,
+        "display_name" TEXT,
+        "email" VARCHAR UNIQUE NOT NULL,
         "username" varchar(32) UNIQUE,
-        "skills" text,
-        "bio" text,
-        "twitter_username" text,
-        "github_username" text,
-        "website_url" text,
-        "linkedin_url" text,
-        "location" text,
-        "timezone" text,
-        "pfp_url" text,
-        "stacks" TEXT[] DEFAULT ARRAY[]::TEXT[],
-        "products" TEXT[] DEFAULT ARRAY[]::TEXT[],
-        "languages" TEXT[] DEFAULT ARRAY[]::TEXT[],
-        "availabilities" TEXT[] DEFAULT ARRAY[]::TEXT[],
+        "skills" TEXT,
+        "bio" TEXT,
+        "twitter_username" TEXT UNIQUE,
+        "github_username" TEXT UNIQUE,
+        "website_url" TEXT,
+        "linkedin_url" TEXT UNIQUE,
+        "location" TEXT,
+        "timezone" TEXT,
+        "pfp_url" TEXT,
+        "stacks" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+        "products" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+        "languages" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+        "availabilities" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
         "created_at" timestamptz DEFAULT now (),
         "updated_at" timestamptz,
         "deleted_at" timestamptz
@@ -25,26 +25,14 @@ CREATE TABLE
 -- Set up Row Level Security
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Public profiles are viewable by everyone." ON profiles FOR
-SELECT
-    USING (TRUE);
+CREATE POLICY "Public profiles are viewable by everyone." ON profiles 
+FOR SELECT USING (TRUE); 
 
-CREATE POLICY "Users can insert their own profile." ON profiles FOR INSERT
-WITH
-    CHECK (
-        (
-            SELECT
-                auth.uid ()
-        ) = id
-    );
+CREATE POLICY "Users can insert their own profile." ON profiles
+FOR INSERT WITH CHECK ( (SELECT auth.uid()) = id );
 
-CREATE POLICY "Users can update own profile." ON profiles FOR
-UPDATE USING (
-    (
-        SELECT
-            auth.uid ()
-    ) = id
-);
+CREATE POLICY "Users can update own profile." ON profiles 
+FOR UPDATE USING ( (SELECT auth.uid()) = id );
 
 -- Set up Triggers
 ---- Set the `updated_at` column on every update
@@ -56,10 +44,17 @@ CREATE OR REPLACE FUNCTION public.handle_new_user()
     RETURNS TRIGGER
     AS $$
 BEGIN
-    INSERT INTO public.profiles(id, pfp_url)
+    INSERT INTO public.profiles(id, email, pfp_url, github_username)
     -- We can get the user metadata column values like this if we need them
     -- NEW.raw_user_meta_data->>'user_name', NEW.email, NEW.raw_user_meta_data->>'avatar_url'       
- VALUES(NEW.id, NEW.raw_user_meta_data->>'avatar_url');
+ VALUES(
+    NEW.id, 
+    NEW.email, 
+    NEW.raw_user_meta_data->>'avatar_url',         
+    CASE 
+        WHEN NEW.raw_user_meta_data->>'iss' = 'https://api.github.com' THEN NEW.raw_user_meta_data->>'user_name' 
+        ELSE NULL
+    END);
     RETURN new;
 END;
 $$
