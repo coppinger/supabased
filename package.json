@@ -66,6 +66,7 @@
 		"lodash-es": "^4.17.21",
 		"lucide-svelte": "^0.299.0",
 		"mode-watcher": "^0.3.0",
+		"octokit": "^3.2.0",
 		"phosphor-svelte": "^1.4.2",
 		"svelte-french-toast": "^1.2.0",
 		"svelte-sonner": "^0.3.22",

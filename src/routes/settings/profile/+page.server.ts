@@ -1,18 +1,32 @@
 import type { PageServerLoad } from './$types'
-import { error } from '@sveltejs/kit'
 import { profileSchema, VALIDATIONS, type ProfileSchema } from './schema'
-import { fail, message, setError, superValidate } from 'sveltekit-superforms'
+import { message, setError, superValidate } from 'sveltekit-superforms'
 import { redirect } from '@sveltejs/kit'
 import { zod } from 'sveltekit-superforms/adapters'
+import { Octokit } from 'octokit'
 
 const { randomUUID } = crypto
 
-export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
+export const load: PageServerLoad = async ({ locals: { safeGetSession, supabase }, request, fetch }) => {
 	const { session } = await safeGetSession()
 
 	if (!session?.user.id) {
 		redirect(303, '/login')
 	}
+
+	const octokit = new Octokit({
+		userAgent: request.headers.get('user-agent') ?? undefined,
+		request: {
+			fetch
+		}
+	})
+
+	const repos = await octokit.rest.repos.listLanguages({
+		owner: 'themixednuts',
+		repo: 'supabased'
+	})
+
+	console.log(repos)
 
 	return {
 		form: await superValidate<ProfileSchema, string>(zod(profileSchema)),
@@ -21,7 +35,6 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 
 export const actions = {
 	profile: async ({ request, locals: { supabase, safeGetSession } }) => {
-
 		const { session } = await safeGetSession()
 		if (!session) redirect(303, '/login')
 

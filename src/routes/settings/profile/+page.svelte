@@ -144,5 +144,5 @@
 		<Form.Description>Select a spiffy picture of yourself ^_^</Form.Description>
 		<Form.FieldErrors />
 	</Form.Field>
-	<Button>Submit</Button>
+	<Button type="submit">Submit</Button>
 </form>
