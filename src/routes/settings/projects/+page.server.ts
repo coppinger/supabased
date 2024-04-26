@@ -4,19 +4,36 @@ import { projectSchema } from './schema'
 import { fail, message, superValidate } from 'sveltekit-superforms'
 import { redirect } from '@sveltejs/kit'
 import { zod } from 'sveltekit-superforms/adapters'
+import type { Tables } from '$lib/types/DatabaseDefinitions'
+import { Octokit } from 'octokit'
 
-import { randomUUID } from 'crypto'
+const { randomUUID } = crypto
 
-export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
-	const session = await safeGetSession()
+export const load: PageServerLoad = async ({ locals: { safeGetSession, supabase }, fetch, request }) => {
+	const { session } = await safeGetSession()
 
-	if (!session) {
-		throw redirect(303, '/login?redirectedFrom=onboarding')
+	if (!session?.user.id) {
+		throw redirect(303, '/login')
 	}
+
+	const { data, error: profilesError } = await supabase.from('profiles').select().eq('id', session.user.id).single<Tables<'profiles'>>()
+	if (profilesError || !data.github_username) return error(400)
+
+	const octokit = new Octokit({
+		userAgent: request.headers.get('user-agent') ?? undefined,
+		request: {
+			fetch
+		}
+	})
+
+	const { data: repos } = await octokit.rest.repos.listForUser({
+		username: data.github_username
+	})
 
 	return {
 		form: await superValidate(zod(projectSchema)),
-		session
+		repos,
+		projects: await supabase.from('projects').select().eq('profile_id', session.user.id).returns<Tables<'projects'>[]>()
 	}
 }
 
@@ -35,26 +52,24 @@ export const actions = {
 			return fail(400, { form })
 		}
 
-		console.log(form.data)
-
 		// TODO: Do something with the validated form.data
-		const { error: errorProjectInsert, data: dataProjectInsert } = await supabase
-			.from('projects')
-			.insert({
-				project_name: form.data.project_name,
-				project_url: form.data.project_url,
-				description: form.data.description,
-				profile_id: session.user.id
-			})
-			.select()
+		// // const { error: errorProjectInsert, data: dataProjectInsert } = await supabase
+		// // 	.from('projects')
+		// // 	.insert({
+		// // 		project_name: form.data.project_name,
+		// // 		project_url: form.data.project_url,
+		// // 		description: form.data.description,
+		// // 		profile_id: session.user.id
+		// // 	})
+		// // 	.select()
 
-		if (errorProjectInsert) {
-			console.log(errorProjectInsert)
+		// if (errorProjectInsert) {
+		// 	console.log(errorProjectInsert)
 
-			return error(500, 'Error updating or inserting project.')
-		}
+		// 	return error(500, 'Error updating or inserting project.')
+		// }
 
-		console.log(dataProjectInsert)
+		// console.log(dataProjectInsert)
 
 		return message(form, 'Form posted successfully!')
 	}

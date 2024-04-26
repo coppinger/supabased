@@ -1,14 +1,14 @@
 CREATE TABLE
-    "projects" (
-        "id" uuid PRIMARY KEY DEFAULT gen_random_uuid (),
-        "profile_id" uuid REFERENCES profiles (id) ON DELETE CASCADE,
-        "project_name" text,
-        "project_url" text UNIQUE,
-        "repository_url" text UNIQUE,
-        "description" text,
-        "created_at" timestamptz DEFAULT now (),
-        "updated_at" timestamptz,
-        "deleted_at" timestamptz
+    projects (
+        id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid (),
+        profile_id UUID NOT NULL REFERENCES profiles (id) ON DELETE CASCADE,
+        project_name TEXT,
+        project_url TEXT UNIQUE,
+        repository_url TEXT UNIQUE,
+        description TEXT,
+        sort INT,
+        created_at timestamptz DEFAULT now (),
+        updated_at timestamptz
     );
 
 CREATE INDEX ix_projects_profiles_id ON projects (profile_id);
@@ -31,6 +31,13 @@ WITH
 
 CREATE POLICY "Users can update their own projects." ON projects FOR
 UPDATE USING (
+    (
+        SELECT
+            auth.uid ()
+    ) = profile_id
+);
+
+CREATE POLICY "Users can delete their own projects." ON projects FOR DELETE USING (
     (
         SELECT
             auth.uid ()

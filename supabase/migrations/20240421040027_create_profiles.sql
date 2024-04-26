@@ -34,6 +34,8 @@ FOR INSERT WITH CHECK ( (SELECT auth.uid()) = id );
 CREATE POLICY "Users can update own profile." ON profiles 
 FOR UPDATE USING ( (SELECT auth.uid()) = id );
 
+CREATE POLICY "Users can delete own profile." ON profiles 
+FOR DELETE USING ( (SELECT auth.uid()) = id );
 -- Set up Triggers
 ---- Set the `updated_at` column on every update
 CREATE TRIGGER handle_profile_updated_at BEFORE

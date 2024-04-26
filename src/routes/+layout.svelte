@@ -1,6 +1,6 @@
 <script lang="ts">
 	import NavBar from '$lib/components/layouts/navbar.svelte';
-	import { Toaster } from 'svelte-sonner';
+	import { Toaster, type ToasterProps } from 'svelte-sonner';
 	import '../app.pcss';
 	import '@fontsource-variable/manrope';
 
@@ -14,11 +14,11 @@
 	import 'iconify-icon';
 	import Footer from '$lib/components/Footer.svelte';
 	import { menuItems } from '$lib/components/menu/menuItems';
-	import { dev } from '$app/environment';
 
 	export let data;
-
-	if (dev) console.log(data.session);
+	// const toastOptions = {
+	// 	actionButtonStyle: 'background-color: hsl(52,211,153);'
+	// } satisfies ToasterProps['toastOptions'];
 </script>
 
 {#if $menuBoolean}
@@ -55,7 +55,7 @@
 {/if}
 
 <div class="min-h-svh flex flex-col">
-	<Toaster />
+	<Toaster theme={'dark'} closeButton />
 	<nav>
 		<NavBar />
 	</nav>
