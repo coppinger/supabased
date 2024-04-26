@@ -26,7 +26,7 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession, supabase 
 		repo: 'supabased'
 	})
 
-	console.log(repos)
+	// console.log(repos)
 
 	return {
 		form: await superValidate<ProfileSchema, string>(zod(profileSchema)),

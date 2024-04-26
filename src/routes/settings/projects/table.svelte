@@ -26,7 +26,7 @@
 			project_url: repo.homepage ?? '',
 			repository_url: repo.html_url,
 			profile_id: $page.data.session?.user.id ?? null,
-			isRepo: true
+			isRepo: true,
 		})) as Combined;
 
 	const data: Combined = projects.concat(filtered);
@@ -35,8 +35,8 @@
 		page: addPagination(),
 		select: addSelectedRows(),
 		filter: addTableFilter({
-			fn: ({ filterValue, value }) => value.toLowerCase().includes(filterValue.toLowerCase())
-		})
+			fn: ({ filterValue, value }) => value.toLowerCase().includes(filterValue.toLowerCase()),
+		}),
 	});
 
 	const columns = table.createColumns([
@@ -45,7 +45,7 @@
 			header: (_, { pluginStates }) => {
 				const { allPageRowsSelected } = pluginStates.select;
 				return createRender(TableCheckbox, {
-					checked: allPageRowsSelected
+					checked: allPageRowsSelected,
 				});
 			},
 			cell: ({ row }, { pluginStates }) => {
@@ -53,26 +53,26 @@
 				const { isSelected } = getRowState(row);
 
 				return createRender(TableCheckbox, {
-					checked: isSelected
+					checked: isSelected,
 				});
 			},
 			plugins: {
 				filter: {
-					exclude: true
-				}
-			}
+					exclude: true,
+				},
+			},
 		}),
 		table.column({
 			accessor: 'project_name',
-			header: 'Name'
+			header: 'Name',
 		}),
 		table.column({
 			accessor: 'project_url',
-			header: 'Website'
+			header: 'Website',
 		}),
 		table.column({
 			accessor: 'repository_url',
-			header: 'Repository'
+			header: 'Repository',
 		}),
 		table.column({
 			accessor: (val) => val,
@@ -80,10 +80,10 @@
 			cell: ({ value }) => createRender(TableActions, { value }),
 			plugins: {
 				filter: {
-					exclude: true
-				}
-			}
-		})
+					exclude: true,
+				},
+			},
+		}),
 	]);
 
 	const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates, rows } =
@@ -96,7 +96,7 @@
 <div class="flex items-center py-4">
 	<Input class="max-w-sm" placeholder="Filter projects..." type="text" bind:value={$filterValue} />
 </div>
-<div class="border rounded-lg">
+<div class="rounded-lg border">
 	<Table.Root {...$tableAttrs}>
 		<Table.Header>
 			{#each $headerRows as headerRow}
@@ -120,15 +120,15 @@
 						{...rowAttrs}
 						data-state={$selectedDataIds[row.id] && 'selected'}
 						class={cn({
-							'bg-opacity-20': row.isData() && row.original.isRepo
+							'bg-red-500 bg-opacity-20': row.isData() && row.original.isRepo,
 						})}
 					>
 						{#each row.cells as cell (cell.id)}
 							<Subscribe attrs={cell.attrs()} let:attrs>
 								<Table.Cell {...attrs}>
-									{#if cell.isData() && (cell.id === 'project_url' || cell.id === 'repository_url')}
+									{#if cell.isData() && (cell.id === 'project_url' || cell.id === 'repository_url') && typeof cell.value === 'string'}
 										<a href={cell.value} target="_blank"><Render of={cell.render()} /></a>
-									{:else}
+									{:else if cell.isData() && cell.value}
 										<Render of={cell.render()} />
 									{/if}
 								</Table.Cell>
