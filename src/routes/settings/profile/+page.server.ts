@@ -3,7 +3,7 @@ import { profileSchema, VALIDATIONS, type ProfileSchema } from './schema'
 import { message, setError, superValidate } from 'sveltekit-superforms'
 import { redirect } from '@sveltejs/kit'
 import { zod } from 'sveltekit-superforms/adapters'
-import { Octokit } from 'octokit'
+import type { Tables } from '$lib/types/DatabaseDefinitions'
 
 const { randomUUID } = crypto
 
@@ -14,22 +14,10 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession, supabase 
 		redirect(303, '/login')
 	}
 
-	const octokit = new Octokit({
-		userAgent: request.headers.get('user-agent') ?? undefined,
-		request: {
-			fetch
-		}
-	})
-
-	const repos = await octokit.rest.repos.listLanguages({
-		owner: 'themixednuts',
-		repo: 'supabased'
-	})
-
-	// console.log(repos)
-
 	return {
 		form: await superValidate<ProfileSchema, string>(zod(profileSchema)),
+		availabilities: await supabase.from('availabilities').select().order('sort').returns<Tables<'availabilities'>[]>(),
+		products: await supabase.from('products').select().order('sort').returns<Tables<'products'>[]>(),
 	}
 }
 
@@ -42,7 +30,12 @@ export const actions = {
 
 		if (!form.valid) return message(form, 'Invalid form', { status: 400 })
 
-		const { pfp_url: file, display_name, bio, location, username } = form.data
+		const { pfp_url: file, display_name, bio, location, username, availability, products } = form.data
+		const insertData: Partial<Tables<'profiles'>> = {}
+		if (display_name) insertData.display_name = display_name
+		if (location) insertData.location = location
+		if (bio) insertData.bio = bio
+		if (username) insertData.username = username
 
 		const { data, error } = await supabase
 			.from('profiles')
@@ -52,7 +45,7 @@ export const actions = {
 
 		if (data) return setError(form, 'username', VALIDATIONS.USERNAME.FAIL)
 
-		let pfp_url = null
+
 		if (file) {
 			const fileExt = file.name.split('.').pop()
 			const filePath = `${randomUUID()}.${fileExt}`
@@ -76,18 +69,12 @@ export const actions = {
 			if (!url) {
 				return message(form, 'Issue with getting Public URL', { status: 500 })
 			}
-
-			pfp_url = url
+			insertData.pfp_url = url.publicUrl
 		}
+
 		const { error: errorProfileInsert } = await supabase
 			.from('profiles')
-			.update({
-				display_name,
-				location,
-				bio,
-				pfp_url,
-				username
-			})
+			.update(insertData)
 			.eq('id', session.user.id)
 			.select()
 
@@ -96,6 +83,39 @@ export const actions = {
 			return message(form, 'Error updating or inserting profile.', { status: 400 })
 		}
 
+		if (availability.length) {
+			const { data: currentRows, error: currentError } = await supabase.from('profiles_availabilities').select().returns<Tables<'profiles_availabilities'>[]>()
+			if (currentError) return message(form, currentError.message, { status: 400 })
+
+			const { data, error } = await supabase
+				.from('profiles_availabilities')
+				.upsert(availability.map(avail => ({
+					profile_id: session.user.id,
+					availability_id: avail,
+					id: currentRows.find(row => row.availability_id === avail)?.id
+				})), { ignoreDuplicates: true })
+				.select()
+			if (error) return message(form, error.message, { status: 400 })
+
+			const rowsToDelete = currentRows.filter(row => !availability.includes(row.availability_id!)).map(row => row.id)
+			const { data: deletedRows, error: deletedError } = await supabase.from('profiles_availabilities').delete().in('id', rowsToDelete).select()
+		}
+		else {
+			const { data, error } = await supabase.from('profiles_availabilities').delete().eq('profile_id', session.user.id).select()
+			if (error) return message(form, error.message, { status: 400 })
+		}
+
+		if (products.length) {
+			const { data, error } = await supabase.from('profiles_products').upsert(products.map(product => ({ profile_id: session.user.id, product_id: product }))).select()
+			if (error) return message(form, error.message, { status: 400 })
+			console.log(data)
+		}
+		else {
+
+			const { data, error } = await supabase.from('profiles_products').delete().eq('profile_id', session.user.id).select()
+			if (error) return message(form, error.message, { status: 400 })
+		}
 		return message(form, ':)')
 	}
 }
+

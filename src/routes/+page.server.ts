@@ -12,7 +12,7 @@ export async function load({ locals: { supabase } }) {
 			.select(PROFILE_QUERY)
 			.neq('display_name', null)
 			.returns<ProfilesResult[]>(),
-		availabilityTypes: await supabase.from('availabilities').select().order('sort').returns<Tables<'availabilities'>[]>(),
+		availabilities: await supabase.from('availabilities').select().order('sort').returns<Tables<'availabilities'>[]>(),
 		products: await supabase.from('products').select().order('sort').returns<Tables<'products'>[]>(),
 		stacks: await supabase.from('stacks_count').select().limit(6).returns<Tables<'stacks_count'>[]>(),
 		endorse: await superValidate(zod(endorseSchema))

@@ -18,14 +18,14 @@
 	async function handleDelete() {
 		const { data, error } = await deleteUserProject($page.data.supabase, id);
 		if (data)
-			toast.info(`Deleted ${data.project_name}`, {
+			toast.info(`Deleted ${data[0].project_name}`, {
 				action: {
 					label: 'Undo',
 					onClick: async () => {
 						const { data: insert, error } = await insertUserProject($page.data.supabase, data);
 						if (error) toast.error('Error undoing project deletion');
 						if (insert)
-							toast.info(`${insert.project_name} is back`, {
+							toast.info(`${insert[0].project_name} is back`, {
 								description: 'Please re-enter all missing metadata',
 							});
 						await invalidateAll();

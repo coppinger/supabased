@@ -340,6 +340,68 @@ VALUES
     ('Senja', 'https://senja.io/', 'senja'),
     ('Shoutout', 'https://shoutout.io/', 'shoutout');
 
+INSERT INTO
+    languages (name)
+VALUES
+    ('JavaScript'),
+    ('Python'),
+    ('Java'),
+    ('C#'),
+    ('C++'),
+    ('Svelte'),
+    ('TypeScript'),
+    ('Ruby'),
+    ('Swift'),
+    ('Go'),
+    ('PHP'),
+    ('HTML'),
+    ('CSS'),
+    ('SQL'),
+    ('Kotlin'),
+    ('Rust'),
+    ('Perl'),
+    ('Objective-C'),
+    ('Scala'),
+    ('Shell'),
+    ('Lua'),
+    ('Dart'),
+    ('Assembly'),
+    ('R'),
+    ('Groovy'),
+    ('Haskell'),
+    ('Matlab'),
+    ('Scheme'),
+    ('VBA'),
+    ('Clojure'),
+    ('F#'),
+    ('Ada'),
+    ('COBOL'),
+    ('Fortran'),
+    ('Delphi'),
+    ('Erlang'),
+    ('Lisp'),
+    ('Prolog'),
+    ('ABAP'),
+    ('Apex'),
+    ('PowerShell'),
+    ('PL/SQL'),
+    ('T-SQL'),
+    ('VBScript'),
+    ('Transact-SQL'),
+    ('XQuery'),
+    ('XSLT'),
+    ('Racket'),
+    ('Bash');
+
+
+
+
+------------------------------------------------------------------------------------------------------------------
+---                                                                                                            ---
+---                                   COMMENT OUT EVERYTHING BELOW FOR PRODUCTION                              ---
+---                                                                                                            ---
+------------------------------------------------------------------------------------------------------------------    
+
 -- from https://gist.github.com/khattaksd/4e8f4c89f4e928a2ecaad56d4a17ecd1
 -- create test users
 INSERT INTO
@@ -548,57 +610,6 @@ VALUES
     ((SELECT id FROM projects WHERE project_name = 'Django Project'), 5),
     ((SELECT id FROM projects WHERE project_name = 'Django Project'), 6);
 
-INSERT INTO
-    languages (name)
-VALUES
-    ('JavaScript'),
-    ('Python'),
-    ('Java'),
-    ('C#'),
-    ('C++'),
-    ('TypeScript'),
-    ('Ruby'),
-    ('Swift'),
-    ('Go'),
-    ('PHP'),
-    ('HTML'),
-    ('CSS'),
-    ('SQL'),
-    ('Kotlin'),
-    ('Rust'),
-    ('Perl'),
-    ('Objective-C'),
-    ('Scala'),
-    ('Shell'),
-    ('Lua'),
-    ('Dart'),
-    ('Assembly'),
-    ('R'),
-    ('Groovy'),
-    ('Haskell'),
-    ('Matlab'),
-    ('Scheme'),
-    ('VBA'),
-    ('Clojure'),
-    ('F#'),
-    ('Ada'),
-    ('COBOL'),
-    ('Fortran'),
-    ('Delphi'),
-    ('Erlang'),
-    ('Lisp'),
-    ('Prolog'),
-    ('ABAP'),
-    ('Apex'),
-    ('PowerShell'),
-    ('PL/SQL'),
-    ('T-SQL'),
-    ('VBScript'),
-    ('Transact-SQL'),
-    ('XQuery'),
-    ('XSLT'),
-    ('Racket'),
-    ('Bash');
 
 INSERT INTO
     projects_languages (project_id, language_id)

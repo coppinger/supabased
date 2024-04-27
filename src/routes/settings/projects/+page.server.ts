@@ -6,6 +6,7 @@ import { redirect } from '@sveltejs/kit'
 import { zod } from 'sveltekit-superforms/adapters'
 import type { Tables } from '$lib/types/DatabaseDefinitions'
 import { Octokit } from 'octokit'
+import { insertUserProject } from '$lib/db/helpers'
 
 const { randomUUID } = crypto
 
@@ -53,16 +54,13 @@ export const actions = {
 
 		const { project_name, project_url, repository_url, description } = form.data
 
-		const { data, error } = await supabase
-			.from('projects')
-			.insert({
-				project_name,
-				project_url,
-				description,
-				repository_url,
-				profile_id: session.user.id,
-			})
-			.select()
+		const { error } = await insertUserProject(supabase, {
+			profile_id: session.user.id,
+			project_name,
+			project_url,
+			description,
+			repository_url,
+		})
 
 		if (error) {
 			console.log(error)

@@ -5,6 +5,7 @@ import {
 	PUBLIC_SUPABASE_DEV_ANON,
 	PUBLIC_SUPABASE_DEV_URL
 } from '$env/static/public'
+import { PROFILE_QUERY, type ProfilesResult } from '$lib/db/query'
 import type { Database, Tables } from '$lib/types/DatabaseDefinitions'
 import type { LayoutLoad } from './$types'
 import { createBrowserClient, isBrowser, parse } from '@supabase/ssr'
@@ -44,9 +45,9 @@ export const load = (async ({ fetch, data, depends }) => {
 		...session.user,
 		profile: await supabase
 			.from('profiles')
-			.select()
+			.select(PROFILE_QUERY)
 			.eq('id', session?.user?.id)
-			.maybeSingle<Tables<'profiles'>>()
+			.maybeSingle<ProfilesResult>()
 	} : undefined
 
 	return {

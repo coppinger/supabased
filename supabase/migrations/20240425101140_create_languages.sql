@@ -35,9 +35,9 @@ WITH
                 auth.uid ()
         ) = (
             SELECT
-                profile_id
+                p.profile_id
             FROM
-                projects
+                projects p
             WHERE
                 id = project_id
         )

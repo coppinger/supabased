@@ -41,13 +41,15 @@
 		"tailwindcss": "^3.3.6",
 		"tailwindcss-contain": "^0.1.1",
 		"tslib": "^2.4.1",
-		"typescript": "^5.0.0",
+		"typescript": "^5.5.0-dev.20240426",
 		"vite": "^5.0.3"
 	},
 	"type": "module",
 	"dependencies": {
 		"@fontsource-variable/manrope": "^5.0.20",
 		"@formkit/auto-animate": "^0.8.2",
+		"@octokit/core": "^6.1.2",
+		"@octokit/plugin-rest-endpoint-methods": "^13.1.1",
 		"@supabase/auth-ui-shared": "^0.1.8",
 		"@supabase/auth-ui-svelte": "^0.2.9",
 		"@supabase/ssr": "^0.0.10",

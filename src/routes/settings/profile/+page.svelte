@@ -15,11 +15,15 @@
 	// import { CircleCheck, XCircle } from 'lucide-svelte';
 	import { CircleNotch } from 'phosphor-svelte';
 	import { dev } from '$app/environment';
+	import * as Profile from '$lib/components/profile/index.js';
+	import type { Writable } from 'svelte/store';
+	import type { ProfilesResult } from '$lib/db/query.js';
+	import { setContext } from 'svelte';
 
 	export let data: PageData;
 
-	let { supabase, user } = data;
-	$: ({ supabase, user } = data);
+	let { supabase, user, availabilities, products } = data;
+	$: ({ supabase, user, availabilities, products } = data);
 
 	let profile = user?.profile.data;
 	$: if (user) profile = user.profile.data;
@@ -27,6 +31,7 @@
 	const form = superForm(data.form, {
 		validators: zodClient(profileSchema),
 		validationMethod: 'oninput',
+		dataType: 'json',
 		onError: ({ result }) => {
 			const { error } = result;
 			toast.error(error.message);
@@ -35,13 +40,30 @@
 			const { valid, message } = form;
 			if (!valid) toast.error('Error', { description: message });
 			if (valid) toast.success('Success', { description: message });
-		}
+		},
 	});
+
+	setContext('form', form);
 
 	const file = fileProxy(form, 'pfp_url');
 	const { form: formData, enhance, errors, constraints } = form;
+	let profileState: Writable<ProfilesResult> | undefined;
+
+	$: {
+		if ($profileState?.availabilities && availabilities.data)
+			$formData.availability = availabilities.data
+				.filter((ele) => ele.name && $profileState?.availabilities?.includes(ele.name))
+				.map((ele) => ele.id);
+	}
+	$: {
+		if ($profileState?.products && products.data)
+			$formData.products = products.data
+				.filter((ele) => ele.name && $profileState?.products?.includes(ele.name))
+				.map((ele) => ele.id);
+	}
 
 	let checking = false;
+	let isEditing: Writable<boolean>;
 
 	let timer: ReturnType<typeof setTimeout>;
 	const debounce = () => {
@@ -55,7 +77,8 @@
 		}, 750);
 	};
 
-	async function handleUsernameChange(username: string) {
+	async function handleUsernameChange(username?: string) {
+		if (!username) return;
 		const { data, error } = await supabase
 			.from('profiles')
 			.select('username')
@@ -68,20 +91,20 @@
 
 	// putting the Java in JavaScript am I right? haha you can thank devdad smh.
 	function isUsernameLengthGreaterThanMinContrainst() {
+		if (!$formData.username) return;
 		const { length } = $formData.username;
 		return !($constraints.username?.minlength && length < $constraints.username.minlength);
 	}
 </script>
 
-<div class="absolute right-4 min-w-96 top-[6.5rem]">
+<div class="absolute right-4 top-[6.5rem] min-w-96">
 	<SuperDebug data={$formData} display={dev} />
 </div>
-
 <form
 	method="post"
 	action="?/profile"
 	enctype="multipart/form-data"
-	class="flex flex-col gap-4"
+	class="flex flex-col gap-6"
 	use:enhance
 >
 	<Form.Field {form} name="username">
@@ -100,49 +123,36 @@
 				</div>
 			{:else if !checking && !$errors.username?.length && isUsernameLengthGreaterThanMinContrainst()}
 				<div class="flex items-center gap-2 text-green-500">
-					<!-- <CircleCheck size="1rem" /> -->
 					<p>{VALIDATIONS.USERNAME.SUCCESS}</p>
 				</div>
 			{/if}
 		</Form.Description>
 		<Form.FieldErrors />
 	</Form.Field>
-	<Form.Field {form} name="display_name">
-		<Form.Control let:attrs>
-			<Form.Label>Display name</Form.Label>
-			<Input {...attrs} bind:value={$formData.display_name} />
-		</Form.Control>
-		<Form.Description>This is your public display name.</Form.Description>
-		<Form.FieldErrors />
-	</Form.Field>
-	<Form.Field {form} name="location">
-		<Form.Control let:attrs>
-			<Form.Label>Location</Form.Label>
 
-			<Input {...attrs} bind:value={$formData.location} />
-		</Form.Control>
-		<Form.Description>Where you're located; be as specific (or not) as you'd like.</Form.Description
-		>
-		<Form.FieldErrors />
-	</Form.Field>
-	<Form.Field {form} name="bio">
-		<Form.Control let:attrs>
-			<Form.Label>Bio</Form.Label>
-			<Textarea {...attrs} bind:value={$formData.bio} />
-		</Form.Control>
-		<Form.Description>Let everyone know a little bit about you.</Form.Description>
-		<p class={cn($formData.bio.length > 160 ? 'text-destructive' : 'text-muted-foreground')}>
-			{$formData.bio.length}/160
-		</p>
-		<Form.FieldErrors />
-	</Form.Field>
-	<Form.Field {form} name="pfp_url">
+	{#if profile}
+		<Profile.Root {profile} allowEditing bind:isEditing bind:profileState>
+			<Profile.Header />
+			{#await availabilities then { data }}
+				{#if data}
+					<Profile.Availability availabilities={data} />
+				{/if}
+			{/await}
+		</Profile.Root>
+	{/if}
+
+	<!-- <Form.Field {form} name="pfp_url">
 		<Form.Control let:attrs>
 			<Form.Label>Profile picture</Form.Label>
 			<Input {...attrs} type="file" bind:files={$file} />
 		</Form.Control>
 		<Form.Description>Select a spiffy picture of yourself ^_^</Form.Description>
 		<Form.FieldErrors />
-	</Form.Field>
-	<Button type="submit">Submit</Button>
+	</Form.Field> -->
+	<div class="flex flex-col gap-2">
+		<Button variant="outline" on:click={() => ($isEditing = !$isEditing)}>
+			{!$isEditing ? 'Edit Profile' : 'Save Profile'}
+		</Button>
+		<Button type="submit">Submit</Button>
+	</div>
 </form>

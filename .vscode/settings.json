@@ -8,5 +8,7 @@
 		"**/src/routes/**/+page.ts": "${dirname} - page script",
 		"**/src/routes/**/+error.svelte": "${dirname} - error",
 		"**/src/routes/**/+layout.ts": "${dirname} - layout script"
-	}
+	},
+	"typescript.tsdk": "./node_modules/typescript/lib",
+	"typescript.enablePromptUseWorkspaceTsdk": true
 }

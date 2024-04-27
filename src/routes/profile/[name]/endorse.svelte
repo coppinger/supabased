@@ -1,3 +1,10 @@
+<script context="module" lang="ts">
+	let realtime: ReturnType<SupabaseClient['channel']> | undefined;
+	let components = writable(
+		new Map<ReturnType<typeof crypto.randomUUID>, Writable<ProfilesResult>>()
+	);
+</script>
+
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { endorseSchema, type EndorseSchema } from '$routes/profile/[name]/schema';
@@ -8,19 +15,23 @@
 	import { Auth } from '@supabase/auth-ui-svelte';
 	import { ThemeSupa } from '@supabase/auth-ui-shared';
 	import type { PageData } from './$types';
-	import type { ProfilesResult } from '$lib/db/query';
+	import type { EndorsementsResult, ProfilesResult } from '$lib/db/query';
 	import type { HTMLFormAttributes } from 'svelte/elements';
+	import { getContext, onMount } from 'svelte';
+	import { get, writable, type Writable } from 'svelte/store';
+	import type { SupabaseClient } from '@supabase/supabase-js';
+	import type { Tables } from '$lib/types/DatabaseDefinitions';
 
-	type $$Props = HTMLFormAttributes & { profile: ProfilesResult };
+	type $$Props = HTMLFormAttributes;
 
-	export let profile: ProfilesResult;
+	let profile = getContext<Writable<ProfilesResult>>('profile');
 
-	let { user, endorse: data } = $page.data as PageData;
-	$: ({ user, endorse: data } = $page.data);
+	let { user, endorse: data, supabase } = $page.data as PageData;
+	$: ({ user, endorse: data, supabase } = $page.data);
 
 	const form = superForm(data, {
 		validators: zodClient(endorseSchema),
-		id: profile.github_username ?? profile.display_name ?? crypto.randomUUID(),
+		id: $profile.github_username ?? $profile.display_name ?? crypto.randomUUID(),
 		invalidateAll: false,
 		onUpdated: ({ form }) => {
 			if (form.valid) {
@@ -34,12 +45,88 @@
 				toast.error('Error');
 			}
 		},
-		onError: ({ result }) => {
-			toast.error('error');
-		}
+		onError: ({ result: { error } }) => {
+			toast.error('error', {
+				description: error.message,
+			});
+		},
 	});
 
 	const { form: formData, enhance } = form;
+
+	const id = crypto.randomUUID();
+
+	onMount(() => {
+		$components.set(id, profile);
+		$components = $components;
+
+		if (!realtime) {
+			realtime = supabase
+				.channel('endorsements')
+				.on(
+					'postgres_changes',
+					{
+						event: 'INSERT',
+						schema: 'public',
+						table: 'endorsements',
+					},
+					async (payload) => {
+						const { endorsement_to, endorsed_by } = payload.new;
+						for (const [_, _profile] of $components) {
+							if (endorsement_to === get(_profile).id) {
+								const { data, error } = await supabase
+									.from('profiles')
+									.select()
+									.eq('id', endorsed_by)
+									.single<Tables<'profiles'>>();
+								if (!error)
+									_profile.update((profile) => {
+										profile.endorsements.push({
+											...payload.new,
+											profiles: data,
+										} as EndorsementsResult);
+										return profile;
+									});
+							}
+							$components = $components;
+						}
+					}
+				)
+				.on(
+					'postgres_changes',
+					{
+						event: 'DELETE',
+						schema: 'public',
+						table: 'endorsements',
+					},
+					(payload) => {
+						const { id } = payload.old;
+						for (const [_, _profile] of $components) {
+							const idx = get(_profile).endorsements.findIndex((ele) => ele.id === id);
+
+							if (idx !== -1) {
+								_profile.update((profile) => {
+									profile.endorsements.splice(idx, 1);
+									return profile;
+								});
+							}
+							$components = $components;
+						}
+					}
+				)
+				.subscribe();
+		}
+
+		// // clean up
+		return () => {
+			$components.delete(id);
+			$components = $components;
+			if ($components.size === 0) {
+				realtime?.unsubscribe();
+				realtime = undefined;
+			}
+		};
+	});
 </script>
 
 <!-- 
@@ -65,10 +152,10 @@ Usage:
 	<form
 		method="POST"
 		use:enhance
-		action="/profile/{profile.username}?/endorse"
+		action="/profile/{$profile.username}?/endorse"
 		class="!w-full md:!w-fit"
 	>
-		<input type="hidden" value={profile.id} name="profile" />
+		<input type="hidden" value={$profile.id} name="profile" />
 		<button class="!w-full md:!w-fit" tabindex={-1}>
 			<slot />
 		</button>
