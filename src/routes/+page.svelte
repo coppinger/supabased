@@ -39,7 +39,7 @@
 				<Button
 					variant="outline"
 					class="border-emerald-400 text-emerald-400 md:w-fit"
-					href="/onboarding/project">Add a project -&gt;</Button
+					href="/settings/projects">Add a project -&gt;</Button
 				>
 			{:else}
 				<Button

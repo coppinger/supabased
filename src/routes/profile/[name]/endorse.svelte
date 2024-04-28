@@ -24,7 +24,7 @@
 
 	type $$Props = HTMLFormAttributes;
 
-	let profile = getContext<Writable<ProfilesResult>>('profile');
+	const profile = getContext<Writable<ProfilesResult>>('profile');
 
 	let { user, endorse: data, supabase } = $page.data as PageData;
 	$: ({ user, endorse: data, supabase } = $page.data);
@@ -149,17 +149,19 @@ Usage:
 -->
 
 {#if user?.id}
-	<form
-		method="POST"
-		use:enhance
-		action="/profile/{$profile.username}?/endorse"
-		class="!w-full md:!w-fit"
-	>
-		<input type="hidden" value={$profile.id} name="profile" />
-		<button class="!w-full md:!w-fit" tabindex={-1}>
-			<slot />
-		</button>
-	</form>
+	{#if user?.id !== $profile.id}
+		<form
+			method="POST"
+			use:enhance
+			action="/profile/{$profile.username}?/endorse"
+			class="!w-full md:!w-fit"
+		>
+			<input type="hidden" value={$profile.id} name="profile" />
+			<button class="!w-full md:!w-fit" tabindex={-1}>
+				<slot />
+			</button>
+		</form>
+	{/if}
 {:else}
 	<Dialog.Root>
 		<Dialog.Trigger class="w-full">

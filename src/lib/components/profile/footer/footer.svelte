@@ -44,7 +44,11 @@
 			{/if}
 		</Button>
 		{#if $profile.projects.length > 0}
-			<Button variant="outline" class="border-emer w-full text-emerald-400 md:w-fit">
+			<Button
+				href="/profile/{$profile.username}"
+				variant="outline"
+				class="border-emer w-full text-emerald-400 md:w-fit"
+			>
 				View {$profile.projects.length} project{$profile.projects.length > 1 ? 's' : ''} ->
 			</Button>
 		{:else}

@@ -24,19 +24,19 @@
 	}
 </script>
 
-<div class="border-b w-full">
-	<div class=" flex items-center justify-between h-full max-w-screen-xl mx-auto py-6 px-4 md:px-20">
+<div class="w-full border-b">
+	<div class=" mx-auto flex h-full max-w-screen-xl items-center justify-between px-4 py-6 md:px-20">
 		<a href="/" class="max-h-8">
 			<Logo />
 		</a>
 
 		{#if !user?.id || !profile}
-			<div class="flex gap-6 items-center">
+			<div class="flex items-center gap-6">
 				<Button href="/login" variant="outline">Sign In</Button>
 				<Menu />
 			</div>
 		{:else}
-			<div class="flex gap-6 items-center">
+			<div class="flex items-center gap-6">
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger>
 						<Avatar class="">

@@ -7,12 +7,42 @@
 	import { Input } from '$lib/components/ui/input';
 	import type { PageData } from '../../../routes/$types';
 	import { supabaseProductIcons } from '../layouts/supabaseProductIcons';
+	import * as Popover from '$lib/components/ui/popover';
+	import * as Command from '$lib/components/ui/command';
+	import { Label } from '../ui/label';
+	import { ChevronsUpDown } from 'lucide-svelte';
+	import { Check } from 'phosphor-svelte';
+	import { tick } from 'svelte';
+	import { page } from '$app/stores';
+
 	export let filter: ReturnType<CreateProfilesState>['filter'];
 	export let availabilityTypes: PageData['availabilities'];
 	export let stacks: PageData['stacks'];
 	export let products: PageData['products'];
 
 	let value = '';
+	let open = false;
+	let data = stacks.data?.map((stack) => ({ value: stack.name, label: stack.name }));
+	let { supabase } = $page.data as PageData;
+
+	$: open = !!value.length;
+	$: selectedValue = data?.find((f) => f.value === value)?.label;
+	$: if (value.length) searchStacks(value);
+	else data = stacks.data?.map((stack) => ({ value: stack.name, label: stack.name }));
+	$: if (selectedValue) {
+		if (!$filter.stacks.some((stack) => stack === selectedValue))
+			$filter.stacks.push(selectedValue);
+		$filter = $filter;
+	}
+
+	async function searchStacks(search?: string) {
+		if (!search) return;
+		const { data: results, error } = await supabase
+			.from('stacks')
+			.select()
+			.textSearch('name', `${search}*`);
+		if (!error) data = results.map((stack) => ({ value: stack.name, label: stack.name }));
+	}
 
 	function handleFilter<T extends keyof typeof $filter>(
 		filterStore: typeof filter,
@@ -27,6 +57,13 @@
 				val[key].push(filterValue ?? '');
 			}
 			return val;
+		});
+	}
+
+	function closeAndFocusTrigger(triggerId: string) {
+		open = false;
+		tick().then(() => {
+			document.getElementById(triggerId)?.focus();
 		});
 	}
 </script>
@@ -46,7 +83,46 @@
 				</Tooltip.Content>
 			</Tooltip.Root>
 		</div>
-		<Input placeholder="Search stacks..." bind:value />
+		<Popover.Root bind:open let:ids>
+			<Popover.Trigger asChild let:builder>
+				<Button
+					builders={[builder]}
+					variant="outline"
+					role="combobox"
+					aria-expanded={open}
+					class="w-[200px] justify-between"
+				>
+					{selectedValue ?? 'Select a stack...'}
+					<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+				</Button>
+			</Popover.Trigger>
+			<Popover.Content class="w-[200px] p-0">
+				<Command.Root>
+					<Command.Input placeholder="Search stack..." bind:value />
+					<Command.Empty>No stack found.</Command.Empty>
+					<Command.Group>
+						{#if data}
+							{#each data as stack}
+								{#if stack.value && stack.label}
+									<Command.Item
+										value={stack.value}
+										onSelect={(currentValue) => {
+											value = currentValue;
+											closeAndFocusTrigger(ids.trigger);
+										}}
+									>
+										<Check
+											class={cn('mr-2 h-4 w-4', value !== stack.value && 'text-transparent')}
+										/>
+										{stack.label}
+									</Command.Item>
+								{/if}
+							{/each}
+						{/if}
+					</Command.Group>
+				</Command.Root>
+			</Popover.Content>
+		</Popover.Root>
 		<p class="font-bold text-neutral-50">Popular stacks</p>
 		<div class="grid grid-cols-2 gap-4">
 			{#await stacks}
@@ -58,7 +134,7 @@
 					{#each data as { name } (name)}
 						{#if name}
 							<Button
-								variant="filter"
+								variant="outline"
 								class={cn('flex flex-wrap gap-4 shadow-sm shadow-neutral-800 backdrop-blur', {
 									'text-primary': $filter.stacks.includes(name),
 								})}
@@ -104,7 +180,7 @@
 					{#each data as { name } (name)}
 						{#if name}
 							<Button
-								variant="filter"
+								variant="outline"
 								class={cn('flex flex-wrap gap-4 shadow-sm shadow-neutral-800 backdrop-blur', {
 									'text-primary': $filter.availibility.includes(name),
 								})}
@@ -144,7 +220,7 @@
 					{#each data as { name } (name)}
 						{#if name}
 							<Button
-								variant="filter"
+								variant="outline"
 								class={cn('flex flex-wrap gap-4 shadow-sm shadow-neutral-800 backdrop-blur', {
 									'text-primary': $filter.experiences.includes(name),
 								})}

@@ -32,7 +32,7 @@
 			{#each menuItems as { label, href }}
 				<li>
 					<a
-						class="inline-flex gap-2 items-center justify-center p-5 text-xl"
+						class="inline-flex items-center justify-center gap-2 p-5 text-xl"
 						on:click={toggleMenu}
 						{href}
 						target={href.slice(0, 1) !== '/' ? '_blank' : '_self'}
@@ -46,7 +46,7 @@
 				on:click={toggleMenu}
 				aria-label="Close menu"
 				aria-expanded={$menuBoolean}
-				class="p-5 flex items-center justify-center"
+				class="flex items-center justify-center p-5"
 			>
 				<span class="material-symbols-outlined"> close </span>
 			</button>
@@ -54,7 +54,7 @@
 	</nav>
 {/if}
 
-<div class="min-h-svh flex flex-col">
+<div class="flex min-h-svh flex-col">
 	<Toaster theme={'dark'} closeButton />
 	<nav>
 		<NavBar />
