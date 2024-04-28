@@ -6,12 +6,12 @@
 	const settingPaths = [
 		{
 			label: 'Profile',
-			href: '/settings/profile'
+			href: '/settings/profile',
 		},
 		{
 			label: 'Projects',
-			href: '/settings/projects'
-		}
+			href: '/settings/projects',
+		},
 		// {
 		// 	label: 'Profile',
 		// 	href: '/settings/social'
@@ -20,11 +20,13 @@
 	];
 </script>
 
-<div class="flex gap-2 grow">
-	<section class="flex flex-col gap-2 min-w-64">
+<div class="flex grow gap-2">
+	<section class="flex min-w-64 flex-col gap-2">
 		{#each settingPaths as path}
 			<Button href={path.href}>{path.label}</Button>
 		{/each}
 	</section>
-	<slot />
+	<section class="p-2">
+		<slot />
+	</section>
 </div>

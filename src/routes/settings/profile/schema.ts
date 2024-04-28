@@ -16,7 +16,6 @@ export const profileSchema = z.object({
 			'Only .jpg, .jpeg, .png and .webp formats are supported.'
 		).optional(),
 	availability: z.number().int().array(),
-	products: z.number().int().array()
 })
 
 export type ProfileSchema = z.infer<typeof profileSchema>

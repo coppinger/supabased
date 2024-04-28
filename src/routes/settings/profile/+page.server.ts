@@ -30,7 +30,7 @@ export const actions = {
 
 		if (!form.valid) return message(form, 'Invalid form', { status: 400 })
 
-		const { pfp_url: file, display_name, bio, location, username, availability, products } = form.data
+		const { pfp_url: file, display_name, bio, location, username, availability } = form.data
 		const insertData: Partial<Tables<'profiles'>> = {}
 		if (display_name) insertData.display_name = display_name
 		if (location) insertData.location = location
@@ -84,16 +84,15 @@ export const actions = {
 		}
 
 		if (availability.length) {
-			const { data: currentRows, error: currentError } = await supabase.from('profiles_availabilities').select().returns<Tables<'profiles_availabilities'>[]>()
+			const { data: currentRows, error: currentError } = await supabase.from('profiles_availabilities').select().eq('profile_id', session.user.id).returns<Tables<'profiles_availabilities'>[]>()
 			if (currentError) return message(form, currentError.message, { status: 400 })
 
 			const { data, error } = await supabase
 				.from('profiles_availabilities')
-				.upsert(availability.map(avail => ({
+				.insert(availability.filter(avail => !currentRows.some(row => row.availability_id === avail)).map(avail => ({
 					profile_id: session.user.id,
 					availability_id: avail,
-					id: currentRows.find(row => row.availability_id === avail)?.id
-				})), { ignoreDuplicates: true })
+				})))
 				.select()
 			if (error) return message(form, error.message, { status: 400 })
 
@@ -105,16 +104,6 @@ export const actions = {
 			if (error) return message(form, error.message, { status: 400 })
 		}
 
-		if (products.length) {
-			const { data, error } = await supabase.from('profiles_products').upsert(products.map(product => ({ profile_id: session.user.id, product_id: product }))).select()
-			if (error) return message(form, error.message, { status: 400 })
-			console.log(data)
-		}
-		else {
-
-			const { data, error } = await supabase.from('profiles_products').delete().eq('profile_id', session.user.id).select()
-			if (error) return message(form, error.message, { status: 400 })
-		}
 		return message(form, ':)')
 	}
 }

@@ -8,7 +8,6 @@
 	import { createProfilesState } from '$lib/stores/profiles.js';
 	import Filter from '$lib/components/filter/filter.svelte';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
-
 	export let data;
 
 	let { supabase, availabilities, products, profiles: init, stacks, user } = data;
@@ -115,8 +114,8 @@
 							<Profile.Availability availabilities={data} />
 						{/if}
 					{/await}
-					<!-- <Profile.Products /> -->
-					<!-- <Separator /> -->
+					<Profile.Stacks />
+					<Separator />
 					<Profile.Social class="place-self-center md:hidden" />
 					<Profile.Footer />
 				</Profile.Root>

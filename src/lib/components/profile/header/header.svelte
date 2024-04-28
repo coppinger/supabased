@@ -143,43 +143,20 @@
 			</div>
 		</div>
 		<div class="flex flex-col items-end justify-center gap-4">
-			<div
-				class={cn('hidden w-full gap-6 md:flex', {
-					'gap-0': $isEditing,
-				})}
-			>
+			<div class={cn('hidden w-full gap-6 md:flex', {})}>
 				{#each supabaseProducts as { Icon, label }}
 					<Tooltip.Root openDelay={0}>
-						{#if $isEditing}
-							<Tooltip.Trigger asChild let:builder>
-								<Button
-									builders={[builder]}
-									size="sm"
-									variant="ghost"
-									on:click={() => handleExperience(label)}
-								>
-									<div
-										class={cn('flex items-center gap-6 font-bold text-neutral-400', {
-											'text-emerald-400': $profile.products?.includes(label),
-										})}
-									>
-										<Icon class="h-4 w-4" />
-									</div>
-								</Button>
-							</Tooltip.Trigger>
-						{:else}
-							<Tooltip.Trigger asChild let:builder>
-								<div
-									use:builder.action
-									{...builder}
-									class={cn('flex items-center gap-6 font-bold text-neutral-400', {
-										'text-emerald-400': $profile.products?.includes(label),
-									})}
-								>
-									<Icon class="h-4 w-4" />
-								</div>
-							</Tooltip.Trigger>
-						{/if}
+						<Tooltip.Trigger asChild let:builder>
+							<div
+								use:builder.action
+								{...builder}
+								class={cn('flex items-center gap-6 font-bold text-neutral-400', {
+									'text-emerald-400': $profile.products?.includes(label),
+								})}
+							>
+								<Icon class="h-4 w-4" />
+							</div>
+						</Tooltip.Trigger>
 						<Tooltip.Content>
 							{label}
 						</Tooltip.Content>

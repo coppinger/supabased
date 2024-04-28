@@ -55,12 +55,6 @@
 				.filter((ele) => ele.name && $profileState?.availabilities?.includes(ele.name))
 				.map((ele) => ele.id);
 	}
-	$: {
-		if ($profileState?.products && products.data)
-			$formData.products = products.data
-				.filter((ele) => ele.name && $profileState?.products?.includes(ele.name))
-				.map((ele) => ele.id);
-	}
 
 	let checking = false;
 	let isEditing: Writable<boolean>;
@@ -107,28 +101,33 @@
 	class="flex flex-col gap-6"
 	use:enhance
 >
-	<Form.Field {form} name="username">
-		<Form.Control let:attrs>
-			<Form.Label>Username</Form.Label>
-			<div class="flex items-center gap-2">
-				<p class="text-muted-foreground">@</p>
-				<Input {...attrs} bind:value={$formData.username} on:input={debounce} />
-			</div>
-		</Form.Control>
-		<Form.Description>
-			{#if checking && !$errors.username}
-				<div class="flex items-center gap-2 text-muted-foreground">
-					<CircleNotch class="animate-spin" size="1rem" />
-					<p>Checking username availability...</p>
+	<div
+		class={cn('flex w-full flex-col gap-6 rounded-md border border-neutral-800 p-6')}
+		{...$$restProps}
+	>
+		<Form.Field {form} name="username">
+			<Form.Control let:attrs>
+				<Form.Label>Username</Form.Label>
+				<div class="flex items-center gap-2">
+					<p class="text-muted-foreground">@</p>
+					<Input {...attrs} bind:value={$formData.username} on:input={debounce} />
 				</div>
-			{:else if !checking && !$errors.username?.length && isUsernameLengthGreaterThanMinContrainst()}
-				<div class="flex items-center gap-2 text-green-500">
-					<p>{VALIDATIONS.USERNAME.SUCCESS}</p>
-				</div>
-			{/if}
-		</Form.Description>
-		<Form.FieldErrors />
-	</Form.Field>
+			</Form.Control>
+			<Form.Description>
+				{#if checking && !$errors.username}
+					<div class="flex items-center gap-2 text-muted-foreground">
+						<CircleNotch class="animate-spin" size="1rem" />
+						<p>Checking username availability...</p>
+					</div>
+				{:else if !checking && !$errors.username?.length && isUsernameLengthGreaterThanMinContrainst()}
+					<div class="flex items-center gap-2 text-green-500">
+						<p>{VALIDATIONS.USERNAME.SUCCESS}</p>
+					</div>
+				{/if}
+			</Form.Description>
+			<Form.FieldErrors />
+		</Form.Field>
+	</div>
 
 	{#if profile}
 		<Profile.Root {profile} allowEditing bind:isEditing bind:profileState>
