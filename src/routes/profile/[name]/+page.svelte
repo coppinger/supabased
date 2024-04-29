@@ -12,9 +12,13 @@
 
 	export let data: PageData;
 	let { user } = data;
+	$: ({ user } = data);
+
 	const profile = writable(data.profile.data);
 	setContext('profile', profile);
-	// $: ({ profile, user, supabase } = data);
+	$: $profile = data.profile.data;
+
+	$: console.log($profile);
 </script>
 
 <div class="container flex max-w-[50rem] flex-col gap-6 py-2">
@@ -60,14 +64,16 @@
 				</Button>
 			</div>
 		</div>
-		<Profile.Root profile={$profile}>
-			<Profile.Header />
-			<Profile.Social />
-			{#if data.availabilities.data}
-				<Profile.Availability availabilities={data.availabilities.data} />
-			{/if}
-			<Profile.Stacks />
-			<Profile.Projects />
-		</Profile.Root>
+		{#key $profile}
+			<Profile.Root profile={$profile}>
+				<Profile.Header />
+				<Profile.Social />
+				{#if data.availabilities.data}
+					<Profile.Availability availabilities={data.availabilities.data} />
+				{/if}
+				<Profile.Stacks />
+				<Profile.Projects />
+			</Profile.Root>
+		{/key}
 	{/if}
 </div>

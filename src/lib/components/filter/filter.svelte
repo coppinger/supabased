@@ -14,6 +14,7 @@
 	import { Check } from 'phosphor-svelte';
 	import { tick } from 'svelte';
 	import { page } from '$app/stores';
+	import Combox from '../combobox/combox.svelte';
 
 	export let filter: ReturnType<CreateProfilesState>['filter'];
 	export let availabilityTypes: PageData['availabilities'];
@@ -40,8 +41,10 @@
 		const { data: results, error } = await supabase
 			.from('stacks')
 			.select()
-			.textSearch('name', `${search}*`);
-		if (!error) data = results.map((stack) => ({ value: stack.name, label: stack.name }));
+			.textSearch('name', `${search}:*`);
+		if (!error) {
+			data = results.map((stack) => ({ value: stack.name, label: stack.name }));
+		}
 	}
 
 	function handleFilter<T extends keyof typeof $filter>(
@@ -57,13 +60,6 @@
 				val[key].push(filterValue ?? '');
 			}
 			return val;
-		});
-	}
-
-	function closeAndFocusTrigger(triggerId: string) {
-		open = false;
-		tick().then(() => {
-			document.getElementById(triggerId)?.focus();
 		});
 	}
 </script>
@@ -83,46 +79,12 @@
 				</Tooltip.Content>
 			</Tooltip.Root>
 		</div>
-		<Popover.Root bind:open let:ids>
-			<Popover.Trigger asChild let:builder>
-				<Button
-					builders={[builder]}
-					variant="outline"
-					role="combobox"
-					aria-expanded={open}
-					class="w-[200px] justify-between"
-				>
-					{selectedValue ?? 'Select a stack...'}
-					<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
-				</Button>
-			</Popover.Trigger>
-			<Popover.Content class="w-[200px] p-0">
-				<Command.Root>
-					<Command.Input placeholder="Search stack..." bind:value />
-					<Command.Empty>No stack found.</Command.Empty>
-					<Command.Group>
-						{#if data}
-							{#each data as stack}
-								{#if stack.value && stack.label}
-									<Command.Item
-										value={stack.value}
-										onSelect={(currentValue) => {
-											value = currentValue;
-											closeAndFocusTrigger(ids.trigger);
-										}}
-									>
-										<Check
-											class={cn('mr-2 h-4 w-4', value !== stack.value && 'text-transparent')}
-										/>
-										{stack.label}
-									</Command.Item>
-								{/if}
-							{/each}
-						{/if}
-					</Command.Group>
-				</Command.Root>
-			</Popover.Content>
-		</Popover.Root>
+		<Combox
+			bind:data
+			multiple
+			bind:value={$filter.stacks}
+			on:input={(e) => searchStacks(e.currentTarget.value)}
+		/>
 		<p class="font-bold text-neutral-50">Popular stacks</p>
 		<div class="grid grid-cols-2 gap-4">
 			{#await stacks}

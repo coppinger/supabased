@@ -34,7 +34,8 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession, supabase 
 	return {
 		form: await superValidate(zod(projectSchema)),
 		repos,
-		projects: await supabase.from('projects').select().eq('profile_id', session.user.id).returns<Tables<'projects'>[]>()
+		projects: await supabase.from('projects').select().eq('profile_id', session.user.id).returns<Tables<'projects'>[]>(),
+		products: await supabase.from('products').select().order('sort').returns<Tables<'products'>[]>(),
 	}
 }
 

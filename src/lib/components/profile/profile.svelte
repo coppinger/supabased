@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { onMount, setContext } from 'svelte';
-	import type { EndorsementsResult, ProfilesResult } from '$lib/db/query';
-	import type { Database, Tables } from '$lib/types/DatabaseDefinitions';
-	import type { SupabaseClient, User } from '@supabase/supabase-js';
+	import { setContext } from 'svelte';
+	import type { ProfilesResult } from '$lib/db/query';
 	import { writable, type Writable } from 'svelte/store';
 	import { cn } from '$lib/utils';
 	import type { HTMLAttributes } from 'svelte/elements';

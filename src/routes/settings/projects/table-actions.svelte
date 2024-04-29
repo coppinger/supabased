@@ -84,7 +84,9 @@
 			</AlertDialog.Header>
 			<AlertDialog.Footer>
 				<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-				<AlertDialog.Action on:click={handleDelete}>Continue</AlertDialog.Action>
+				<AlertDialog.Action class="bg-destructive" on:click={handleDelete}
+					>Continue</AlertDialog.Action
+				>
 			</AlertDialog.Footer>
 		</AlertDialog.Content>
 	</AlertDialog.Root>
