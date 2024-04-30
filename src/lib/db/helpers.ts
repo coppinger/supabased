@@ -5,6 +5,7 @@ import { Octokit } from 'octokit'
 
 const octokit = new Octokit()
 
+
 /**
  * Add an availability to the user's Profile.
  * Returns the inserted row.
@@ -54,46 +55,79 @@ export async function deleteUserProject(supabase: SupabaseClient<Database>, id: 
     return supabase.from('projects').delete().in('id', Array.isArray(id) ? id : [id]).select()
 }
 
-export async function insertUserProject(supabase: SupabaseClient<Database>, project: Require<Partial<Tables<'projects'>>, 'profile_id'> | Require<Partial<Tables<'projects'>>, 'profile_id'>[]) {
+type UserProject = Require<Partial<Tables<'projects'>>, 'profile_id'> & { stacks: [], products: [] }
+export async function insertUserProject(supabase: SupabaseClient<Database>, project: UserProject | UserProject[]) {
+
     const _project = Array.isArray(project) ? project : [project]
-    const projects = _project.map((p) => {
-        const { id: _, ...rest } = p
+    const projects = _project.map((p) => ({ ...p, id: crypto.randomUUID() }))
+
+    const mapped_projects = projects.map(project => {
+        const { stacks, products, ...rest } = project
         return rest
     })
-    const { data, ...rest } = await supabase.from('projects').insert(projects).select()
+
+    const { data, error } = await supabase.from('projects').insert(mapped_projects).select()
+    if (error) {
+        console.log('insert project error', error)
+        return { data, error }
+    }
+
     for (const project of projects) {
-        if (!project.repository_url) continue
-        const [owner, repo] = project.repository_url.split('/').splice(3)
-        const { data: languages } = await octokit.rest.repos.listLanguages({
-            owner,
-            repo
-        })
+        if (project.stacks) {
+            const { data: stacks } = await supabase.from('stacks').select().in('name', project.stacks)
 
+            const mapped_stacks = project.stacks.map(stack => ({
+                project_id: project.id,
+                stack_id: stacks?.find(ele => ele.name === stack)?.id
+            })).filter(ele => ele.stack_id)
 
-        let ids = []
-        for (const language of Object.keys(languages)) {
-            const { data: returnedLanguage, error: returnedLanguageError } = await supabase.from('languages').select().eq('name', language).maybeSingle()
-            if (!returnedLanguage) {
-                console.log(language)
-                // const { data: returnedLanguage, error } = await supabase.from('languages').insert({ name: language }).select().maybeSingle()
-                // if (!returnedLanguage) {
-                //     console.log(error)
-                //     continue
-                // }
-                // ids.push(returnedLanguage.id)
-            } else ids.push(returnedLanguage.id)
+            await supabase.from('projects_stacks').insert(mapped_stacks)
 
         }
-        if (data) {
-            const { error } = await insertUserProjectLanguages(supabase, ids.map(id => ({ project_id: data[0].id, language_id: id })))
-            if (error) console.log(error)
+        if (project.products) {
+            const { data: products } = await supabase.from('products').select().in('name', project.products)
+            const mapped_products = project.products.map(product => ({
+                project_id: project.id,
+                product_id: products?.find(ele => ele.name === product)?.id
+            })).filter(ele => ele.product_id)
+
+            await supabase.from('projects_products').insert(mapped_products)
+        }
+
+        if (project.repository_url) {
+            const [owner, repo] = project.repository_url.split('/').splice(3)
+
+            const { data: languages } = await octokit.rest.repos.listLanguages({
+                owner,
+                repo
+            })
+
+            let ids = []
+            for (const language of Object.keys(languages)) {
+                const { data: returnedLanguage, error: returnedLanguageError } = await supabase.from('languages').select().eq('name', language).maybeSingle()
+                if (returnedLanguage) ids.push(returnedLanguage.id)
+
+            }
+            if (data) {
+                const { error } = await insertUserProjectLanguages(supabase, ids.map(id => ({ project_id: data[0].id, language_id: id })))
+                if (error) console.log(error)
+            }
+
         }
 
     }
-    return { data, ...rest }
+    return { data, error }
 }
 
 
 export async function insertUserProjectLanguages(supabase: SupabaseClient<Database>, row: Omit<Tables<'projects_languages'>, 'id'> | Omit<Tables<'projects_languages'>, 'id'>[]) {
     return supabase.from('projects_languages').insert(Array.isArray(row) ? row : [row]).select()
+}
+
+export async function insertUserProjectStacks(supabase: SupabaseClient<Database>, row: Omit<Tables<'projects_stacks'>, 'id'> | Omit<Tables<'projects_stacks'>, 'id'>[]) {
+    return supabase.from('projects_stacks').insert(Array.isArray(row) ? row : [row]).select()
+}
+
+export async function insertUserProjectProducts(supabase: SupabaseClient<Database>, row: Omit<Tables<'projects_products'>, 'id'> | Omit<Tables<'projects_products'>, 'id'>[]) {
+    return supabase.from('projects_products').insert(Array.isArray(row) ? row : [row]).select()
 }

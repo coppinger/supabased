@@ -23,13 +23,13 @@
 
 	let value = '';
 	let open = false;
-	let data = stacks.data?.map((stack) => ({ value: stack.name, label: stack.name }));
+	let data = stacks.data?.map((stack) => ({ value: stack.name!, label: stack.name! }));
 	let { supabase } = $page.data as PageData;
 
 	$: open = !!value.length;
 	$: selectedValue = data?.find((f) => f.value === value)?.label;
 	$: if (value.length) searchStacks(value);
-	else data = stacks.data?.map((stack) => ({ value: stack.name, label: stack.name }));
+	else data = stacks.data?.map((stack) => ({ value: stack.name!, label: stack.name! }));
 	$: if (selectedValue) {
 		if (!$filter.stacks.some((stack) => stack === selectedValue))
 			$filter.stacks.push(selectedValue);
@@ -43,7 +43,9 @@
 			.select()
 			.textSearch('name', `${search}:*`);
 		if (!error) {
-			data = results.map((stack) => ({ value: stack.name, label: stack.name }));
+			data = results.map((stack) => ({ value: stack.name!, label: stack.name! }));
+		} else {
+			data = [];
 		}
 	}
 

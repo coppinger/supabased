@@ -17,8 +17,6 @@
 	const profile = writable(data.profile.data);
 	setContext('profile', profile);
 	$: $profile = data.profile.data;
-
-	$: console.log($profile);
 </script>
 
 <div class="container flex max-w-[50rem] flex-col gap-6 py-2">

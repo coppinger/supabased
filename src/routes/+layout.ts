@@ -40,7 +40,6 @@ export const load = (async ({ fetch, data, depends }) => {
 	const {
 		data: { session }
 	} = await supabase.auth.getSession()
-	console.log(session?.user.id)
 
 	const user = session?.user ? {
 		...session.user,

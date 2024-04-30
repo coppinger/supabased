@@ -53,7 +53,7 @@ export const actions = {
 			return fail(400, { form })
 		}
 
-		const { project_name, project_url, repository_url, description } = form.data
+		const { project_name, project_url, repository_url, description, stacks, products } = form.data
 
 		const { error } = await insertUserProject(supabase, {
 			profile_id: session.user.id,
@@ -61,6 +61,8 @@ export const actions = {
 			project_url,
 			description,
 			repository_url,
+			stacks,
+			products
 		})
 
 		if (error) {
