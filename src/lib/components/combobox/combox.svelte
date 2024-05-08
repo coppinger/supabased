@@ -1,10 +1,9 @@
 <script lang="ts" generics="T extends string, U extends string">
-	import type { InputEvents } from '../ui/input';
-
-	import { Button } from '$lib/components/ui/button/index.js';
-	import * as Command from '$lib/components/ui/command/index.js';
-	import * as Popover from '$lib/components/ui/popover/index.js';
-	import { cn } from '$lib/utils.js';
+	import type { InputEvents } from '$lib/components/shadcn/ui/input';
+	import { Button } from '$lib/components/shadcn/ui/button/index.js';
+	import * as Command from '$lib/components/shadcn/ui/command/index.js';
+	import * as Popover from '$lib/components/shadcn/ui/popover/index.js';
+	import { cn } from '$lib/components/shadcn/utils.js';
 	import { Check, ChevronsUpDown } from 'lucide-svelte';
 	import { tick } from 'svelte';
 

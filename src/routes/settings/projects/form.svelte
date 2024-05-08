@@ -3,21 +3,21 @@
 	import type { PageData } from './$types.js';
 	import { projectSchema } from './schema.js';
 	import SuperDebug from 'sveltekit-superforms';
-	import * as Form from '$lib/components/ui/form';
+	import * as Form from '$lib/components/shadcn/ui/form';
 	import { superForm } from 'sveltekit-superforms';
-	import { cn } from '$lib/utils.js';
+	import { cn } from '$lib/components/shadcn/utils.js';
 	import { toast } from 'svelte-sonner';
-	import { Input } from '$lib/components/ui/input';
+	import { Input } from '$lib/components/shadcn/ui/input';
 	import { page } from '$app/stores';
-	import type { Tables } from '$lib/types/DatabaseDefinitions.js';
-	import { Textarea } from '$lib/components/ui/textarea';
+	import { Textarea } from '$lib/components/shadcn/ui/textarea';
 	import { dev } from '$app/environment';
 	import Combox from '$lib/components/combobox/combox.svelte';
 
-	export let data: Pick<
-		Tables<'projects'>,
-		'profile_id' | 'project_name' | 'project_url' | 'repository_url' | 'id'
-	> & { isRepo?: boolean };
+	export let data: Partial<NonNullable<PageData['projects']['data']>[number]> & {
+		isRepo?: boolean;
+	};
+
+	$: ({ products, supabase } = $page.data as PageData);
 
 	const form = superForm(($page.data as PageData).form, {
 		validators: zodClient(projectSchema),
@@ -31,15 +31,21 @@
 	});
 
 	const { form: formData, enhance, errors, constraints } = form;
-	const { project_name, project_url, repository_url } = data;
+	const { project_name, project_url, repository_url, description, id } = data;
 
-	if (project_name) $formData.project_name = project_name;
-	if (project_url) $formData.project_url = project_url;
-	if (repository_url) $formData.repository_url = repository_url;
-
-	$: ({ products, supabase } = $page.data as PageData);
+	$formData = {
+		...$formData,
+		...(id && {id}), 
+		...(project_name && { project_name }),
+		...(project_url && { project_url }),
+		...(repository_url && { repository_url }),
+		...(description && { description }),
+		stacks: (data.stacks || []).map((stack) => stack.stack?.name as string) ?? [],
+		products: (data.products || []).map((product) => product.product?.name as string) ?? [],
+	};
 
 	let stacks: { value: string; label: string }[] = [];
+
 	async function searchStacks(search: string) {
 		if (!search) {
 			stacks = [];
@@ -54,7 +60,6 @@
 			console.log(error);
 			stacks = [];
 		}
-		console.log(stacks);
 	}
 </script>
 

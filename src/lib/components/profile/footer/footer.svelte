@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button';
+	import { Button } from '$lib/components/shadcn/ui/button';
 	import type { ProfilesResult } from '$lib/db/query';
 	import Endorse from '$routes/profile/[name]/endorse.svelte';
 	import { getContext } from 'svelte';
-	import * as Avatar from '$lib/components/ui/avatar';
+	import * as Avatar from '$lib/components/shadcn/ui/avatar';
 	import { DotsThree } from 'phosphor-svelte';
 	import type { Writable } from 'svelte/store';
 

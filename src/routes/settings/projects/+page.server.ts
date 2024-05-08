@@ -34,8 +34,8 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession, supabase 
 	return {
 		form: await superValidate(zod(projectSchema)),
 		repos,
-		projects: await supabase.from('projects').select().eq('profile_id', session.user.id).returns<Tables<'projects'>[]>(),
-		products: await supabase.from('products').select().order('sort').returns<Tables<'products'>[]>(),
+		projects: await supabase.from('projects').select(`*, stacks:projects_stacks(*, stack:stacks(*)), langauges:projects_languages(*, language:languages(*)), products:projects_products(*, product: products(*))`).eq('profile_id', session.user.id),
+		products: await supabase.from('products').select().order('sort'),
 	}
 }
 
@@ -53,9 +53,10 @@ export const actions = {
 			return fail(400, { form })
 		}
 
-		const { project_name, project_url, repository_url, description, stacks, products } = form.data
+		const { project_name, project_url, repository_url, description, stacks, products, id } = form.data
 
 		const { error } = await insertUserProject(supabase, {
+			id,
 			profile_id: session.user.id,
 			project_name,
 			project_url,

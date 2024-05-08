@@ -1,10 +1,10 @@
 import { z } from 'zod'
 
 const MAX_FILE_SIZE = 1024 * 1024 * 2
-const ACCEPTED_IMAGE_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+const ACCEPTED_IMAGE_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
 
 export const profileSchema = z.object({
-	username: z.string().min(3).max(32).optional(),
+	username: z.union([z.string().min(3).max(32), z.string().length(0)]).optional(),
 	display_name: z.string().min(3).max(64).optional(),
 	bio: z.string().max(160).optional(),
 	location: z.string().optional(),

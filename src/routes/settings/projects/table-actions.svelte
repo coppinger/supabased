@@ -1,37 +1,22 @@
 <script lang="ts">
 	import { DotsThree } from 'phosphor-svelte';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import { Button, buttonVariants } from '$lib/components/ui/button';
-	import * as AlertDialog from '$lib/components/ui/alert-dialog';
-	import { deleteUserProject, insertUserProject } from '$lib/db/helpers';
+	import * as DropdownMenu from '$lib/components/shadcn/ui/dropdown-menu';
+	import { Button } from '$lib/components/shadcn/ui/button';
+	import * as AlertDialog from '$lib/components/shadcn/ui/alert-dialog';
+	import { deleteUserProject } from '$lib/db/helpers';
 	import { page } from '$app/stores';
 	import { toast } from 'svelte-sonner';
 	import type { Tables } from '$lib/types/DatabaseDefinitions';
 	import { invalidateAll } from '$app/navigation';
-	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
+	import * as Dialog from '$lib/components/shadcn/ui/dialog/index.js';
 	import Form from './form.svelte';
 	export let value: Tables<'projects'> & { isRepo?: boolean };
 	const { id, isRepo } = value;
 
 	async function handleDelete() {
 		const { data, error } = await deleteUserProject($page.data.supabase, id);
-		if (data)
-			toast.info(`Deleted ${data[0].project_name}`, {
-				action: {
-					label: 'Undo',
-					onClick: async () => {
-						const { data: insert, error } = await insertUserProject($page.data.supabase, data);
-						if (error) toast.error('Error undoing project deletion');
-						if (insert)
-							toast.info(`${insert[0].project_name} is back`, {
-								description: 'Please re-enter all missing metadata',
-							});
-						await invalidateAll();
-					},
-				},
-			});
+		if (error) console.log(error);
+		if (data) toast.info(`Deleted ${data[0].project_name}`);
 
 		await invalidateAll();
 	}
@@ -67,6 +52,9 @@
 							<DropdownMenu.Item>Add to Projects</DropdownMenu.Item>
 						</Dialog.Trigger>
 					{:else}
+						<Dialog.Trigger class="size-full">
+							<DropdownMenu.Item>Edit</DropdownMenu.Item>
+						</Dialog.Trigger>
 						<AlertDialog.Trigger class="size-full">
 							<DropdownMenu.Item>Delete Project</DropdownMenu.Item>
 						</AlertDialog.Trigger>

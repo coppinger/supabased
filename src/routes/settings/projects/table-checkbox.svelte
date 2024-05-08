@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Checkbox } from '$lib/components/ui/checkbox';
+	import { Checkbox } from '$lib/components/shadcn/ui/checkbox';
 	import type { Writable } from 'svelte/store';
 
 	export let checked: Writable<boolean>;

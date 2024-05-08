@@ -1,64 +1,39 @@
 <script lang="ts">
 	import NavBar from '$lib/components/layouts/navbar.svelte';
-	import { Toaster, type ToasterProps } from 'svelte-sonner';
+	import { Toaster } from 'svelte-sonner';
 	import '../app.pcss';
 	import '@fontsource-variable/manrope';
-
-	import { menuBoolean } from '$lib/menuStore';
-	import { fade } from 'svelte/transition';
-	import setFocus from '@svackages/set-focus';
-	function toggleMenu() {
-		menuBoolean.update((value) => !value);
-	}
-
+	import { goto, invalidate } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import 'iconify-icon';
-	import Footer from '$lib/components/Footer.svelte';
-	import { menuItems } from '$lib/components/menu/menuItems';
+	import Footer from '$lib/components/layouts/footer.svelte';
 
 	export let data;
-	// const toastOptions = {
-	// 	actionButtonStyle: 'background-color: hsl(52,211,153);'
-	// } satisfies ToasterProps['toastOptions'];
-</script>
+	$: ({ session, supabase } = data);
 
-{#if $menuBoolean}
-	<nav
-		transition:fade
-		class="fixed inset-0 z-10 flex h-screen w-screen items-center justify-center bg-neutral-950 bg-opacity-80 backdrop-blur-md"
-		aria-label="Main navigation"
-		use:setFocus
-	>
-		<ul class="flex flex-col items-center justify-center px-6 py-12 text-center">
-			{#each menuItems as { label, href }}
-				<li>
-					<a
-						class="inline-flex items-center justify-center gap-2 p-5 text-xl"
-						on:click={toggleMenu}
-						{href}
-						target={href.slice(0, 1) !== '/' ? '_blank' : '_self'}
-						tabindex="0"
-						>{label}
-						<p class="-rotate-45">{href.slice(0, 1) !== '/' ? ' ->' : ''}</p>
-					</a>
-				</li>
-			{/each}
-			<button
-				on:click={toggleMenu}
-				aria-label="Close menu"
-				aria-expanded={$menuBoolean}
-				class="flex items-center justify-center p-5"
-			>
-				<span class="material-symbols-outlined"> close </span>
-			</button>
-		</ul>
-	</nav>
-{/if}
+	onMount(() => {
+		const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
+			if (!newSession) {
+				/**
+				 * Queue this as a task so the navigation won't prevent the
+				 * triggering function from completing
+				 */
+				setTimeout(() => {
+					goto('/', { invalidateAll: true });
+				});
+			}
+			if (newSession?.expires_at !== session?.expires_at) {
+				invalidate('supabase:auth');
+			}
+		});
+
+		return () => data.subscription.unsubscribe();
+	});
+</script>
 
 <div class="flex min-h-svh flex-col">
 	<Toaster theme={'dark'} closeButton />
-	<nav>
-		<NavBar />
-	</nav>
+	<NavBar />
 	<main class="grow">
 		<slot />
 	</main>

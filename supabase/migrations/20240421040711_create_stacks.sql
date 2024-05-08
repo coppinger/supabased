@@ -93,9 +93,7 @@ BEGIN
     -- Update the profiles table to add the stack name to the array
     UPDATE profiles
     SET stacks = ARRAY(SELECT DISTINCT unnest(array_append(stacks,(SELECT name FROM stack_name))))
-    WHERE id = (
-        SELECT profile_id FROM projects WHERE id = NEW.project_id
-    );
+    WHERE id = ( SELECT auth.uid() );
 
     RETURN NEW;
 END;
@@ -125,9 +123,8 @@ BEGIN
     -- Update the profiles table to remove the stack name from the array
     UPDATE profiles
     SET stacks = array_remove(stacks, (SELECT name FROM stack_name))
-    WHERE id = (
-        SELECT profile_id FROM projects WHERE id = OLD.project_id
-    );
+    WHERE id = ( SELECT auth.uid() );
+
 
     RETURN OLD;
 END;

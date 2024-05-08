@@ -42,6 +42,23 @@ WITH
                 id = project_id
         )
     );
+CREATE POLICY "Profiles can update projects_languages for their own projects" ON projects_languages FOR UPDATE
+WITH
+    CHECK (
+        (
+            SELECT
+                auth.uid ()
+        ) = (
+            SELECT
+                p.profile_id
+            FROM
+                projects p
+            WHERE
+                id = project_id
+        )
+    );
+CREATE POLICY "Profiles can delete projects_languages for their own projects" ON projects_languages FOR DELETE
+USING ( ( SELECT auth.uid () ) = ( SELECT p.profile_id FROM projects p WHERE id = project_id ) );
 
 -- Trigger function to update profiles when a row is inserted into projects_languages
 CREATE OR REPLACE FUNCTION update_profile_languages_on_insert()
@@ -58,9 +75,7 @@ BEGIN
     -- Update the profiles table to add the language name to the array
     UPDATE profiles
     SET languages = ARRAY(SELECT DISTINCT unnest(array_append(languages, (SELECT name FROM language_name))))
-    WHERE id = (
-        SELECT profile_id FROM projects WHERE id = NEW.project_id
-    );
+    WHERE id = ( SELECT auth.uid() );
 
     RETURN NEW;
 END;
@@ -89,9 +104,7 @@ BEGIN
     -- Update the profiles table to remove the language name from the array
     UPDATE profiles
     SET languages = array_remove(languages, (SELECT name FROM languages_name))
-    WHERE id = (
-        SELECT profile_id FROM projects WHERE id = OLD.project_id
-    );
+    WHERE id = ( SELECT auth.uid() );
 
     RETURN OLD;
 END;

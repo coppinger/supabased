@@ -1,19 +1,19 @@
-import type { SuperValidated } from 'sveltekit-superforms'
-import type { Database } from '../DatabaseDefinitions'
-import { SupabaseClient, Session } from '@supabase/supabase-js'
-import type { EndorseSchema } from '$routes/profile/[name]/schema'
+import type { Database } from '$lib/types/DatabaseDefinitions'
+import type { Session, SupabaseClient, User } from '@supabase/supabase-js'
 
 declare global {
 	namespace App {
+		// interface Error {}
 		interface Locals {
 			supabase: SupabaseClient<Database>
-			safeGetSession(): Promise<{ session: Session | null; user: User | null }>
-		}
-		interface PageData {
+			safeGetSession: () => Promise<{ session: Session | null; user: User | null }>
 			session: Session | null
 			user: User | null
 		}
-		// interface Error {}
+		// interface PageData {}
+		// interface PageState {}
 		// interface Platform {}
 	}
 }
+
+export { }

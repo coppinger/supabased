@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { superForm } from 'sveltekit-superforms';
 
-	import Button from '$lib/components/ui/button/button.svelte';
-	import Input from '$lib/components/ui/input/input.svelte';
+	import Button from '$lib/components/shadcn/ui/button/button.svelte';
+	import Input from '$lib/components/shadcn/ui/input/input.svelte';
 
 	import { page } from '$app/stores';
-	import Label from '$lib/components/ui/label/label.svelte';
+	import Label from '$lib/components/shadcn/ui/label/label.svelte';
 	import { SocialAuth } from '@supabase/auth-ui-svelte';
 	import { ThemeSupa } from '@supabase/auth-ui-shared';
 
@@ -21,8 +21,8 @@
 			options: {
 				// set this to false if you do not want the user to be automatically signed up
 				shouldCreateUser: true,
-				emailRedirectTo: $page.url.origin + '/login'
-			}
+				emailRedirectTo: $page.url.origin + '/login',
+			},
 		});
 	}
 
@@ -43,7 +43,7 @@
 	$: email = $form.email;
 </script>
 
-<div class="border-neutral-800 mx-auto max-w-md p-10 my-10 border rounded-md">
+<div class="mx-auto my-10 max-w-md rounded-md border border-neutral-800 p-10">
 	{#if session.user}
 		<p>You're logged in as {session.user?.email}</p>
 	{:else}
@@ -70,7 +70,7 @@
 
 <!-- TODO sorry charlie, don't hate me LMAO, I'll let you make it pretty-->
 <div
-	class="border-neutral-800 mx-auto max-w-md px-10 py-4 my-10 border rounded-md flex items-center justify-center gap-2"
+	class="mx-auto my-10 flex max-w-md items-center justify-center gap-2 rounded-md border border-neutral-800 px-10 py-4"
 >
 	<SocialAuth
 		supabaseClient={supabase}
@@ -78,8 +78,8 @@
 		appearance={{
 			theme: ThemeSupa,
 			style: {
-				button: 'background-color: hsl(var(--primary)); border-color: rgb(38 38 38)'
-			}
+				button: 'background-color: hsl(var(--primary)); border-color: rgb(38 38 38)',
+			},
 		}}
 		socialLayout="horizontal"
 	/>

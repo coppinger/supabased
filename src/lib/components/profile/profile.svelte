@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { setContext } from 'svelte';
-	import type { ProfilesResult } from '$lib/db/query';
 	import { writable, type Writable } from 'svelte/store';
-	import { cn } from '$lib/utils';
+	import { cn } from '$lib/components/shadcn/utils';
 	import type { HTMLAttributes } from 'svelte/elements';
+	import type { PageData } from '../../../routes/$types';
 
 	type $$Props = HTMLAttributes<HTMLDivElement> & {
-		profile: ProfilesResult;
+		profile: PageData['user']['profile']['data'];
 		allowEditing?: boolean;
 		isEditing?: Writable<boolean>;
-		profileState?: Writable<ProfilesResult>;
+		profileState?: Writable<PageData['user']['profile']['data']>;
 	};
 	export let profile: $$Props['profile'];
 	export let allowEditing: $$Props['allowEditing'] = false;

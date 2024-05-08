@@ -1,10 +1,11 @@
 import { z } from 'zod'
 
 export const projectSchema = z.object({
-	project_name: z.string().min(3).max(32),
-	project_url: z.string().url().optional().nullable().default(null),
-	repository_url: z.string().url(),
-	description: z.string().min(16).max(160).optional().nullable().default(null),
+	id: z.union([z.string().uuid(), z.string()]).optional(),
+	project_name: z.union([z.string().min(3).max(32), z.string().length(0)]).optional(),
+	project_url: z.union([z.string().url(), z.string().length(0)]).optional(),
+	repository_url: z.union([z.string().url(), z.string().length(0)]).optional(),
+	description: z.union([z.string().min(16).max(160), z.string().length(0)]).optional(),
 	stacks: z.string().array().optional(),
 	products: z.string().array().optional(),
 }).refine(form => form.project_url !== form.repository_url, {

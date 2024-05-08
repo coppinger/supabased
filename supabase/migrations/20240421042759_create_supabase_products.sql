@@ -85,9 +85,7 @@ BEGIN
     -- Update the profiles table to add the product name to the array
     UPDATE profiles
     SET products = ARRAY(SELECT DISTINCT unnest(array_append(products, (SELECT name FROM product_name))))
-    WHERE id = (
-        SELECT profile_id FROM projects WHERE id = NEW.project_id
-    );
+    WHERE id = ( SELECT auth.uid() );
 
     RETURN NEW;
 END;
@@ -113,13 +111,10 @@ BEGIN
     WHERE id = OLD.product_id
     )
 
-
     -- Update the profiles table to remove the product name from the array
     UPDATE profiles
     SET products = array_remove(products, (SELECT name FROM products_name))
-    WHERE id = (
-        SELECT profile_id FROM projects WHERE id = OLD.project_id
-    );
+    WHERE id = ( SELECT auth.uid() );
 
     RETURN OLD;
 END;

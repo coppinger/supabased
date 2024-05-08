@@ -46,17 +46,17 @@ CREATE OR REPLACE FUNCTION public.handle_new_user()
     RETURNS TRIGGER
     AS $$
 BEGIN
-    INSERT INTO public.profiles(id, email, pfp_url, github_username)
+    INSERT INTO public.profiles(id, email, pfp_url, username, github_username)
     -- We can get the user metadata column values like this if we need them
     -- NEW.raw_user_meta_data->>'user_name', NEW.email, NEW.raw_user_meta_data->>'avatar_url'       
  VALUES(
     NEW.id, 
     NEW.email, 
     NEW.raw_user_meta_data->>'avatar_url',         
-    CASE 
-        WHEN NEW.raw_user_meta_data->>'iss' = 'https://api.github.com' THEN NEW.raw_user_meta_data->>'user_name' 
-        ELSE NULL
-    END);
+    NEW.raw_user_meta_data->>'user_name',
+    NEW.raw_user_meta_data->>'user_name'
+    ); 
+      
     RETURN new;
 END;
 $$

@@ -1,6 +1,7 @@
 import type { PostgrestSingleResponse, SupabaseClient } from '@supabase/supabase-js'
 import { derived, get, writable, type Writable } from 'svelte/store'
-import { PROFILE_QUERY, type ProfilesResult } from '$lib/db/query'
+import { PROFILE_QUERY } from '$lib/db/query'
+import type { PageData } from '../../routes/$types'
 
 export interface FilterOptions {
 	stacks: string[]
@@ -8,16 +9,16 @@ export interface FilterOptions {
 	experiences: string[]
 }
 
-export const createProfilesState = (init: PostgrestSingleResponse<ProfilesResult[]>, supabase: SupabaseClient) => {
+export const createProfilesState = (init: NonNullable<PageData['user']['profile']['data']>[], supabase: PageData['supabase']) => {
 	const initital = init
-	const filter: Writable<FilterOptions> = writable({
+	const filterBy: Writable<FilterOptions> = writable({
 		stacks: [],
 		availibility: [],
 		experiences: []
 	})
-	const sort = writable('')
+	const sortBy = writable('')
 	const search = writable('')
-	const profiles = derived([filter, sort, search], ([$filter, $sort, $search], set) => {
+	const profiles = derived([filterBy, sortBy, search], ([$filter, $sort, $search], set) => {
 
 		let query = supabase
 			.from('profiles')
@@ -29,23 +30,20 @@ export const createProfilesState = (init: PostgrestSingleResponse<ProfilesResult
 		if ($filter.stacks.length) query = query.contains('stacks', $filter.stacks)
 		if ($filter.experiences.length) query = query.contains('products', $filter.experiences)
 
+		query.then(({ data, error }) => {
+			if (!error) set(data)
+		})
 
-		query.returns<ProfilesResult[]>()
-			.then(({ data, error }) => {
-				if (!error) set(data)
-				// else console.log(error)
-			})
+	}, initital)
 
-	}, initital.data)
-
-	const activeFilters = derived([filter], ([$filter], set) => {
+	const activeFilters = derived([filterBy], ([$filter], set) => {
 		const arr = Object.values($filter).flat()
 		set(arr)
-	}, Object.values(get(filter)).flat())
+	}, Object.values(get(filterBy)).flat())
 
 	const clearFilters = (str: string | undefined = undefined) => {
 
-		filter.update(filter => {
+		filterBy.update(filter => {
 			for (const key of Object.keys(filter) as [keyof typeof filter]) {
 				if (!str) filter[key] = []
 				else {
@@ -59,9 +57,9 @@ export const createProfilesState = (init: PostgrestSingleResponse<ProfilesResult
 
 	return {
 		profiles,
-		filter,
+		filterBy,
 		activeFilters,
-		sort,
+		sortBy,
 		search,
 		clearFilters,
 	}

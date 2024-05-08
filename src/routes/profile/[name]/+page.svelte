@@ -3,9 +3,9 @@
 	import * as Profile from '$lib/components/profile';
 	import { Accessibility } from 'lucide-svelte';
 	import Availabilities from '$lib/components/profile/availabilities.svelte';
-	import { Button } from '$lib/components/ui/button';
+	import { Button } from '$lib/components/shadcn/ui/button';
 	import Endorse from './endorse.svelte';
-	import * as Avatar from '$lib/components/ui/avatar';
+	import * as Avatar from '$lib/components/shadcn/ui/avatar';
 	import { DotsThree } from 'phosphor-svelte';
 	import { setContext } from 'svelte';
 	import { writable } from 'svelte/store';

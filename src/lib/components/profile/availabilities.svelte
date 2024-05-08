@@ -1,18 +1,18 @@
 <script lang="ts">
-	import type { ProfilesResult } from '$lib/db/query';
 	import type { Tables } from '$lib/types/DatabaseDefinitions';
-	import { cn } from '$lib/utils';
+	import { cn } from '$lib/components/shadcn/utils';
 	import { getContext } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import type { Writable } from 'svelte/store';
-	import { Button } from '../ui/button';
+	import { Button } from '$lib/components/shadcn/ui/button';
+	import type { PageData } from '../../../routes/$types';
 
 	type $$Props = HTMLAttributes<HTMLUListElement> & { availabilities: Tables<'availabilities'>[] };
 	export let availabilities: $$Props['availabilities'];
 	let className: $$Props['class'] = undefined;
 	export { className as class };
 
-	const profile = getContext<Writable<ProfilesResult>>('profile');
+	const profile = getContext<Writable<NonNullable<PageData['user']['profile']['data']>>>('profile');
 	const isEditing = getContext<Writable<boolean>>('isEditing');
 
 	function handleAvailability(availability: string | null) {

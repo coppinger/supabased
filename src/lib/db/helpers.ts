@@ -1,10 +1,9 @@
 import type { Database, Tables } from '$lib/types/DatabaseDefinitions'
-import type { Require } from '$lib/utils'
+import type { Require } from '$lib/components/shadcn/utils'
 import type { SupabaseClient, User } from '@supabase/supabase-js'
 import { Octokit } from 'octokit'
 
 const octokit = new Octokit()
-
 
 /**
  * Add an availability to the user's Profile.
@@ -54,74 +53,96 @@ export async function deleteUserAvailability(supabase: SupabaseClient<Database>,
 export async function deleteUserProject(supabase: SupabaseClient<Database>, id: Tables<'projects'>['id'] | Tables<'projects'>['id'][]) {
     return supabase.from('projects').delete().in('id', Array.isArray(id) ? id : [id]).select()
 }
+export async function deleteUserProjectByRepoUrl(supabase: SupabaseClient<Database>, url: Tables<'projects'>['repository_url'] | Tables<'projects'>['repository_url'][]) {
+    return supabase.from('projects').delete().in('repository_url', Array.isArray(url) ? url : [url]).select()
+}
 
-type UserProject = Require<Partial<Tables<'projects'>>, 'profile_id'> & { stacks: [], products: [] }
+type UserProject = Require<Partial<Tables<'projects'>>, 'profile_id'> & { stacks?: string[], products?: string[] }
 export async function insertUserProject(supabase: SupabaseClient<Database>, project: UserProject | UserProject[]) {
+    const projects = Array.isArray(project) ? project : [project]
 
-    const _project = Array.isArray(project) ? project : [project]
-    const projects = _project.map((p) => ({ ...p, id: crypto.randomUUID() }))
+    const { data: found } = await supabase.from('projects').select().in('repository_url', projects.map(project => project.repository_url))
+    if (found) {
+        for (const project of projects) {
+            const idx = found.findIndex(row => row.repository_url === project.repository_url)
+            console.log(project.id, idx)
+            if (idx !== -1) continue
+            project.id = crypto.randomUUID()
+        }
+    }
 
-    const mapped_projects = projects.map(project => {
+    const stacks = projects.map(project => ({ project_id: project.id, stacks: project.stacks })).filter(project => project.project_id && project.stacks)
+    const products = projects.map(project => ({ project_id: project.id, products: project.products })).filter(project => project.products && project.project_id)
+
+    const { data, error } = await supabase.from('projects').upsert(projects.map(project => {
         const { stacks, products, ...rest } = project
         return rest
-    })
+    })).select()
 
-    const { data, error } = await supabase.from('projects').insert(mapped_projects).select()
     if (error) {
         console.log('insert project error', error)
         return { data, error }
     }
 
-    for (const project of projects) {
-        if (project.stacks) {
-            const { data: stacks } = await supabase.from('stacks').select().in('name', project.stacks)
+    for (const stack of stacks) {
+        if (!stack.project_id || !stack.stacks) continue
 
-            const mapped_stacks = project.stacks.map(stack => ({
-                project_id: project.id,
-                stack_id: stacks?.find(ele => ele.name === stack)?.id
-            })).filter(ele => ele.stack_id)
+        await supabase.from('projects_stacks').delete().eq('project_id', stack.project_id)
+        const { data: stacks } = await supabase.from('stacks').select().in('name', stack.stacks)
 
-            await supabase.from('projects_stacks').insert(mapped_stacks)
+        const mapped_stacks = stack.stacks.map(s => ({
+            project_id: stack.project_id,
+            stack_id: stacks?.find(ele => ele.name === s)?.id
+        })).filter(ele => ele.stack_id)
 
-        }
-        if (project.products) {
-            const { data: products } = await supabase.from('products').select().in('name', project.products)
-            const mapped_products = project.products.map(product => ({
-                project_id: project.id,
-                product_id: products?.find(ele => ele.name === product)?.id
-            })).filter(ele => ele.product_id)
+        await supabase.from('projects_stacks').insert(mapped_stacks)
+    }
 
-            await supabase.from('projects_products').insert(mapped_products)
-        }
+    for (const product of products) {
+        if (!product.project_id || !product.products) continue
+        await supabase.from('projects_products').delete().eq('project_id', product.project_id).select()
 
-        if (project.repository_url) {
-            const [owner, repo] = project.repository_url.split('/').splice(3)
+        const { data: products } = await supabase.from('products').select().in('name', product.products)
+        const mapped_products = product.products.map(p => ({
+            project_id: product.project_id,
+            product_id: products?.find(ele => ele.name === p)?.id
+        })).filter(ele => ele.product_id)
 
-            const { data: languages } = await octokit.rest.repos.listLanguages({
-                owner,
-                repo
-            })
-
-            let ids = []
-            for (const language of Object.keys(languages)) {
-                const { data: returnedLanguage, error: returnedLanguageError } = await supabase.from('languages').select().eq('name', language).maybeSingle()
-                if (returnedLanguage) ids.push(returnedLanguage.id)
-
-            }
-            if (data) {
-                const { error } = await insertUserProjectLanguages(supabase, ids.map(id => ({ project_id: data[0].id, language_id: id })))
-                if (error) console.log(error)
-            }
-
-        }
+        await supabase.from('projects_products').insert(mapped_products)
 
     }
+
+    for (const project of projects) {
+        if (!project.repository_url || !project.id) continue
+
+        const [owner, repo] = project.repository_url.split('/').splice(3)
+
+        const { data: languages } = await octokit.rest.repos.listLanguages({
+            owner,
+            repo
+        })
+
+        let ids = []
+        for (const language of Object.keys(languages)) {
+            const { data: returnedLanguage, error: returnedLanguageError } = await supabase.from('languages').select().eq('name', language).maybeSingle()
+            if (returnedLanguage) ids.push(returnedLanguage.id)
+
+        }
+
+        if (!data) continue
+
+        await supabase.from('projects_languages').delete().eq('project_id', project.id)
+        const { error } = await insertUserProjectLanguages(supabase, ids.map(id => ({ project_id: data[0].id, language_id: id })))
+        if (error) console.log(error)
+    }
+
     return { data, error }
 }
 
 
 export async function insertUserProjectLanguages(supabase: SupabaseClient<Database>, row: Omit<Tables<'projects_languages'>, 'id'> | Omit<Tables<'projects_languages'>, 'id'>[]) {
-    return supabase.from('projects_languages').insert(Array.isArray(row) ? row : [row]).select()
+    const _row = Array.isArray(row) ? row : [row]
+    return supabase.from('projects_languages').insert(_row).select()
 }
 
 export async function insertUserProjectStacks(supabase: SupabaseClient<Database>, row: Omit<Tables<'projects_stacks'>, 'id'> | Omit<Tables<'projects_stacks'>, 'id'>[]) {

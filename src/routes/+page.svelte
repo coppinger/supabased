@@ -1,22 +1,25 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/button/button.svelte';
-	import Input from '$lib/components/ui/input/input.svelte';
-	import SupabaseLogo from '$lib/components/SupabaseLogo.svelte';
+	import Button from '$lib/components/shadcn/ui/button/button.svelte';
+	import Input from '$lib/components/shadcn/ui/input/input.svelte';
+	import SupabaseLogo from '$lib/components/layouts/SupabaseLogo.svelte';
 	import SupabaseProductsBar from '$lib/components/layouts/SupabaseProductsBar.svelte';
-	import Supa3D from '$lib/components/Supa3D.svelte';
+	import Supa3D from '$lib/components/supa3d/Supa3D.svelte';
 	import * as Profile from '$lib/components/profile';
 	import { createProfilesState } from '$lib/stores/profiles.js';
 	import Filter from '$lib/components/filter/filter.svelte';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import Separator from '$lib/components/shadcn/ui/separator/separator.svelte';
 	export let data;
 
 	let { supabase, availabilities, products, profiles: init, stacks, user } = data;
 	$: ({ supabase, availabilities, products, profiles: init, stacks, user } = data);
 
-	let { profiles, filter, activeFilters, search, clearFilters } = createProfilesState(
-		init,
-		supabase
-	);
+	let {
+		profiles,
+		filterBy: filter,
+		activeFilters,
+		search,
+		clearFilters,
+	} = createProfilesState(init.data ?? [], supabase);
 </script>
 
 <SupabaseProductsBar {supabase} {filter} />

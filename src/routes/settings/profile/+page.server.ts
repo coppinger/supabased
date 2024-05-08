@@ -5,8 +5,6 @@ import { redirect } from '@sveltejs/kit'
 import { zod } from 'sveltekit-superforms/adapters'
 import type { Tables } from '$lib/types/DatabaseDefinitions'
 
-const { randomUUID } = crypto
-
 export const load: PageServerLoad = async ({ locals: { safeGetSession, supabase }, request, fetch }) => {
 	const { session } = await safeGetSession()
 
@@ -31,24 +29,28 @@ export const actions = {
 		if (!form.valid) return message(form, 'Invalid form', { status: 400 })
 
 		const { pfp_url: file, display_name, bio, location, username, availability } = form.data
-		const insertData: Partial<Tables<'profiles'>> = {}
-		if (display_name) insertData.display_name = display_name
-		if (location) insertData.location = location
-		if (bio) insertData.bio = bio
-		if (username) insertData.username = username
+		const insertData: Partial<Tables<'profiles'>> = {
+			...(display_name && { display_name }),
+			...(location && { location }),
+			...(bio && { bio }),
+			...(username && { username })
+		}
 
-		const { data, error } = await supabase
-			.from('profiles')
-			.select('username')
-			.eq('username', username)
-			.maybeSingle()
+		if (username) {
+			const { data, error } = await supabase
+				.from('profiles')
+				.select('username')
+				.eq('username', username)
+				.maybeSingle()
 
-		if (data) return setError(form, 'username', VALIDATIONS.USERNAME.FAIL)
+			if (data) return setError(form, 'username', VALIDATIONS.USERNAME.FAIL)
+
+		}
 
 
 		if (file) {
 			const fileExt = file.name.split('.').pop()
-			const filePath = `${randomUUID()}.${fileExt}`
+			const filePath = `${crypto.randomUUID()}.${fileExt}`
 
 			const { data: uploadData, error: uploadError } = await supabase.storage
 				.from('profile_pictures')

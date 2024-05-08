@@ -1,22 +1,22 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button';
-	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
+	import { Button } from '$lib/components/shadcn/ui/button';
+	import Checkbox from '$lib/components/shadcn/ui/checkbox/checkbox.svelte';
 	import type { CreateProfilesState } from '$lib/stores/profiles';
-	import { cn } from '$lib/utils';
-	import * as Tooltip from '$lib/components/ui/tooltip';
-	import { Input } from '$lib/components/ui/input';
+	import { cn } from '$lib/components/shadcn/utils';
+	import * as Tooltip from '$lib/components/shadcn/ui/tooltip';
+	import { Input } from '$lib/components/shadcn/ui/input';
 	import type { PageData } from '../../../routes/$types';
 	import { supabaseProductIcons } from '../layouts/supabaseProductIcons';
-	import * as Popover from '$lib/components/ui/popover';
-	import * as Command from '$lib/components/ui/command';
-	import { Label } from '../ui/label';
+	import * as Popover from '$lib/components/shadcn/ui/popover';
+	import * as Command from '$lib/components/shadcn/ui/command';
+	import { Label } from '$lib/components/shadcn/ui/label';
 	import { ChevronsUpDown } from 'lucide-svelte';
 	import { Check } from 'phosphor-svelte';
 	import { tick } from 'svelte';
 	import { page } from '$app/stores';
 	import Combox from '../combobox/combox.svelte';
 
-	export let filter: ReturnType<CreateProfilesState>['filter'];
+	export let filter: ReturnType<CreateProfilesState>['filterBy'];
 	export let availabilityTypes: PageData['availabilities'];
 	export let stacks: PageData['stacks'];
 	export let products: PageData['products'];

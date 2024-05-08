@@ -1,30 +1,33 @@
 <script context="module" lang="ts">
 	let realtime: ReturnType<SupabaseClient['channel']> | undefined;
 	let components = writable(
-		new Map<ReturnType<typeof crypto.randomUUID>, Writable<ProfilesResult>>()
+		new Map<
+			ReturnType<typeof crypto.randomUUID>,
+			Writable<NonNullable<PageData['user']['profile']['data']>>
+		>()
 	);
 </script>
 
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { endorseSchema, type EndorseSchema } from '$routes/profile/[name]/schema';
+	import { endorseSchema } from '$routes/profile/[name]/schema';
 	import { toast } from 'svelte-sonner';
-	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
+	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import * as Dialog from '$lib/components/ui/dialog';
+	import * as Dialog from '$lib/components/shadcn/ui/dialog';
 	import { Auth } from '@supabase/auth-ui-svelte';
 	import { ThemeSupa } from '@supabase/auth-ui-shared';
 	import type { PageData } from './$types';
-	import type { EndorsementsResult, ProfilesResult } from '$lib/db/query';
 	import type { HTMLFormAttributes } from 'svelte/elements';
 	import { getContext, onMount } from 'svelte';
 	import { get, writable, type Writable } from 'svelte/store';
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import type { Tables } from '$lib/types/DatabaseDefinitions';
+	import { SupabaseRealtimeHandler } from '$lib/realtime/event';
 
 	type $$Props = HTMLFormAttributes;
 
-	const profile = getContext<Writable<ProfilesResult>>('profile');
+	const profile = getContext<Writable<NonNullable<PageData['user']['profile']['data']>>>('profile');
 
 	let { user, endorse: data, supabase } = $page.data as PageData;
 	$: ({ user, endorse: data, supabase } = $page.data);
@@ -78,15 +81,16 @@
 									.from('profiles')
 									.select()
 									.eq('id', endorsed_by)
-									.single<Tables<'profiles'>>();
-								if (!error)
+									.single();
+								if (data) {
 									_profile.update((profile) => {
 										profile.endorsements.push({
 											...payload.new,
 											profiles: data,
-										} as EndorsementsResult);
+										});
 										return profile;
 									});
+								}
 							}
 							$components = $components;
 						}
@@ -174,9 +178,11 @@ Usage:
 				<div class="">
 					<Auth
 						supabaseClient={$page.data.supabase}
-						providers={['google', 'github', 'twitter']}
+						providers={['github']}
 						redirectTo={`${$page.url.origin}/auth/callback`}
 						showLinks={false}
+						magicLink={false}
+						onlyThirdPartyProviders={true}
 						appearance={{ theme: ThemeSupa, style: { input: 'color: #fff' } }}
 						socialLayout="horizontal"
 					/>

@@ -1,24 +1,20 @@
 <script lang="ts">
-	import type { ProfileSchema } from '$routes/settings/profile/schema';
-
-	import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
-
-	import type { ProfilesResult } from '$lib/db/query';
-	import { cn } from '$lib/utils';
-	import * as Avatar from '$lib/components/ui/avatar';
+	import { cn } from '$lib/components/shadcn/utils';
+	import * as Avatar from '$lib/components/shadcn/ui/avatar';
 	import { Box, Cloud, Database, Lock, MousePointerClick, Triangle } from 'lucide-svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import SocialBanner from '$lib/components/profile/social/banner.svelte';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
-	import Input from '$lib/components/ui/input/input.svelte';
-	import { Button } from '$lib/components/ui/button';
-	import * as Tooltip from '$lib/components/ui/tooltip';
-	import * as Form from '$lib/components/ui/form';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import Input from '$lib/components/shadcn/ui/input/input.svelte';
+	import { Button } from '$lib/components/shadcn/ui/button';
+	import * as Tooltip from '$lib/components/shadcn/ui/tooltip';
+	import * as Form from '$lib/components/shadcn/ui/form';
+	import Separator from '$lib/components/shadcn/ui/separator/separator.svelte';
+	import type { PageData } from '../../../../routes/$types';
 
 	type $$Props = HTMLAttributes<HTMLDivElement>;
-	const profile = getContext<Writable<ProfilesResult>>('profile');
+	const profile = getContext<Writable<NonNullable<PageData['user']['profile']['data']>>>('profile');
 
 	let className: $$Props['class'] = undefined;
 	export { className as class };
@@ -69,7 +65,7 @@
 				<div
 					class={cn('flex items-center gap-4 font-bold text-neutral-400', {
 						'text-primary': project.projects_products.some(
-							(product) => product.product.name === label
+							(product) => product.product?.name === label
 						),
 					})}
 				>
@@ -96,7 +92,7 @@
 									{...builder}
 									class={cn('flex items-center gap-6 font-bold text-neutral-400', {
 										'text-primary': project.projects_products.some(
-											(product) => product.product.name === label
+											(product) => product.product?.name === label
 										),
 									})}
 								>
@@ -121,7 +117,7 @@
 					<li
 						class="flex items-center justify-center rounded-full border border-neutral-800 px-4 py-2 text-sm text-neutral-600"
 					>
-						{stacks.stack.name}
+						{stacks.stack?.name}
 					</li>
 				{/each}
 			</ul>

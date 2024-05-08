@@ -1,17 +1,18 @@
 <script lang="ts" generics="T extends Tables<'projects'>, U extends PageData['repos'][number]">
+	import { toast } from 'svelte-sonner';
+	import { invalidateAll } from '$app/navigation';
+	import { deleteUserProjectByRepoUrl } from '$lib/db/helpers';
 	import { page } from '$app/stores';
-
-	import { cn } from '$lib/utils';
-
+	import { cn } from '$lib/components/shadcn/utils';
 	import type { PageData } from './$types';
 	import type { Tables } from '$lib/types/DatabaseDefinitions';
 	import { createTable, Render, Subscribe, createRender } from 'svelte-headless-table';
 	import { readable } from 'svelte/store';
-	import * as Table from '$lib/components/ui/table';
+	import * as Table from '$lib/components/shadcn/ui/table';
 	import TableActions from './table-actions.svelte';
 	import { addPagination, addTableFilter, addSelectedRows } from 'svelte-headless-table/plugins';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
+	import { Button } from '$lib/components/shadcn/ui/button';
+	import { Input } from '$lib/components/shadcn/ui/input';
 	import TableCheckbox from './table-checkbox.svelte';
 
 	export let projects: T[];
@@ -144,6 +145,21 @@
 	<div class="flex-1 text-sm text-muted-foreground">
 		{Object.keys($selectedDataIds).length} of{' '}
 		{$rows.length} row(s) selected.
+		<Button
+			size="sm"
+			variant="destructive"
+			class={cn('ml-2 select-none', {})}
+			on:click={async () => {
+				const { data, error } = await deleteUserProjectByRepoUrl(
+					$page.data.supabase,
+					Object.keys($selectedDataIds).map((id) => $rows[id].original.repository_url)
+				);
+				if (error) console.log(error);
+				if (data?.length) toast.success('Deleted projects');
+				invalidateAll();
+			}}
+			disabled={!Object.keys($selectedDataIds).length}>Delete</Button
+		>
 	</div>
 	<Button
 		variant="outline"
