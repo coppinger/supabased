@@ -1,8 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import * as Profile from '$lib/components/profile';
-	import { Accessibility } from 'lucide-svelte';
-	import Availabilities from '$lib/components/profile/availabilities.svelte';
 	import { Button } from '$lib/components/shadcn/ui/button';
 	import Endorse from './endorse.svelte';
 	import * as Avatar from '$lib/components/shadcn/ui/avatar';
@@ -43,7 +41,7 @@
 					<span class="flex -space-x-2">
 						{#each $profile.endorsements as endorsement, _ (endorsement.id)}
 							<Avatar.Root class="h-8 w-8 border-2 border-background">
-								<Avatar.Image src={endorsement.profiles.pfp_url} />
+								<Avatar.Image src={endorsement.profile?.pfp_url} />
 							</Avatar.Root>
 						{/each}
 					</span>

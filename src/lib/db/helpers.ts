@@ -65,7 +65,6 @@ export async function insertUserProject(supabase: SupabaseClient<Database>, proj
     if (found) {
         for (const project of projects) {
             const idx = found.findIndex(row => row.repository_url === project.repository_url)
-            console.log(project.id, idx)
             if (idx !== -1) continue
             project.id = crypto.randomUUID()
         }

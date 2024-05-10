@@ -4,21 +4,20 @@ import { zod } from "sveltekit-superforms/adapters"
 import { endorseSchema, type EndorseSchema } from "./schema"
 import type { User } from "@supabase/supabase-js"
 import type { Tables } from "$lib/types/DatabaseDefinitions"
-import { PROFILE_QUERY, type ProfilesResult } from "$lib/db/query"
+import { PROFILE_QUERY } from "$lib/db/query"
 
 export interface Message {
   status: 'error' | 'success'
   text: string
-  // TODO add correct type
 }
 
 export const load = (async ({ locals: { supabase, safeGetSession }, params: { name } }) => {
-  const profile = await supabase.from('profiles').select(PROFILE_QUERY).eq('username', name).maybeSingle<ProfilesResult>()
+  const profile = await supabase.from('profiles').select(PROFILE_QUERY).eq('username', name).maybeSingle()
 
   return {
     profile,
     endorse: await superValidate(zod(endorseSchema)),
-    availabilities: await supabase.from('availabilities').select().returns<Tables<'availabilities'>[]>()
+    availabilities: await supabase.from('availabilities').select()
   }
 
 }) satisfies PageServerLoad

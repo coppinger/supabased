@@ -1,13 +1,3 @@
-<script context="module" lang="ts">
-	let realtime: ReturnType<SupabaseClient['channel']> | undefined;
-	let components = writable(
-		new Map<
-			ReturnType<typeof crypto.randomUUID>,
-			Writable<NonNullable<PageData['user']['profile']['data']>>
-		>()
-	);
-</script>
-
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { endorseSchema } from '$routes/profile/[name]/schema';
@@ -20,10 +10,9 @@
 	import type { PageData } from './$types';
 	import type { HTMLFormAttributes } from 'svelte/elements';
 	import { getContext, onMount } from 'svelte';
-	import { get, writable, type Writable } from 'svelte/store';
-	import type { SupabaseClient } from '@supabase/supabase-js';
+	import { get, type Writable } from 'svelte/store';
 	import type { Tables } from '$lib/types/DatabaseDefinitions';
-	import { SupabaseRealtimeHandler } from '$lib/realtime/event';
+	import type { NonNullableFields } from '$lib/utils';
 
 	type $$Props = HTMLFormAttributes;
 
@@ -57,78 +46,57 @@
 
 	const { form: formData, enhance } = form;
 
-	const id = crypto.randomUUID();
-
 	onMount(() => {
-		$components.set(id, profile);
-		$components = $components;
-
-		if (!realtime) {
-			realtime = supabase
-				.channel('endorsements')
-				.on(
-					'postgres_changes',
-					{
-						event: 'INSERT',
-						schema: 'public',
-						table: 'endorsements',
-					},
-					async (payload) => {
-						const { endorsement_to, endorsed_by } = payload.new;
-						for (const [_, _profile] of $components) {
-							if (endorsement_to === get(_profile).id) {
-								const { data, error } = await supabase
-									.from('profiles')
-									.select()
-									.eq('id', endorsed_by)
-									.single();
-								if (data) {
-									_profile.update((profile) => {
-										profile.endorsements.push({
-											...payload.new,
-											profiles: data,
-										});
-										return profile;
-									});
-								}
-							}
-							$components = $components;
-						}
+		const rt = supabase
+			.channel(`${$profile.id}`)
+			.on(
+				'postgres_changes',
+				{
+					event: 'INSERT',
+					schema: 'public',
+					table: 'endorsements',
+					filter: `endorsement_to=eq.${$profile.id}`,
+				},
+				async (payload) => {
+					const { endorsed_by } = payload.new as NonNullableFields<Tables<'endorsements'>>;
+					const { data, error } = await supabase
+						.from('profiles')
+						.select()
+						.eq('id', endorsed_by)
+						.single();
+					if (data) {
+						profile.update(($profile) => {
+							//@ts-expect-error
+							$profile.endorsements.push({
+								...payload.new,
+								profile: data,
+							});
+							return $profile;
+						});
 					}
-				)
-				.on(
-					'postgres_changes',
-					{
-						event: 'DELETE',
-						schema: 'public',
-						table: 'endorsements',
-					},
-					(payload) => {
-						const { id } = payload.old;
-						for (const [_, _profile] of $components) {
-							const idx = get(_profile).endorsements.findIndex((ele) => ele.id === id);
+				}
+			)
+			.on(
+				'postgres_changes',
+				{
+					event: 'DELETE',
+					schema: 'public',
+					table: 'endorsements',
+				},
+				(payload) => {
+					const { id } = payload.old;
+					const idx = get(profile).endorsements.findIndex((ele) => ele.id === id);
+					if (idx === -1) return;
+					profile.update(($profile) => {
+						$profile.endorsements.splice(idx, 1);
+						return $profile;
+					});
+				}
+			)
+			.subscribe();
 
-							if (idx !== -1) {
-								_profile.update((profile) => {
-									profile.endorsements.splice(idx, 1);
-									return profile;
-								});
-							}
-							$components = $components;
-						}
-					}
-				)
-				.subscribe();
-		}
-
-		// // clean up
 		return () => {
-			$components.delete(id);
-			$components = $components;
-			if ($components.size === 0) {
-				realtime?.unsubscribe();
-				realtime = undefined;
-			}
+			rt.unsubscribe();
 		};
 	});
 </script>
@@ -139,10 +107,6 @@ Form Action wrapper.
 
 @props
 data: SuperValidated<Infer<EndorseSchema>, Message>;
-// TODO put correct Profile type
-export let profile: { name: any };
-// TODO put correct Profile type
-export let endorser: { name: any };
 
 Usage:
 ```svelte
@@ -172,8 +136,6 @@ Usage:
 			<slot />
 		</Dialog.Trigger>
 		<Dialog.Content>
-			<!-- TODO update with actual auth component -->
-			<!-- Touch action none on mobile -->
 			<div class="flex place-content-center">
 				<div class="">
 					<Auth
